@@ -3,8 +3,8 @@
 This is the interpreter for the LCL (Lucas Command Language) programming language. To get started with the language, follow these steps:
 1. Download a copy of this project from GitHub and extract it, and open it in any C++ IDE of your choice (or anywhere else that can run C++ code).
 2. Note the location of the file called `"input.txt"`. This is currently in the GitHub repository at the relative path `"LucasCommandLanguage/LucasCommandLanguage/inputFile/input.txt"`. It is important for you to see where this file is, relative to the entire project's location, and keep note of this path.
-3. Open the file `"LucasCommandLanguage/LucasCommandLanguage/Interpreter.cpp"` (where the `main()` function is). Near the top, there is a constant called `INPUT_FILE`.
-<br>Currently, this constant is declared as: `const string INPUT_FILE = "../LucasCommandLanguage/inputFile/input.txt";`
+3. Open the file `"LucasCommandLanguage/LucasCommandLanguage/Interpreter.cpp"` (where the `main()` function is). Near the top, there is a constant called `INPUT_FILE`. Currently, this constant is declared as:
+<br>`const string INPUT_FILE = "../LucasCommandLanguage/inputFile/input.txt";`
 4. Change the value of this constant to be the relative path that you kept note of in step 2, such that when you run the program in your specific environment, this filename can be understood and the corresponding file can be successfully opened and read from.
 5. Compile and run the program. It should run successfully, and print out some green text telling you that the source code is empty.
 6. Follow the instructions from the message that was printed from step 5. Add the single command `/help` to `"input.txt"`. Then save the file and re-run the program. Now you should see a help directory. Go from there to learn how to create programs in LCL.
