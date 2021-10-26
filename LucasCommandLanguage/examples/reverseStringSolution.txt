@@ -1,0 +1,31 @@
+// PROBLEM: given a string (no spaces) with length >= 1, reverse the string
+// INPUT: the original string will be stored in a variable called s
+// OUTPUT: the reversed string should be stored in a variable called o
+// REQUIRES: no additional, unnecessary output/input to/from the console
+
+/input s String Enter the original string here: 
+
+// BEGIN YOUR CODE HERE
+
+/length n {s}
+/sub pos_last [n] 1
+/charat o {s} [pos_last]
+
+/blockdef iterate
+/charat curr_char {s} [curr_index]
+/concat o {o} {curr_char}
+/equal reached_the_end [curr_index] 0
+/not cond {reached_the_end}
+/sub curr_index {curr_index} 1
+/endblock
+
+/sub curr_index [pos_last] 1
+/greater cond {n} 1
+/while cond iterate
+
+// END YOUR CODE HERE
+
+/line
+/printvar s
+/printvar o
+/line

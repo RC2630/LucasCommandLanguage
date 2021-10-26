@@ -1,0 +1,46 @@
+/store s1 a String
+/store s2 lol String
+/store s3 BANANAS! String
+
+(s1, s2, s3) = ({s1}, {s2}, {s3})
+
+/length l1 {s1}
+/length l2 {s2}
+/length l3 {s3}
+
+(l1, l2, l3) = ({l1}, {l2}, {l3})
+
+/contains c1 {s3} BAN
+/contains c2 {s2} ll
+/contains c3 {s3} BANANAS!
+
+(c1, c2, c3) = ({c1}, {c2}, {c3})
+
+/charat ch1 {s3} 5
+/charat ch2 {s3} 7
+/charat ch3 {s1} 0
+
+(ch1, ch2, ch3) = ({ch1}, {ch2}, {ch3})
+
+/concat cc1 {s2}
+/concat cc2 {s3} {s1} {s2}
+/concat cc3 {s3} {s3} {s1} {s2} {s1} {s3} {cc1} {cc2} {cc2}
+
+(cc1, cc2, cc3) = ({cc1}, {cc2}, {cc3})
+
+/sub last [l3] 1
+/substr ss1 {s3} 0 [last]
+/substr ss2 {s3} 2 6
+/substr ss3 {cc3} 14 22
+
+(ss1, ss2, ss3) = ({ss1}, {ss2}, {ss3})
+
+/strequal e1 {s2} {s3}
+/strequal e2 {s3} {s3}
+/strequal e3 {s1} {s2} {s3} CANDY BAG idc idk
+/strequal e4 {s3} {s3} BANANAS! {s3} {s3} BANANAS!
+/strequal e5 {s3} {s3} BANANAS! {s3} {s2} BANANAS!
+
+(e1, e2, e3, e4, e5) = ({e1}, {e2}, {e3}, {e4}, {e5})
+
+/line

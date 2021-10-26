@@ -6,6 +6,7 @@
 #include "variable.h"
 #include "ansi_codes.h"
 #include "numberUtility.h"
+#include "block.h"
 
 #include <iomanip>
 #include <stdexcept>
@@ -18,17 +19,25 @@ using namespace strUtil;
 using namespace help;
 using namespace var;
 using namespace numUtil;
+using namespace blk;
 
-const string INPUT_FILE = "../LucasCommandLanguage/inputFile/input.txt";
+const string INPUT_FILE = "../LucasCommandLanguage/inputFile/input.txt"; // file path for the source code
 
-bool reuse_display = true;
-bool warn_type_change = true;
-bool use_blue = true;
-int num_places = 3;
-vector<Variable> vars;
+bool reuse_display = true; // using "/prev" will show special green message
+bool warn_type_change = true; // changing type of variable will show warning message
+bool use_blue = true; // most output is blue (instead of the system's default colour)
+
+int num_places = 3; // number of decimal places numerical display uses
+
+vector<Variable> vars; // list of all variables in the program
+
+bool block_mode_on = false; // the current command is being placed into a block instead of being executed normally
+string curr_block_name; // name of the current block being defined
+vector<string> temp_commands; // all the commands in the current block being defined (so far)
+vector<Block> blocks; // list of all blocks in the program
 
 // primary function for interpreting commands
-void interpretCommand(const string& command);
+void interpretCommand(const string& command, vector<string>& commands, int currIndex);
 
 // a testing function that executes when the main program terminates
 void test(vector<string>& com);
@@ -87,6 +96,17 @@ void strConcat(const string& command);
 void strSubstr(const string& varname, const string& s, int begin, int end);
 void strEqual(const string& command);
 
+// block-related helpers
+void createBlock(const string& blockname);
+void runBlock(const string& blockname, vector<string>& commands, int currIndex);
+
+// control-flow-related helpers
+void cflowIf(bool condition, const string& blockname, vector<string>& commands, int currIndex);
+void cflowIfvar(const string& boolvarname, const string& blockname, vector<string>& commands, int currIndex);
+void cflowLoop(int numIterations, const string& blockname, vector<string>& commands, int currIndex);
+void cflowFor(const string& numvarname, const string& blockname, vector<string>& commands, int currIndex);
+void cflowWhile(const string& condvarname, const string& blockname, vector<string>& commands, int currIndex);
+
 int main() {
 
 	digits(num_places);
@@ -113,6 +133,20 @@ int main() {
 			prevCommand = command;
 			command = commands.at(currIndex);
 			currIndex++;
+
+			if (block_mode_on) {
+				if (command == "/endblock") {
+					block_mode_on = false;
+					Block thisBlock(curr_block_name, temp_commands);
+					curr_block_name.clear();
+					temp_commands.clear();
+					blocks.push_back(thisBlock);
+					continue;
+				} else {
+					temp_commands.push_back(command);
+					continue;
+				}
+			}
 
 			if (commandIs(command, "/escprint")) {
 				string message = parseArgumentUntilEnd(command);
@@ -166,7 +200,7 @@ int main() {
 				break;
 			}
 
-			interpretCommand(command);
+			interpretCommand(command, commands, currIndex);
 
 		}
 
@@ -177,7 +211,7 @@ int main() {
 
 }
 
-void interpretCommand(const string& command) {
+void interpretCommand(const string& command, vector<string>& commands, int currIndex) {
 
 	if (beginsWith(command, "//")) { // cannot use commandIs() because there may not be a space between the "//" and the comment itself
 		// ignore this command because it is a comment
@@ -269,6 +303,20 @@ void interpretCommand(const string& command) {
 		strSubstr(parseArgument(command, 1), parseArgument(command, 2), parseNumericalArgument(command, 3), parseNumericalArgument(command, 4));
 	} else if (commandIs(command, "/strequal")) {
 		strEqual(command);
+	} else if (commandIs(command, "/blockdef")) {
+		createBlock(parseArgument(command));
+	} else if (commandIs(command, "/block")) {
+		runBlock(parseArgument(command), commands, currIndex);
+	} else if (commandIs(command, "/if")) {
+		cflowIf(parseBooleanArgument(command, 1), parseArgument(command, 2), commands, currIndex);
+	} else if (commandIs(command, "/ifvar")) {
+		cflowIfvar(parseArgument(command, 1), parseArgument(command, 2), commands, currIndex);
+	} else if (commandIs(command, "/loop")) {
+		cflowLoop(parseNumericalArgument(command, 1), parseArgument(command, 2), commands, currIndex);
+	} else if (commandIs(command, "/for")) {
+		cflowFor(parseArgument(command, 1), parseArgument(command, 2), commands, currIndex);
+	} else if (commandIs(command, "/while")) {
+		cflowWhile(parseArgument(command, 1), parseArgument(command, 2), commands, currIndex);
 	} else {
 		cout << ANSI_RED << "\"" << command << "\" is not a valid command.\n" << ANSI_NORMAL;
 	}
@@ -279,7 +327,7 @@ void interpretCommand(const string& command) {
 // note: this function passes in the commands of the program by reference, so we can look at the commands for debugging purposes
 // note: some commands will be different when inspected at the end of execution because of modifications during the program execution
 void test(vector<string>& com) {
-	// nothing for now
+	// ...
 }
 
 void helpWith1Arg(const string& specific) {
@@ -287,6 +335,8 @@ void helpWith1Arg(const string& specific) {
 		cout << ANSI_GREEN << COMMAND_HELP_DIRECTORY << "\n" << ANSI_NORMAL;
 	} else if (specific == "variables") {
 		cout << ANSI_GREEN << VARIABLE_HELP << "\n" << ANSI_NORMAL;
+	} else if (specific == "blocks") {
+		cout << ANSI_GREEN << BLOCK_HELP << "\n" << ANSI_NORMAL;
 	} else if (specific == "lclinfo") {
 		cout << ANSI_GREEN << LCL_INFO << "\n" << ANSI_NORMAL;
 	} else {
@@ -310,6 +360,10 @@ void helpWith2Arg(const string& spec1, const string& spec2) {
 			cout << ANSI_GREEN << COMMAND_HELP_CAST << "\n" << ANSI_NORMAL;
 		} else if (spec2 == "string") {
 			cout << ANSI_GREEN << COMMAND_HELP_STRING << "\n" << ANSI_NORMAL;
+		} else if (spec2 == "blocks") {
+			cout << ANSI_GREEN << COMMAND_HELP_BLOCKS << "\n" << ANSI_NORMAL;
+		} else if (spec2 == "cflow") {
+			cout << ANSI_GREEN << COMMAND_HELP_CONTROL_FLOW << "\n" << ANSI_NORMAL;
 		} else {
 			cout << ANSI_RED << "\"/help commands " << spec2 << "\" does not display a valid help document, because \""
 			 	 << spec2 << "\" is not a valid category of commands.\n" << ANSI_NORMAL;
@@ -662,4 +716,87 @@ void strEqual(const string& command) {
 	}
 	bool eq = allEqual(v);
 	createVar(varname, boolval(eq), "Bool");
+}
+
+void createBlock(const string& blockname) {
+	block_mode_on = true;
+	curr_block_name = blockname;
+}
+
+void runBlock(const string& blockname, vector<string>& commands, int currIndex) {
+	Block block = find(blocks, blockname);
+	block.spliceInto(commands, currIndex);
+}
+
+void cflowIf(bool condition, const string& blockname, vector<string>& commands, int currIndex) {
+	if (condition) {
+		runBlock(blockname, commands, currIndex);
+	}
+}
+
+void cflowIfvar(const string& boolvarname, const string& blockname, vector<string>& commands, int currIndex) {
+	if (!contains(vars, boolvarname)) {
+		cout << ANSI_RED << "/ifvar or /while cannot execute because the boolean variable \"" << boolvarname << "\" is not found.\n" << ANSI_NORMAL;
+		return;
+	}
+	Variable boolvar = find(vars, boolvarname);
+	if (boolvar.datatype != "Bool") {
+		cout << ANSI_RED << "/ifvar or /while cannot execute because the variable \"" << boolvarname << "\" is not of type Bool.\n" << ANSI_NORMAL;
+		return;
+	}
+	cflowIf(boolvar.getBooleanValue(), blockname, commands, currIndex);
+}
+
+void cflowLoop(int numIterations, const string& blockname, vector<string>& commands, int currIndex) {
+	for (int i = 1; i <= numIterations; i++) {
+		runBlock(blockname, commands, currIndex);
+	}
+}
+
+void cflowFor(const string& numvarname, const string& blockname, vector<string>& commands, int currIndex) {
+	if (!contains(vars, numvarname)) {
+		cout << ANSI_RED << "/for cannot execute because the numerical variable \"" << numvarname << "\" is not found.\n" << ANSI_NORMAL;
+		return;
+	}
+	Variable numvar = find(vars, numvarname);
+	if (numvar.datatype != "Number") {
+		cout << ANSI_RED << "/for cannot execute because the variable \"" << numvarname << "\" is not of type Number.\n" << ANSI_NORMAL;
+		return;
+	}
+	cflowLoop(numvar.getNumericalValue(), blockname, commands, currIndex);
+}
+
+/*
+
+Given any block defined as follows (where <loc> indicates an arbitrary number of commands):
+
+/blockdef B
+<loc>
+/endblock
+
+The command:
+/while <conditionvariable> B
+
+can be rewritten as:
+/ifvar <conditionvariable> B'
+
+where B' is a recursively defined block:
+
+/blockdef B'
+/block B
+/ifvar <conditionvariable> B'
+/endblock
+
+Such a transformation allows us to perform while loops.
+
+*/
+void cflowWhile(const string& condvarname, const string& blockname, vector<string>& commands, int currIndex) {
+	
+	// make new block that starts with the reserved prefix ("__temp__")
+	Block block = find(blocks, blockname);
+	string newBlockname = block.createTemp(blocks, condvarname);
+
+	// run the transformed version of the block
+	cflowIfvar(condvarname, newBlockname, commands, currIndex);
+
 }

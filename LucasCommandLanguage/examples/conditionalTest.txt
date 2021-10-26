@@ -1,0 +1,30 @@
+/blockdef B
+B has been executed
+/endblock
+
+if true:
+/if true B
+
+if false:
+/if false B
+
+/input n Number Enter a number: 
+/ge cond [n] 10
+
+if n >= 10:
+/if {cond} B
+
+/line
+
+ifvar:
+/ifvar cond B
+
+ifvar with nonexistent variable:
+/ifvar var B
+
+ifvar with non-boolean variable:
+/store x 7.5 Number
+/ifvar x B
+
+/line
+

@@ -1,0 +1,105 @@
+/useblue false
+/digits 0
+
+1. Lola:
+/line
+
+/store hp1 4000 Number
+Health (level 1): {hp1}
+/times hp9 [hp1] 1.4
+Health (level 9): {hp9}
+/line
+
+/store dpp1 280 Number
+/times dpp9 [dpp1] 1.4
+Damage per projectile (level 1): {dpp1}
+Damage per projectile (level 9): {dpp9}
+/line
+
+/store ppa 6 Number
+Projectiles per ammo: {ppa}
+/times dpa1 [dpp1] [ppa]
+/times dpa9 [dpp9] [ppa]
+Damage per ammo (level 1): {dpa1}
+Damage per ammo (level 9): {dpa9}
+Attack range and pattern similar to Max's.
+/line
+
+/store rs 1.7 Number
+/digits 1
+Reload speed per ammo: {rs} seconds
+/digits 0
+/div dps1 [dpa1] [rs]
+/div dps9 [dpa9] [rs]
+Damage per second (level 1): {dps1}
+Damage per second (level 9): {dps9}
+/line
+
+Super:
+Creates clone of self that does exactly what Lola does, including movement and attacking.
+When Lola attacks, clone attacks in the same direction as Lola's aiming.
+/div chp1 [hp1] 2
+/div chp9 [hp9] 2
+Clone has same damage as Lola but only half health ({chp1} at level 1, {chp9} at level 9)
+If you run clone into wall, can use that to reposition the clone.
+/line
+
+1st Star Power:
+/store dpp10 509 Number
+/div increaseFactor [dpp10] [dpp9]
+/sub increaseFactor [increaseFactor] 1
+/times increaseFactor [increaseFactor] 100
+When Lola has only 1 ammo remaining, the ammo bar turns yellow, and Lola's damage per projectile (max level) increases from {dpp9} to {dpp10}.
+That is a {increaseFactor}% increase!
+Note that Lola's clone does NOT receive boosts from this star power.
+/line
+
+With this SP equipped:
+/times dpa10 [dpp10] [ppa]
+/div dps10 [dpa10] [rs]
+Damage per ammo: {dpa10}
+Damage per second: {dps10}
+/line
+
+----------------------------------------------------------------
+/line
+
+2. Rewards for watching BS Championship Tournament:
+- Coins
+- Star Points
+- Pins
+- New Jessie Skin
+/line
+
+3. Brawl-o-ween special modifier:
+- Any existing gamemode
+- All brawlers will become invisible for 10 seconds once every 10 seconds (10 sec on, 10 sec off, repeat cycle every 20 seconds)
+/line
+
+4. Other things that I don't really care that much about:
+- New pins
+- Jessie remodel
+- New skins
+- New lore
+- Other unimportant stuff
+/line
+
+5. Annoucement about clubs
+- Club resizing will occur in the NEXT (not this) update for unspecified reasons
+- Looking forward to something BIG ......
+/line
+
+6. Balance changes (speculated)
+- deduced from footage shown in brawl talk
+- MORTIS SP1 1800 -> 1400
+- JESSIE HP 3000 -> 3500 (4200 -> 4900)
+- not sure about the others (there will definitely be more though)
+/line
+
+7. Gadget icon
+- now when someone has gadgets, a small icon will show up under them indicating that (like the star sign that shows the presence of an SP, but for gadgets)
+- great quality of life improvement, especially for lower level gameplay
+/line
+
+AND THAT'S ABOUT IT FOR NOW :D
+/line

@@ -16,6 +16,7 @@ namespace help {
 		"/help = display help directory (this document)\n"
 		"/help commands = display help directory for commands (they are grouped into categories such as general, variable, arithmetic, etc.)\n"
 		"/help variables = display help document for variables (how to use variables, including examples)\n"
+		"/help blocks = display help document for blocks (how to use blocks, including examples)\n"
 		"/help lclinfo = display information on this programming language (LCL = Lucas Command Language), including copyright";
 
 	const string COMMAND_HELP_DIRECTORY =
@@ -28,7 +29,9 @@ namespace help {
 		"/help commands relational = display commands that compare numbers\n"
 		"/help commands logical = display commands that operate on booleans\n"
 		"/help commands cast = display commands that convert/cast variables to a different type\n"
-		"/help commands string = display commands that operate on strings";
+		"/help commands string = display commands that operate on strings\n"
+		"/help commands blocks = display commands related to blocks\n"
+		"/help commands cflow = display commands related to control flow";
 
 	const string COMMAND_HELP_GENERAL =
 
@@ -120,6 +123,27 @@ namespace help {
 		"/substr <varname> <s> <begin> <end> = find the substring of s from index begin to index end (inclusive, 0-based), then store the result into varname\n"
 		"/strequal <varname> <s1> <s2> ... <si> = store true in varname if all string arguments {s1, ..., si} are equal, otherwise store false";
 
+	const string COMMAND_HELP_BLOCKS =
+
+		"LIST OF BLOCK-RELATED COMMANDS:\n\n"
+
+		"/blockdef <blockname> = start the definition for a new block named blockname\n"
+		"/endblock = end the definition for the current block\n"
+		"/block <blockname> = execute the block named blockname\n\n"
+
+		"Type \"/help blocks\" for more details on how to use blocks";
+
+	const string COMMAND_HELP_CONTROL_FLOW =
+
+		"LIST OF CONTROL-FLOW-RELATED COMMANDS:\n\n"
+		
+		"/if <b> <blockname> = run the block named blockname if b is true\n"
+		"/ifvar <boolvar> <blockname> = run the block named blockname if boolvar holds value of true\n\n"
+
+		"/loop <n> <blockname> = run the block named blockname n times\n"
+		"/for <numvar> <blockname> = run the block named blockname n times, where n is the number stored by numvar when this command is executed (regardless of if numvar is changed later)\n"
+		"/while <condvar> <blockname> = run the block named blockname while condvar holds value of true (it is intended that the value of condvar will change through the iterations)";
+
 	const string VARIABLE_HELP =
 		
 		"HELP WITH VARIABLES:\n\n"
@@ -149,6 +173,22 @@ namespace help {
 		"/add sum [n1] [n2] [n3]\n\n"
 		
 		"Type \"/help commands variables\" for a list of commands that create, modify, and access variables";
+
+	const string BLOCK_HELP =
+
+		"HELP WITH BLOCKS:\n\n"
+
+		"Start the definition of a block with \"/blockdef <blockname>\" and end the definition with \"/endblock\".\n"
+		"Between these two commands, you can place any number of other commands; these form the body of the block.\n"
+		"The commands you put in the middle will not be executed until you explicitly run the block using \"/block <blockname>\".\n\n"
+
+		"Note that you should not define any other blocks inside the definition for a block (no nested block definitions).\n"
+		"You should also not create multiple blocks with the same block name - doing so is undefined behaviour.\n"
+		"Also, attempting to run undefined blocks is undefined behaviour as well (unlike undefined variables, which display a warning message).\n\n"
+
+		"All block names cannot begin with \"__temp__\" (2 underscores before, 2 underscores after). This name has special significance for the interpreter.\n\n"
+
+		"Type \"/help commands blocks\" for a list of commands related to blocks";
 
 	const string LCL_INFO =
 

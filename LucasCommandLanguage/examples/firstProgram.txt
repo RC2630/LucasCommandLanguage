@@ -1,0 +1,17 @@
+So far, I believe that my progress in this program has been quite good.
+I still need to implement a bunch of stuff like arithmetic, control flow, and user inputs, but look at what I have accomplished today:
+/line
+- Variables
+- Basic Structure
+- Digits and Line Functions
+- and a lot more :D
+/line
+I am very happy with the result, and as I say so, I will sign off for the day...
+
+/store n1 Royal String
+/store n2 Cannon String
+/store signatureNumber 2630 Number
+
+/line
+------ {n1} {n2} {signatureNumber} :D
+/line

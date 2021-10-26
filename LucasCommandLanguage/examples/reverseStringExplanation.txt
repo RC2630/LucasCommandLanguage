@@ -1,0 +1,59 @@
+// PROBLEM: given a string (no spaces) with length >= 1, reverse the string
+// INPUT: the original string will be stored in a variable called s
+// OUTPUT: the reversed string should be stored in a variable called o
+// REQUIRES: no additional, unnecessary output/input to/from the console
+
+/input s String Enter the original string here: 
+
+// BEGIN YOUR CODE HERE
+
+// n = length(s)
+/length n {s}
+
+// pos_last = n - 1
+/sub pos_last [n] 1
+
+// o = charat(s, pos_last)
+/charat o {s} [pos_last]
+
+// -------------------------------------------------------
+
+// define iterate():
+/blockdef iterate
+
+// curr_char = charat(s, curr_index)
+/charat curr_char {s} [curr_index]
+
+// o = o + curr_char
+/concat o {o} {curr_char}
+
+// reached_the_end = (curr_index == 0)
+/equal reached_the_end [curr_index] 0
+
+// cond = !reached_the_end
+/not cond {reached_the_end}
+
+// curr_index = curr_index - 1
+/sub curr_index {curr_index} 1
+
+// (end define)
+/endblock
+
+// -------------------------------------------------------
+
+// curr_index = pos_last - 1
+/sub curr_index [pos_last] 1
+
+// cond = (n > 1)
+/greater cond {n} 1
+
+// while cond:
+//	iterate()
+/while cond iterate
+
+// END YOUR CODE HERE
+
+/line
+/printvar s
+/printvar o
+/line

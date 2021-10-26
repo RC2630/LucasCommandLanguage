@@ -1,0 +1,25 @@
+/input fname String What is your first name? Enter it here (no spaces): 
+/input lname String What is your last name? Enter it here (no spaces): 
+/input age Number What is your age? Enter it here: 
+/input likeMeat Bool Do you like meat? Enter true/false: 
+/input likeSeafood Bool Do you like seafood? Enter true/false: 
+/line
+
+Your first name: {fname}
+Your last name: {lname}
+Your age: {age}
+Do you like meat? {likeMeat}
+Do you like seafood? {likeSeafood}
+/line
+
+/concat fullname {fname} - {lname}
+/sub age3YearsAgo [age] 3
+/and likeMeatAndSeafood {likeMeat} {likeSeafood}
+
+Your full name: {fullname}
+/useblue false
+(sorry for replacing the space with a hyphen - it's just a technical limitation right now)
+/useblue true
+Your age 3 years ago: {age3YearsAgo}
+Do you like both meat and seafood? {likeMeatAndSeafood}
+/line

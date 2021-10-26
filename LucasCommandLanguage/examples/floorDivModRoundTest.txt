@@ -1,0 +1,76 @@
+/store n1 74 Number
+/store n2 5 Number
+
+(n1, n2) = ({n1}, {n2})
+/line
+
+/div a [n1] [n2]
+// expect 14.8
+a = n1 / n2 = {a}
+
+/fdiv b [n1] [n2]
+// expect 14
+b = n1 // n2 = {b}
+
+/div c [n1] [n2] [n2]
+// expect 2.96
+c = n1 / n2 / n3 = {c}
+
+/fdiv d [n1] [n2] [n2]
+// expect 2
+d = n1 // n2 // n3 = {d}
+/line
+
+/mod e [n1] [n2]
+// expect 4
+e = n1 % n2 = {e}
+
+/mod f [n1] 19
+// expect 17
+f = n1 % 19 = {f}
+
+/mod g [n1] 19 6
+// expect 5
+g = n1 % 19 % 6 = {g}
+
+/mod h [n1] 19 6 3
+// expect 2
+h = n1 % 19 % 6 % 3 = {h}
+/line
+
+/round r1 300.5
+// expect 301
+r1 = round(300.5) = {r1}
+
+/round r2 -300.5
+// expect -300
+r2 = round(-300.5) = {r2}
+
+/round r3 194.84
+// expect 195
+r3 = round(194.84) = {r3}
+
+/round r4 -26.308
+// expect -26
+r4 = round(-26.308) = {r4}
+
+/round r5 171.23
+// expect 171
+r5 = round(171.23) = {r5}
+
+/round r6 -7123.9158
+// expect -7124
+r6 = round(-7123.9158) = {r6}
+
+/round r7 952
+// expect 952
+r7 = round(952) = {r7}
+
+/round r8 -11
+// expect -11
+r8 = round(-11) = {r8}
+
+/round r9 0
+// expect 0
+r9 = round(0) = {r9}
+/line

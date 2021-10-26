@@ -1,0 +1,45 @@
+Hello! My name is Buddy!
+/escprint Hello! My name is Buddy!
+/escvarprint Hello! My name is Buddy!
+/line
+
+/Hello! My name is Buddy!
+/escprint /Hello! My name is Buddy!
+/escvarprint /Hello! My name is Buddy!
+/line
+
+/store n 15 Number
+Hello! My name is Buddy and I am not [n] years old!
+/escprint Hello! My name is Buddy and I am not [n] years old!
+/escvarprint Hello! My name is Buddy and I am not [n] years old!
+/line
+
+Hello! My name is Buddy and I am not {n} years old!
+/escprint Hello! My name is Buddy and I am not {n} years old!
+/escvarprint Hello! My name is Buddy and I am not {n} years old!
+/line
+
+Hello! My name is Buddy and I may be {n} or [n] years old!
+/escprint Hello! My name is Buddy and I may be {n} or [n] years old!
+/escvarprint Hello! My name is Buddy and I may be {n} or [n] years old!
+/line
+
+Hello! My name is Buddy and I may be {n} or [n] years old! [nonexistentVar]
+/escprint Hello! My name is Buddy and I may be {n} or [n] years old! [nonexistentVar]
+/escvarprint Hello! My name is Buddy and I may be {n} or [n] years old! [nonexistentVar]
+/line
+
+Hello! My name is Buddy and I may be {n} or [n] years old! {nonexistentVar}
+/escprint Hello! My name is Buddy and I may be {n} or [n] years old! {nonexistentVar}
+/escvarprint Hello! My name is Buddy and I may be {n} or [n] years old! {nonexistentVar}
+/line
+
+Hello! My name is Buddy and I may be {n} or [n] years old! {nonexistentVar} [nonexistentVar]
+/escprint Hello! My name is Buddy and I may be {n} or [n] years old! {nonexistentVar} [nonexistentVar]
+/escvarprint Hello! My name is Buddy and I may be {n} or [n] years old! {nonexistentVar} [nonexistentVar]
+/line
+
+/Hello! My name is Buddy and I may be {n} or [n] years old! {nonexistentVar} [nonexistentVar]
+/escprint /Hello! My name is Buddy and I may be {n} or [n] years old! {nonexistentVar} [nonexistentVar]
+/escvarprint /Hello! My name is Buddy and I may be {n} or [n] years old! {nonexistentVar} [nonexistentVar]
+/line

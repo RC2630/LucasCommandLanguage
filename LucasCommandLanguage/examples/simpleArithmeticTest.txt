@@ -1,0 +1,51 @@
+/useblue false
+
+/store a 16.7 Number
+/store b 11.2 Number
+/store c -8.5 Number
+
+Variables initialized to:
+[a, b, c] = [{a}, {b}, {c}]
+/line
+--------------------------------------------------------------
+/line
+
+// n1 is supposed to be 16.7 + 11.2 + -8.5 = 19.4
+/add n1 {a} {b} {c}
+a + b + c = {n1}
+/printvar n1
+/line
+
+// n2 is supposed to be 16.7 - 11.2 - -8.5 = 14.0
+/sub n2 {a} {b} {c}
+a - b - c = {n2}
+/printvar n2
+/line
+
+// n3 is supposed to be 16.7 * 11.2 * -8.5 = -1589.84
+/times n3 {a} {b} {c}
+a * b * c = {n3}
+/printvar n3
+/line
+
+After /digits 0:
+/digits 0
+// expecting -1590
+a * b * c = {n3}
+/printvar n3
+/line
+/digits 3
+
+// n4 is supposed to be 16.7 / 11.2 / -8.5 = -0.175 (to 3 decimal places)
+/div n4 {a} {b} {c}
+a / b / c = {n4}
+/printvar n4
+/line
+
+After /digits 6:
+/digits 6
+// expecting -0.175420
+a / b / c = {n4}
+/printvar n4
+/line
+/digits 3

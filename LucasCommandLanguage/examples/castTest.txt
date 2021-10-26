@@ -1,0 +1,105 @@
+num to bool:
+/line
+/store n1 37 Number
+/store n2 0 Number
+n1 = {n1}, n2 = {n2}
+/printvar n1
+/printvar n2
+/line
+
+/numtobool b1 [n1]
+/numtobool b2 [n2]
+b1 = {b1}, b2 = {b2}
+/printvar b1
+/printvar b2
+/line
+-------------------------------------------------------------------------------
+/line
+
+bool to num:
+/line
+/store b3 true Bool
+/store b4 false Bool
+b3 = {b3}, b4 = {b4}
+/printvar b3
+/printvar b4
+/line
+
+/booltonum n3 {b3}
+/booltonum n4 {b4}
+n3 = {n3}, n4 = {n4}
+/printvar n3
+/printvar n4
+/line
+-------------------------------------------------------------------------------
+/line
+
+num to string:
+/line
+/store n5 1.7312856 Number
+/store n6 -0.8333128 Number
+n5 = {n5} = [n5], n6 = {n6} = [n6]
+/printvar n5
+/printvar n6
+/line
+
+/numtostr s1 [n5]
+/numtostr s2 [n6]
+s1 = {s1}, s2 = {s2}
+/printvar s1
+/printvar s2
+/line
+-------------------------------------------------------------------------------
+/line
+
+string to num:
+/line
+/store s3 7.1926384 String
+/store s4 -11.11223 String
+s3 = {s3}, s4 = {s4}
+/printvar s3
+/printvar s4
+/line
+
+/strtonum n7 {s3}
+/strtonum n8 {s4}
+n7 = {n7} = [n7], n8 = {n8} = [n8]
+/printvar n7
+/printvar n8
+/line
+-------------------------------------------------------------------------------
+/line
+
+bool to string:
+/line
+/store b5 true Bool
+/store b6 false Bool
+b5 = {b5}, b6 = {b6}
+/printvar b5
+/printvar b6
+/line
+
+/booltostr s5 {b5}
+/booltostr s6 {b6}
+s5 = {s5}, s6 = {s6}
+/printvar s5
+/printvar s6
+/line
+-------------------------------------------------------------------------------
+/line
+
+string to bool:
+/line
+/store s7 TRUE String
+/store s8 notTrue String
+s7 = {s7}, s8 = {s8}
+/printvar s7
+/printvar s8
+/line
+
+/strtobool b7 {s7}
+/strtobool b8 {s8}
+b7 = {b7}, b8 = {b8}
+/printvar b7
+/printvar b8
+/line

@@ -1,0 +1,58 @@
+/and a true true
+/and b true false
+/and c false true
+/and d false false
+
+/and e true true true true true
+/and f true true false true true
+/and g false false false true false
+
+/or h true true
+/or i true false
+/or j false true
+/or k false false
+
+/or l true true false true true
+/or m true false false false false
+/or n false false false false false
+
+/xor o true true
+/xor p true false
+/xor q false true
+/xor r false false
+
+/not s true
+/not t false
+
+/boolequal u true true
+/boolequal v true false
+/boolequal w false true
+/boolequal x false false
+
+/boolequal y true true true true true
+/boolequal z true true false true true
+/boolequal A false false false true false
+/boolequal B true false false false false
+/boolequal C false false false false false
+/boolequal D false true false false true
+
+AND: {a} {b} {c} {d} {e} {f} {g}
+ OR: {h} {i} {j} {k} {l} {m} {n}
+XOR: {o} {p} {q} {r}
+NOT: {s} {t}
+ EQ: {u} {v} {w} {x} {y} {z} {A} {B} {C} {D}
+
+/line
+
+// reflecting actual usage
+/store N 14 Number
+N = {N}
+
+// is N a (positive) single digit number?
+/ge g0 {N} 0
+/le l9 {N} 9
+/and singleDigit {g0} {l9}
+
+greater than 0 = {g0}, less than 9 = {l9}, single digit = {singleDigit}
+Is N a (positive) single digit number? {singleDigit}
+/line

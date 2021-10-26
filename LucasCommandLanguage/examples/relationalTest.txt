@@ -1,0 +1,38 @@
+// use find + replace all to test all the possible relational commands
+
+/notequal a 2 5
+/notequal b 5 2
+/notequal c 3 4
+/notequal d 4 3
+/notequal e -7 8
+/notequal f 8 -7
+/notequal g 5 5
+
+/notequal h 2 5 4
+/notequal i 2 1 4
+/notequal j 2 5 5
+/notequal k 5 2 2
+/notequal l 2 5 6
+/notequal m 6 5 2
+/notequal n -3 -3 -3
+
+/notequal o 1 3 5 7 9 11
+/notequal p 11 9 7 5 3 1
+/notequal q 1 5 3 9 7 11
+/notequal r 11 7 9 3 5 1
+/notequal s 1 3 3 5 7 9
+/notequal t 9 7 7 5 3 1
+/notequal u 0.5 0.5 0.5 0.5
+
+/notequal v 1.0 1
+/notequal w 1 1.0
+/notequal x 0 0
+/notequal y 0 0 0.0 0 0.1 0.10 0.2
+/notequal z -18 -1.8 -0.08 0 0.08 1.8 18
+
+    2-number test: {a} {b} {c} {d} {e} {f} {g}
+    3-number test: {h} {i} {j} {k} {l} {m} {n}
+multi-number test: {o} {p} {q} {r} {s} {t} {u}
+   precision test: {v} {w} {x} {y} {z}
+
+/line

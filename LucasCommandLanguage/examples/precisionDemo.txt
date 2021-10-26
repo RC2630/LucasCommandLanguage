@@ -1,0 +1,32 @@
+/store n 1.38249 Number
+/store s 1.38249 String
+
+Full precision (as String): {s}
+/printvar s
+Default precision (3): {n}
+/printvar n
+
+/digits 0
+Integer precision (0): {n}
+/printvar n
+/digits 6
+Half precision (6): {n}
+/printvar n
+/digits 12
+Full numerical precision (12): {n}
+/printvar n
+
+/line
+We would like n to remain 3 decimal places after invalid instructions:
+/digits 3
+{n}
+
+/line
+Invalid instructions:
+/digits -1
+{n}
+/digits 13
+{n}
+/digits 2630
+{n}
+/line

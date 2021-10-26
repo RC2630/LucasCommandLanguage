@@ -97,6 +97,36 @@ namespace vecUtil {
         return !allEqual(v);
     }
 
+    // inserts e into v at index pos, so that v.at(pos) == e after the insert
+    template <typename T>
+    void insertAtPos(vector<T>& v, int pos, const T& e) {
+        vector<T> newVector;
+        for (int i = 0; i < pos; i++) {
+            newVector.push_back(v.at(i));
+        }
+        newVector.push_back(e);
+        for (int i = pos; i < v.size(); i++) {
+            newVector.push_back(v.at(i));
+        }
+        v = newVector;
+    }
+
+    // splices the elements of spliceInput into v at index pos, so that v.at(pos) == spliceInput.at(0) after the splice
+    template <typename T>
+    void spliceAtPos(vector<T>& v, int pos, const vector<T>& spliceInput) {
+        vector<T> newVector;
+        for (int i = 0; i < pos; i++) {
+            newVector.push_back(v.at(i));
+        }
+        for (int i = 0; i < spliceInput.size(); i++) {
+            newVector.push_back(spliceInput.at(i));
+        }
+        for (int i = pos; i < v.size(); i++) {
+            newVector.push_back(v.at(i));
+        }
+        v = newVector;
+    }
+
 }
 
 #endif

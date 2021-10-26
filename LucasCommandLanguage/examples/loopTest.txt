@@ -1,0 +1,31 @@
+/blockdef B
+B has been executed
+/endblock
+
+loop 1 time:
+/loop 1 B
+/line
+
+loop 7 times:
+/loop 7 B
+/line
+
+/input n Number Enter n: 
+/line
+
+loop n times:
+/loop [n] B
+/line
+
+for n:
+/for n B
+/line
+
+for (nonexistent var):
+/for var B
+/line
+
+for (non-numerical var):
+/store s HOTDOG String
+/for s B
+/line

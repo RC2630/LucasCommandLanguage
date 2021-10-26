@@ -1,0 +1,44 @@
+/blockdef B
+B has been executed
+/endblock
+
+while with non-existent variable:
+/while lol B
+/line
+
+while with non-boolean variable:
+/store x 1.2 Number
+/while x B
+/line
+
+while with false variable:
+/less f 7 5
+/while f B
+/line
+
+-----------------------------------------------------
+/line
+
+/blockdef O
+// YOU COULD DO THIS TO GET OUT OF LOOP, BUT DON'T -> "/store cond -19 Number" (because this changes cond to non-boolean type which forces /while to exit)
+/store cond false
+/endblock
+
+/blockdef C
+C has begun an iteration
+/printvar n
+/greater g [n] 5
+/ifvar g O
+/add n [n] 1
+C has finished an iteration
+/endblock
+
+/store cond true Bool
+/input n Number Enter n: 
+/while cond C
+/line
+
+/printvar cond
+/printvar n
+/printvar g
+/line
