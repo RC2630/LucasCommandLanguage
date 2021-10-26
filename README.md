@@ -23,6 +23,8 @@ That's about it. Have fun using LCL! 😀
 
 ## Version History
 
+v1.2 - added escaped output and console-based user input
+
 v1.1 - added relational, logical, casting, and string-related commands
 
 v1.0 - initial version (includes variables and simple arithmetic)
