@@ -24,19 +24,22 @@ namespace help {
 
 		"/help commands general = display list of general commands\n"
 		"/help commands variables = display commands related to variables\n"
-		"/help commands arithmetic = display commands related to arithmetic";
+		"/help commands arithmetic = display commands related to arithmetic\n"
+		"/help commands relational = display commands that compare numbers\n"
+		"/help commands logical = display commands that operate on booleans\n"
+		"/help commands cast = display commands that convert/cast variables to a different type\n"
+		"/help commands string = display commands that operate on strings";
 
 	const string COMMAND_HELP_GENERAL =
 
 		"LIST OF GENERAL COMMANDS:\n\n"
 
 		"<empty line> = absolutely nothing (just to make source code look nicer)\n"
-		"<any non-empty line that doesn't start with \"/\"> = display the line verbatim\n\n"
+		"<any non-empty line that doesn't start with \"/\"> = display the line verbatim\n"
+		"// <anything> = just a comment (the space between // and comment is not required, but it looks nicer with the space)\n\n"
 
+		"/help = display help directory (for details on specific help commands, type /help)\n"
 		"/stop = terminate program\n"
-		"/help = display help directory\n"
-		"(for details on specific help commands, type /help)\n"
-		"// <anything> = just a comment (the space between // and comment is not required, but it looks nicer with the space)\n"
 		"/prev = reuse previous command\n\n"
 
 		"/line = print 1 newline character\n"
@@ -69,6 +72,49 @@ namespace help {
 		"/fdiv <varname> <n1> <n2> ... <ni> = evaluate n1 / n2 / ... / ni, then store the result into variable called varname (this is floor division)\n"
 		"/mod <varname> <n1> <n2> ... <ni> = evaluate n1 % n2 % ... % ni, then store the result into variable called varname\n"
 		"/round <varname> <n> = round n to the nearest integer, then store the result into variable called varname";
+
+	const string COMMAND_HELP_RELATIONAL =
+
+		"LIST OF RELATIONAL COMMANDS:\n\n"
+
+		"/less <varname> <n1> <n2> ... <ni> = check each pair n[k-1] < n[k] for all k in {2, ..., i}, store true in varname if all such comparisons hold true, otherwise store false\n"
+		"/greater <varname> <n1> <n2> ... <ni> = check each pair n[k-1] > n[k] for all k in {2, ..., i}, store true in varname if all such comparisons hold true, otherwise store false\n"
+		"/le <varname> <n1> <n2> ... <ni> = check each pair n[k-1] <= n[k] for all k in {2, ..., i}, store true in varname if all such comparisons hold true, otherwise store false\n"
+		"/ge <varname> <n1> <n2> ... <ni> = check each pair n[k-1] >= n[k] for all k in {2, ..., i}, store true in varname if all such comparisons hold true, otherwise store false\n"
+		"/equal <varname> <n1> <n2> ... <ni> = store true in varname if all numerical arguments {n1, ..., ni} are equal, otherwise store false\n"
+		"/notequal <varname> <n1> <n2> ... <ni> = store true in varname if at least 1 numerical argument in {n1, ..., ni} is not equal to another, otherwise store false";
+
+	const string COMMAND_HELP_LOGICAL =
+
+		"LIST OF LOGICAL COMMANDS:\n\n"
+
+		"/and <varname> <b1> <b2> ... <bi> = evaluate b1 AND b2 AND ... AND bi, then store the result into variable called varname\n"
+		"/or <varname> <b1> <b2> ... <bi> = evaluate b1 OR b2 OR ... OR bi, then store the result into variable called varname\n"
+		"/xor <varname> <b1> <b2> = evaluate b1 XOR b2, then store the result into variable called varname\n"
+		"/boolequal <varname> <b1> <b2> ... <bi> = store true in varname if all boolean arguments {b1, ..., bi} are equal, otherwise store false\n"
+		"/not <varname> <b> = evaluate NOT b, then store the result into variable called varname";
+
+	const string COMMAND_HELP_CAST =
+
+		"LIST OF CASTING/CONVERSION COMMANDS:\n\n"
+
+		"/numtobool <boolvar> <num> = if num is 0, store false into boolvar; otherwise, store true\n"
+		"/booltonum <numvar> <bool> = if bool is false, store 0 into numvar; if bool is true, store 1\n"
+		"/numtostr <strvar> <num> = convert num to a string, then store it in strvar\n"
+		"/strtonum <numvar> <str> = convert str to a number if str is a valid string representation of a number and store it in numvar; if str does not represent a valid number, it is undefined behaviour\n"
+		"/booltostr <strvar> <bool> = if bool is false, store false (as a string) into strvar; if bool is true, store true (as a string) into strvar\n"
+		"/strtobool <boolvar> <str> = if str is one of {true, True, TRUE}, store true (as a bool) into boolvar; otherwise, store false (as a bool) into boolvar";
+
+	const string COMMAND_HELP_STRING =
+
+		"LIST OF STRING-RELATED COMMANDS:\n\n"
+
+		"/length <varname> <s> = store the length of s into varname\n"
+		"/contains <varname> <s1> <s2> = store true into varname if s2 is a substring of s1, store false otherwise\n"
+		"/charat <varname> <s> <i> = store the i-th character of s into varname (index is 0-based)\n"
+		"/concat <varname> <s1> <s2> ... <si> = concatenate all strings {s1, ..., si}, then store the result into varname\n"
+		"/substr <varname> <s> <begin> <end> = find the substring of s from index begin to index end (inclusive, 0-based), then store the result into varname\n"
+		"/strequal <varname> <s1> <s2> ... <si> = store true in varname if all string arguments {s1, ..., si} are equal, otherwise store false";
 
 	const string VARIABLE_HELP =
 		

@@ -37,6 +37,14 @@ namespace parse {
         return numOccurrences(command, ' ');
     }
 
+    bool commandIs(const string& command, const string& commandName) {
+        if (numArguments(command) == 0) {
+            return command == commandName;
+        } else {
+            return beginsWith(command, commandName + " ");
+        }
+    }
+
 }
 
 #endif

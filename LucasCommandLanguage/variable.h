@@ -34,7 +34,7 @@ namespace var {
 
 		Variable(const string& varname, bool data) {
 			name = varname;
-			value = data ? "true" : "false";
+			value = strUtil::boolval(data);
 			datatype = "Bool";
 		}
 
@@ -92,7 +92,7 @@ namespace var {
 	}
 
 	void replaceVariableReferencesWithRoundedValues(string& s, vector<Variable>& vars, int numPlaces) {
-		vector<string> parts = partsSplitByOpenCloseDelimiters(s, '{', '}');
+		vector<string> parts = strUtil::partsSplitByOpenCloseDelimiters(s, '{', '}');
 		string newString;
 		for (const string& part : parts) {
 			if (!strUtil::contains(part, "{")) {
@@ -118,7 +118,7 @@ namespace var {
 	}
 
 	void replaceVariableReferencesWithFullPrecisionValues(string& s, vector<Variable>& vars) {
-		vector<string> parts = partsSplitByOpenCloseDelimiters(s, '[', ']');
+		vector<string> parts = strUtil::partsSplitByOpenCloseDelimiters(s, '[', ']');
 		string newString;
 		for (const string& part : parts) {
 			if (!strUtil::contains(part, "[")) {

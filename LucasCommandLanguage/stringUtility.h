@@ -67,6 +67,10 @@ namespace strUtil {
         return s == "true" || s == "True" || s == "TRUE";
     }
 
+    string boolval(bool b) {
+        return b ? "true" : "false";
+    }
+
     // requires matching open/close delimiters and no nested delimiters, also requires open delimiter to be different from close delimiter
     // if delimiters are not matched, may run with unexpected results OR throw runtime_error
     // (generally, missing open delimiters will run with unexpected results, while missing close delimiters will throw)
