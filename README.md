@@ -23,8 +23,10 @@ That's about it. Have fun using LCL! 😀
 
 ## Version History
 
-v1.2 - added escaped output and console-based user input
+v2.0 - BIG UPDATE! Added blocks (functions without arguments), control flow (`/if`, `/ifvar`, `/loop`, `/for`, `/while`), and a ton of example files that you can copy to `"input.txt"` and run! You can find the example files in the `examples` folder. Also, there is a practice problem (`"reverseStringProblem.txt"`) in the `examples` folder, so if you feel confident in LCL already, you can try that out 😀. The concise solution (without comments) and explanatory solution (with comments) are both in the `examples` folder as well - they are `"reverseStringSolution.txt"` and `"reverseStringExplanation.txt"`, respectively.
 
-v1.1 - added relational, logical, casting, and string-related commands
+v1.2 - Added escaped output and console-based user input
 
-v1.0 - initial version (includes variables and simple arithmetic)
+v1.1 - Added relational, logical, casting, and string-related commands
+
+v1.0 - Initial version (includes variables and simple arithmetic)
