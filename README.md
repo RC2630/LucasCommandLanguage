@@ -18,3 +18,11 @@ Special notes:
 3. The interpreter reads commands from `"input.txt"` line by line. Use maximum one command per line in the source code (`"input.txt"`). Do not place a comment and a non-comment command in the same line.
 
 That's about it. Have fun using LCL! 😀
+
+----------------------------------------------------------------------------------------------------------------------------
+
+## Version History
+
+v1.1 - added relational, logical, casting, and string-related commands
+
+v1.0 - initial version (includes variables and simple arithmetic)
