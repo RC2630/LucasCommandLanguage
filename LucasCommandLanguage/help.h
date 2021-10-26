@@ -48,7 +48,11 @@ namespace help {
 
 		"/warntype <b> = set whether or not changing the type of a variable will display a warning message\n"
 		"/useblue <b> = set whether or not displaying verbatim lines will be in blue (if false, then it will be in the default colour)\n"
-		"/reusedisp <b> = set whether or not /prev will print reuse message whenever it is used";
+		"/reusedisp <b> = set whether or not /prev will print reuse message whenever it is used\n\n"
+		
+		"/escprint <escmessage> = display escmessage verbatim, escaping all instances of \"/\", \"[]\", \"{}\", etc. (variables will NOT be replaced with their values)\n"
+		"/escvarprint <escvarmessage> = display escvarmessage verbatim, escaping all instances of \"/\", \"[]\", etc. but NOT \"{}\" (allowing for curly-brace-accessed variables to still work)\n"
+		"/input <varname> <typename> <prompt> = display prompt, then wait for console input; this input is then stored into variable called varname with datatype typename (the input must not include any spaces)";
 
 	const string COMMAND_HELP_VARIABLES =
 

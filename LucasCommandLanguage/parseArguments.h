@@ -33,6 +33,16 @@ namespace parse {
         return parseBool(parseArgument(command, position));
     }
 
+    // parses all arguments from the position-th until the end, treating it all as a single argument and returning it
+    // example: command = "/something arg1 arg2 arg3 arg4 arg5"
+    // parse 1 until the end returns "arg1 arg2 arg3 arg4 arg5"
+    // parse 3 until the end returns "arg3 arg4 arg5"
+    string parseArgumentUntilEnd(const string& command, int position = 1) {
+        string processedCommand = removeChars(command, ' ', position - 1);
+        string argument = parseArgumentHelper(processedCommand);
+        return argument;
+    }
+
     int numArguments(const string& command) {
         return numOccurrences(command, ' ');
     }

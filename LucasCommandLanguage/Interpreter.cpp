@@ -39,6 +39,7 @@ void helpWith2Arg(const string& spec1, const string& spec2);
 void line(int n);
 void digits(int n);
 void digitCommand(int n);
+void inputWithPrompt(const string& varname, const string& type, const string& prompt);
 
 // variable-related helpers
 void createVar(const string& name, const string& val, const string& type);
@@ -113,7 +114,26 @@ int main() {
 			command = commands.at(currIndex);
 			currIndex++;
 
+			if (commandIs(command, "/escprint")) {
+				string message = parseArgumentUntilEnd(command);
+				if (use_blue) {
+					cout << ANSI_BLUE;
+				}
+				cout << message << "\n" << ANSI_NORMAL;
+				continue;
+			}
+
 			replaceVariableReferencesWithRoundedValues(command, vars, num_places);
+
+			if (commandIs(command, "/escvarprint")) {
+				string message = parseArgumentUntilEnd(command);
+				if (use_blue) {
+					cout << ANSI_BLUE;
+				}
+				cout << message << "\n" << ANSI_NORMAL;
+				continue;
+			}
+
 			replaceVariableReferencesWithFullPrecisionValues(command, vars);
 
 			if (command == "/prev") {
@@ -179,6 +199,8 @@ void interpretCommand(const string& command) {
 		use_blue = parseBooleanArgument(command);
 	} else if (commandIs(command, "/reusedisp")) {
 		reuse_display = parseBooleanArgument(command);
+	} else if (commandIs(command, "/input")) {
+		inputWithPrompt(parseArgument(command, 1), parseArgument(command, 2), parseArgumentUntilEnd(command, 3));
 	} else if (commandIs(command, "/store") && numArguments(command) == 3) {
 		createVar(parseArgument(command, 1), parseArgument(command, 2), parseArgument(command, 3));
 	} else if (commandIs(command, "/store") && numArguments(command) == 2) {
@@ -313,6 +335,22 @@ void digitCommand(int n) {
 		digits(n);
 	} else {
 		cout << ANSI_RED << "\"/digits " << n << "\" is not valid because /digits requires 0 <= n <= 12\n" << ANSI_NORMAL;
+	}
+}
+
+void inputWithPrompt(const string& varname, const string& type, const string& prompt) {
+	if (use_blue) {
+		cout << ANSI_BLUE;
+	}
+	cout << prompt << ANSI_NORMAL;
+	string rawinput;
+	cin >> rawinput;
+	if (type == "String") {
+		createVar(varname, rawinput, type);
+	} else if (type == "Number") {
+		createVar(varname, doubleToString(stod(rawinput)), type);
+	} else if (type == "Bool") {
+		createVar(varname, boolval(parseBool(rawinput)), type);
 	}
 }
 
