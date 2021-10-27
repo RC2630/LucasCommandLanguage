@@ -10,6 +10,9 @@ namespace blk {
 
 	const string TEMP_BLOCK_PREFIX = "__temp__"; // reserved block name prefix for the interpreter to use
 
+	struct Block; // forward declaration of this struct
+	string uniqueNumber(const vector<Block>& blocks, const string& nameAllBeforeFinalUnderscore); // prototype for use later
+
 	struct Block {
 
 		string name;
@@ -39,7 +42,8 @@ namespace blk {
 
 		// see cflowWhile() in Interpreter.cpp for details
 		string createTemp(vector<Block>& blocks, const string& condvarname) const {
-			string newName = TEMP_BLOCK_PREFIX + this->name;
+			string mainName = TEMP_BLOCK_PREFIX + this->name;
+			string newName = mainName + "_" + uniqueNumber(blocks, mainName);
 			Block newBlock(newName);
 			newBlock.add(string() + "/block " + this->name);
 			newBlock.add(string() + "/ifvar " + condvarname + " " + newName);
@@ -48,6 +52,26 @@ namespace blk {
 		}
 
 	};
+
+	bool sameExceptForNumber(const string& blockname, const string& nameAllBeforeFinalUnderscore) {
+		if (!strUtil::contains(blockname, "_")) {
+			return false; // because nameAllBeforeFinalUnderscore is guaranteed to have underscores (by definition)
+		}
+		int posLastUnderscore = strUtil::positionOfFinalOccurrence(blockname, '_');
+		string sub = blockname.substr(0, posLastUnderscore);
+		return sub == nameAllBeforeFinalUnderscore;
+	}
+
+	// used to prevent different blocks from having the same names
+	string uniqueNumber(const vector<Block>& blocks, const string& nameAllBeforeFinalUnderscore) {
+		int count = 0;
+		for (const Block& block : blocks) {
+			if (sameExceptForNumber(block.name, nameAllBeforeFinalUnderscore)) {
+				count++;
+			}
+		}
+		return to_string(count); // built-in to_string for integers
+	}
 
 	Block& find(vector<Block>& v, const string& blockname) {
 		for (Block& b : v) {

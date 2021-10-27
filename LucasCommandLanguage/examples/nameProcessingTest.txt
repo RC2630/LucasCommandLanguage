@@ -1,0 +1,47 @@
+// try displaying the block names at the end of the program's execution (add some things to the body of test() in "Interpreter.cpp")
+// this way, you can see how name processing works in while loops ("/while" commands)
+
+/store b false Bool
+/store n 5 Number
+
+/blockdef SetCtoFalse
+/store c false
+/endblock
+
+/blockdef Block
+Block is starting an iteration! (n = {n} at start of iteration)
+/sub n [n] 1
+/equal eq [n] 0
+/ifvar eq SetCtoFalse
+Block has finished an iteration! (n = {n} at end of iteration)
+/line
+/endblock
+
+b = false:
+/while b Block
+/line
+
+/store c true Bool
+c = true:
+/line
+/while c Block
+
+//No infinite loop?! WHAT?!
+//line
+
+/store d false Bool
+d = false:
+/while d Block
+/line
+
+/blockdef Blo
+Something...
+/endblock
+
+/while d Blo
+
+/blockdef Block_1
+Something else...
+/endblock
+
+/while d Block_1

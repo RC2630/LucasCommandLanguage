@@ -59,6 +59,16 @@ namespace strUtil {
         return newString;
     }
 
+    // returns the position in s of the final occurrence of c (throws exception if c is not in s)
+    int positionOfFinalOccurrence(const string& s, char c) {
+        for (int i = s.size() - 1; i >= 0; i--) {
+            if (s.at(i) == c) {
+                return i;
+            }
+        }
+        throw runtime_error(string() + "'" + c + "' is not in \"" + s + "\"");
+    }
+
     int numOccurrences(const string& s, char c) {
         return count(s.begin(), s.end(), c);
     }

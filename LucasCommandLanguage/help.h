@@ -186,6 +186,7 @@ namespace help {
 		"You should also not create multiple blocks with the same block name - doing so is undefined behaviour.\n"
 		"Also, attempting to run undefined blocks is undefined behaviour as well (unlike undefined variables, which display a warning message).\n\n"
 
+		"Block names should be alpha-numeric (including underscores). Follow a consistent style/convention for naming blocks to distinguish them from variable names.\n"
 		"All block names cannot begin with \"__temp__\" (2 underscores before, 2 underscores after). This name has special significance for the interpreter.\n\n"
 
 		"Type \"/help commands blocks\" for a list of commands related to blocks";
