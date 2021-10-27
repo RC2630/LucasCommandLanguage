@@ -1,0 +1,73 @@
+/existvar exist_a a
+/existvar exist_b b
+/existblock exist_O O
+
+At the beginning: (exist_a, exist_b, exist_O) = ({exist_a}, {exist_b}, {exist_O})
+
+/store a 0 Number
+
+/existvar exist_a a
+/existvar exist_b b
+/existblock exist_O O
+
+After "/store a 0 Number": (exist_a, exist_b, exist_O) = ({exist_a}, {exist_b}, {exist_O})
+
+/blockdef O
+/store b 7 Number
+/endblock
+
+/existvar exist_a a
+/existvar exist_b b
+/existblock exist_O O
+
+After "/blockdef O": (exist_a, exist_b, exist_O) = ({exist_a}, {exist_b}, {exist_O})
+
+/block O
+
+/existvar exist_a a
+/existvar exist_b b
+/existblock exist_O O
+
+After "/block O": (exist_a, exist_b, exist_O) = ({exist_a}, {exist_b}, {exist_O})
+
+/delvar a
+
+/existvar exist_a a
+/existvar exist_b b
+/existblock exist_O O
+
+After "/delvar a": (exist_a, exist_b, exist_O) = ({exist_a}, {exist_b}, {exist_O})
+
+/delvar x
+
+/existvar exist_a a
+/existvar exist_b b
+/existblock exist_O O
+
+After "/delvar x": (exist_a, exist_b, exist_O) = ({exist_a}, {exist_b}, {exist_O})
+
+/delblock O
+
+/existvar exist_a a
+/existvar exist_b b
+/existblock exist_O O
+
+After "/delblock O": (exist_a, exist_b, exist_O) = ({exist_a}, {exist_b}, {exist_O})
+
+/delblock Y
+
+/existvar exist_a a
+/existvar exist_b b
+/existblock exist_O O
+
+After "/delblock Y": (exist_a, exist_b, exist_O) = ({exist_a}, {exist_b}, {exist_O})
+
+/delvar b
+
+/existvar exist_a a
+/existvar exist_b b
+/existblock exist_O O
+
+After "/delvar b": (exist_a, exist_b, exist_O) = ({exist_a}, {exist_b}, {exist_O})
+
+/line

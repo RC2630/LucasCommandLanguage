@@ -107,6 +107,14 @@ void cflowLoop(int numIterations, const string& blockname, vector<string>& comma
 void cflowFor(const string& numvarname, const string& blockname, vector<string>& commands, int currIndex);
 void cflowWhile(const string& condvarname, const string& blockname, vector<string>& commands, int currIndex);
 
+// memory related helpers
+void delVar(const string& varname);
+void delBlock(const string& blockname);
+void cleanTemps();
+void existVar(const string& boolvarname, const string& varname);
+void existBlock(const string& boolvarname, const string& blockname);
+void existTemps(const string& boolvarname);
+
 int main() {
 
 	digits(num_places);
@@ -317,6 +325,18 @@ void interpretCommand(const string& command, vector<string>& commands, int currI
 		cflowFor(parseArgument(command, 1), parseArgument(command, 2), commands, currIndex);
 	} else if (commandIs(command, "/while")) {
 		cflowWhile(parseArgument(command, 1), parseArgument(command, 2), commands, currIndex);
+	} else if (commandIs(command, "/delvar")) {
+		delVar(parseArgument(command));
+	} else if (commandIs(command, "/delblock")) {
+		delBlock(parseArgument(command));
+	} else if (commandIs(command, "/clean")) {
+		cleanTemps();
+	} else if (commandIs(command, "/existvar")) {
+		existVar(parseArgument(command, 1), parseArgument(command, 2));
+	} else if (commandIs(command, "/existblock")) {
+		existBlock(parseArgument(command, 1), parseArgument(command, 2));
+	} else if (commandIs(command, "/existtemps")) {
+		existTemps(parseArgument(command));
 	} else {
 		cout << ANSI_RED << "\"" << command << "\" is not a valid command.\n" << ANSI_NORMAL;
 	}
@@ -327,7 +347,22 @@ void interpretCommand(const string& command, vector<string>& commands, int currI
 // note: this function passes in the commands of the program by reference, so we can look at the commands for debugging purposes
 // note: some commands will be different when inspected at the end of execution because of modifications during the program execution
 void test(vector<string>& com) {
-	// ...
+	/*
+	cout << ANSI_YELLOW << "\nVariables:\n\n" << ANSI_NORMAL;
+	for (const Variable& var : vars) {
+		cout << var.name << "\n";
+	}
+	if (vars.empty()) {
+		cout << ANSI_MAGENTA << "(none)\n" << ANSI_NORMAL;
+	}
+	cout << ANSI_YELLOW << "\nBlocks:\n\n" << ANSI_NORMAL;
+	for (const Block& block : blocks) {
+		cout << block.name << "\n";
+	}
+	if (blocks.empty()) {
+		cout << ANSI_MAGENTA << "(none)\n" << ANSI_NORMAL;
+	}
+	*/
 }
 
 void helpWith1Arg(const string& specific) {
@@ -337,6 +372,8 @@ void helpWith1Arg(const string& specific) {
 		cout << ANSI_GREEN << VARIABLE_HELP << "\n" << ANSI_NORMAL;
 	} else if (specific == "blocks") {
 		cout << ANSI_GREEN << BLOCK_HELP << "\n" << ANSI_NORMAL;
+	} else if (specific == "memory") {
+		cout << ANSI_GREEN << MEM_HELP << "\n" << ANSI_NORMAL;
 	} else if (specific == "lclinfo") {
 		cout << ANSI_GREEN << LCL_INFO << "\n" << ANSI_NORMAL;
 	} else {
@@ -364,6 +401,8 @@ void helpWith2Arg(const string& spec1, const string& spec2) {
 			cout << ANSI_GREEN << COMMAND_HELP_BLOCKS << "\n" << ANSI_NORMAL;
 		} else if (spec2 == "cflow") {
 			cout << ANSI_GREEN << COMMAND_HELP_CONTROL_FLOW << "\n" << ANSI_NORMAL;
+		} else if (spec2 == "memory") {
+			cout << ANSI_GREEN << COMMAND_HELP_MEMORY << "\n" << ANSI_NORMAL;
 		} else {
 			cout << ANSI_RED << "\"/help commands " << spec2 << "\" does not display a valid help document, because \""
 			 	 << spec2 << "\" is not a valid category of commands.\n" << ANSI_NORMAL;
@@ -799,4 +838,45 @@ void cflowWhile(const string& condvarname, const string& blockname, vector<strin
 	// run the transformed version of the block
 	cflowIfvar(condvarname, newBlockname, commands, currIndex);
 
+}
+
+void delVar(const string& varname) {
+	var::remove(vars, varname);
+}
+
+void delBlock(const string& blockname) {
+	blk::remove(blocks, blockname);
+}
+
+void cleanTemps() {
+	vector<string> namesOfBlocksToDelete;
+	for (const Block& block : blocks) {
+		if (beginsWith(block.name, blk::TEMP_BLOCK_PREFIX)) {
+			namesOfBlocksToDelete.push_back(block.name);
+		}
+	}
+	for (const string& nameToDelete : namesOfBlocksToDelete) {
+		blk::remove(blocks, nameToDelete);
+	}
+}
+
+void existVar(const string& boolvarname, const string& varname) {
+	bool exist = var::contains(vars, varname);
+	createVar(boolvarname, boolval(exist), "Bool");
+}
+
+void existBlock(const string& boolvarname, const string& blockname) {
+	bool exist = blk::contains(blocks, blockname);
+	createVar(boolvarname, boolval(exist), "Bool");
+}
+
+void existTemps(const string& boolvarname) {
+	bool exist = false;
+	for (const Block& block : blocks) {
+		if (beginsWith(block.name, blk::TEMP_BLOCK_PREFIX)) {
+			exist = true;
+			break;
+		}
+	}
+	createVar(boolvarname, boolval(exist), "Bool");
 }

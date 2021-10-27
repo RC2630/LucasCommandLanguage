@@ -58,6 +58,14 @@ namespace var {
 
 	};
 
+	bool operator == (const Variable& v1, const Variable& v2) {
+		return tie(v1.name, v1.value, v1.datatype) == tie(v2.name, v2.value, v2.datatype);
+	}
+
+	bool operator != (const Variable& v1, const Variable& v2) {
+		return !(v1 == v2);
+	}
+
 	bool contains(const vector<Variable>& v, const string& varname) {
 		for (const Variable& var : v) {
 			if (var.name == varname) {
@@ -67,10 +75,6 @@ namespace var {
 		return false;
 	}
 
-	bool operator == (const Variable& v1, const Variable& v2) {
-		return tie(v1.name, v1.value, v1.datatype) == tie(v2.name, v2.value, v2.datatype);
-	}
-
 	Variable& find(vector<Variable>& v, const string& varname) {
 		for (Variable& var : v) {
 			if (var.name == varname) {
@@ -78,6 +82,14 @@ namespace var {
 			}
 		}
 		throw runtime_error("no matching variable");
+	}
+
+	void remove(vector<Variable>& v, const string& varname) {
+		if (!contains(v, varname)) {
+			return;
+		}
+		Variable var = find(v, varname);
+		vecUtil::removeFirstInstance(v, var);
 	}
 
 	ostream& operator << (ostream& out, const Variable& var) {

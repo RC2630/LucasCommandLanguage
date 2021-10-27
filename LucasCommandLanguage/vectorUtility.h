@@ -127,6 +127,38 @@ namespace vecUtil {
         v = newVector;
     }
 
+    // removes the first instance of e from v
+    template <typename T>
+    void removeFirstInstance(vector<T>& v, const T& e) {
+        vector<T> newVector;
+        int pos;
+        for (pos = 0; pos < v.size(); pos++) {
+            if (v.at(pos) == e) {
+                // do not append onto newVector
+                pos++;
+                break;
+            } else {
+                newVector.push_back(v.at(pos));
+            }
+        }
+        for (int i = pos; i < v.size(); i++) {
+            newVector.push_back(v.at(i));
+        }
+        v = newVector;
+    }
+
+    // removes all instances of e from v
+    template <typename T>
+    void removeAllInstances(vector<T>& v, const T& e) {
+        vector<T> newVector;
+        for (const T& t : v) {
+            if (t != e) {
+                newVector.push_back(t);
+            }
+        }
+        v = newVector;
+    }
+
 }
 
 #endif

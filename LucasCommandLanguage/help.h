@@ -17,6 +17,7 @@ namespace help {
 		"/help commands = display help directory for commands (they are grouped into categories such as general, variable, arithmetic, etc.)\n"
 		"/help variables = display help document for variables (how to use variables, including examples)\n"
 		"/help blocks = display help document for blocks (how to use blocks, including examples)\n"
+		"/help memory = display help document for memory management and cleaning\n"
 		"/help lclinfo = display information on this programming language (LCL = Lucas Command Language), including copyright";
 
 	const string COMMAND_HELP_DIRECTORY =
@@ -31,7 +32,8 @@ namespace help {
 		"/help commands cast = display commands that convert/cast variables to a different type\n"
 		"/help commands string = display commands that operate on strings\n"
 		"/help commands blocks = display commands related to blocks\n"
-		"/help commands cflow = display commands related to control flow";
+		"/help commands cflow = display commands related to control flow\n"
+		"/help commands memory = display commands related to memory";
 
 	const string COMMAND_HELP_GENERAL =
 
@@ -144,6 +146,20 @@ namespace help {
 		"/for <numvar> <blockname> = run the block named blockname n times, where n is the number stored by numvar when this command is executed (regardless of if numvar is changed later)\n"
 		"/while <condvar> <blockname> = run the block named blockname while condvar holds value of true (it is intended that the value of condvar will change through the iterations)";
 
+	const string COMMAND_HELP_MEMORY =
+
+		"LIST OF MEMORY-RELATED COMMANDS:\n\n"
+
+		"/delvar <varname> = delete variable named varname if such variable exists, otherwise do nothing\n"
+		"/delblock <blockname> = delete block named blockname if such block exists, otherwise do nothing\n"
+		"/clean = clean up all temporary blocks (these get created when \"/while\" is used); if there are no temporary blocks, this command does nothing\n\n"
+		
+		"/existvar <boolvar> <varname> = checks if variable named varname exists, and stores result into boolean variable named boolvar\n"
+		"/existblock <boolvar> <blockname> = checks if block named blockname exists, and stores result into boolean variable named boolvar\n"
+		"/existtemps <boolvar> = checks if there are any temporary blocks in the program, and stores result into boolean variable named boolvar\n\n"
+		
+		"Type \"/help memory\" for information on when and why you should use the deletion/cleaning commands";
+
 	const string VARIABLE_HELP =
 		
 		"HELP WITH VARIABLES:\n\n"
@@ -154,8 +170,7 @@ namespace help {
 
 		"String variables do not have surrounding quotes.\n"
 		"Right now, Strings with spaces in them are not supported - your String must not have any spaces.\n"
-		"Boolean variables must be either \"true\" or \"false\" (without the quotes).\n"
-		"Variables can store commands as well - simply store the command as a String. The no-space rule still applies, though.\n\n"
+		"Boolean variables must be either \"true\" or \"false\" (without the quotes).\n\n"
 
 		"To use variables in your command, there are 2 methods that behave differently for numerical variables:\n"
 		"(Note that the 2 methods behave identically for string and boolean variables)\n\n"
@@ -171,6 +186,15 @@ namespace help {
 		"This is most optimally used for performing arithmetic with numerical variables.\n"
 		"Example usage:\n"
 		"/add sum [n1] [n2] [n3]\n\n"
+
+		"Technically, variables can be used to store commands as well - simply store the command as a String.\n"
+		"However, the no-space rule still applies, so any commands stored as variables cannot have spaces in them.\n"
+		"Because of this, it is not recommended to store commands as variables.\n"
+		"Instead, you should create blocks to store commands, as they are much more effective.\n"
+		"Advantages of blocks over variables in command storage include the ability to store commands with spaces, as well as multiple commands (in the same block).\n"
+		"Despite this, command-storing variables are still supported, so any String variable beginning with the '/' character will be treated as a command when used at the BEGINNING of a line in the source code.\n"
+		"At the beginning of a line in the source code, if you want to display command-storing variables verbatim instead of run the command, use \"/escvarprint\" (use braces, not square brackets, to access the variable).\n"
+		"Elsewhere in the source code, if you want to do the above, then no special measure needs to be taken (because the '/' character only has special significance at the beginning of lines in the source code).\n\n"
 		
 		"Type \"/help commands variables\" for a list of commands that create, modify, and access variables";
 
@@ -190,6 +214,30 @@ namespace help {
 		"All block names cannot begin with \"__temp__\" (2 underscores before, 2 underscores after). This name has special significance for the interpreter.\n\n"
 
 		"Type \"/help commands blocks\" for a list of commands related to blocks";
+
+	const string MEM_HELP =
+
+		"HELP WITH MEMORY:\n\n"
+		
+		"As the number of variables and blocks get larger and larger, some of them generally do not need to be used/reused anymore.\n"
+		"Due to this, it is good practice to explicitly delete variables and blocks that are no longer used afterwards.\n"
+		"Doing so not only signifies to the programmer that the variable/block no longer exists, but also saves memory and makes the program run faster.\n"
+		"However, having said so, you should ONLY ever delete a variable or block if you are 100% SURE that you don't need it anymore, since deletion is irreversible.\n\n"
+		
+		"A special case of block deletion arises when you use \"/while\".\n"
+		"In LCL, while loops are implemented in such a way that additional, temporary blocks are required for the loop to work properly.\n"
+		"However, these temporary blocks do not automatically get deleted at the end of the while loop (for complicated but valid reasons).\n"
+		"Therefore, the programmer needs to explicitly delete these blocks when they start to accumulate in problematically large numbers.\n"
+		"Note that it is not necessary to explicitly delete these blocks after EVERY while loop, just once in a while.\n"
+		"However, after an especially lengthy while loop, it is good practice to delete these blocks.\n"
+		"Other loops (such as \"/for\" and \"/loop\"), as well as recursive calls to blocks, do NOT require this type of deletion.\n\n"
+
+		"WARNING: If there are nested while loops, do NOT explicitly delete temporary blocks, since doing so deletes all the temporary blocks.\n"
+		"For example, if there is an outer while loop and an inner while loop, even if you intend to only clean up the temporary blocks left by the inner one,\n"
+		"explicit deletion will cause BOTH the inner and outer loops' temporary blocks to be deleted.\n"
+		"Therefore, wait until all layers of the nested loop are finished before performing the deletion.\n\n"
+
+		"Type \"/help commands memory\" for a list of commands that perform these deletion operations";
 
 	const string LCL_INFO =
 

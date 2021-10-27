@@ -1,0 +1,33 @@
+/existtemps et
+At beginning: et = {et}
+/line
+
+/blockdef B
+B called
+/input cond Bool Remain in the loop? 
+/line
+/endblock
+
+/existtemps et
+After "/blockdef B": et = {et}
+/line
+
+/store cond true Bool
+
+/existtemps et
+After "/store cond true Bool": et = {et}
+/line
+
+/useblue false
+/while cond B
+/useblue true
+
+/existtemps et
+After "/while cond B": et = {et}
+/line
+
+/clean
+
+/existtemps et
+After "/clean": et = {et}
+/line

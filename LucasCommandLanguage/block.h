@@ -4,6 +4,8 @@
 #include "stringUtility.h"
 #include "vectorUtility.h"
 
+#include <tuple>
+
 using namespace std;
 
 namespace blk {
@@ -53,6 +55,14 @@ namespace blk {
 
 	};
 
+	bool operator == (const Block& block1, const Block& block2) {
+		return tie(block1.name, block1.commands) == tie(block2.name, block2.commands);
+	}
+
+	bool operator != (const Block& block1, const Block& block2) {
+		return !(block1 == block2);
+	}
+
 	bool sameExceptForNumber(const string& blockname, const string& nameAllBeforeFinalUnderscore) {
 		if (!strUtil::contains(blockname, "_")) {
 			return false; // because nameAllBeforeFinalUnderscore is guaranteed to have underscores (by definition)
@@ -73,6 +83,15 @@ namespace blk {
 		return to_string(count); // built-in to_string for integers
 	}
 
+	bool contains(const vector<Block>& v, const string& blockname) {
+		for (const Block& block : v) {
+			if (block.name == blockname) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	Block& find(vector<Block>& v, const string& blockname) {
 		for (Block& b : v) {
 			if (b.name == blockname) {
@@ -80,6 +99,14 @@ namespace blk {
 			}
 		}
 		throw runtime_error("block not found");
+	}
+
+	void remove(vector<Block>& v, const string& blockname) {
+		if (!contains(v, blockname)) {
+			return;
+		}
+		Block block = find(v, blockname);
+		vecUtil::removeFirstInstance(v, block);
 	}
 
 	ostream& operator << (ostream& out, const Block& block) {

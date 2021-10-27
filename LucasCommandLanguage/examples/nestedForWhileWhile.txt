@@ -1,0 +1,86 @@
+// demonstration of nested loops and their effects on name processing
+
+For the following numbers, enter integers n, r, max such that r <= n <= max
+/line
+/input n Number Enter n: 
+/input r Number Enter r: 
+/input max Number Enter max: 
+/line
+
+/input iterations Number Enter desired number of iterations: 
+/line
+
+/store r_initial [r] Number
+/store n_initial [n] Number
+r_initial = {r_initial}
+n_initial = {n_initial}
+/line
+
+/blockdef UpdateCondition
+/le cond [n] [max]
+/endblock
+
+/blockdef UpdateInnerCondition
+/le innerCond [r] [n]
+/endblock
+
+// ------------------------------
+
+/blockdef OuterLoop
+
+/escvarprint [n, r, max, cond, innerCond] = [{n}, {r}, {max}, {cond}, {innerCond}] (at beginning of iteration of outer loop)
+
+/while innerCond InnerLoop
+
+/store r [r_initial]
+/block UpdateInnerCondition
+
+/add n [n] 1
+/block UpdateCondition
+
+/endblock
+
+// ------------------------------
+
+/blockdef InnerLoop
+
+/useblue false
+/escvarprint [n, r, max, cond, innerCond] = [{n}, {r}, {max}, {cond}, {innerCond}] (at beginning of iteration of inner loop)
+
+/add r [r] 1
+/block UpdateInnerCondition
+
+/useblue true
+
+/endblock
+
+// ------------------------------
+
+/blockdef OneRound
+---------------------------------
+ONE ROUND BEGIN
+---------------------------------
+/while cond OuterLoop
+/store n [n_initial]
+/block UpdateCondition
+---------------------------------
+ONE ROUND END
+---------------------------------
+/line
+/endblock
+
+// ------------------------------
+
+// the following lines actually initialize (rather than update) the outer and inner conditions, despite the block names
+/block UpdateCondition
+/block UpdateInnerCondition
+
+/for iterations OneRound
+
+r_initial = {r_initial}
+n_initial = {n_initial}
+r = {r}
+n = {n}
+/line
+
+// can you explain (in English) what this program does?
