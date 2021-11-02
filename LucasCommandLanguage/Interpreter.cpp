@@ -355,8 +355,6 @@ void interpretCommand(const string& command, vector<string>& commands, int currI
 		existBlock(parseArgument(command, 1), parseArgument(command, 2));
 	} else if (commandIs(command, "/existtemps")) {
 		existTemps(parseArgument(command));
-	} else if (numArguments(command) == 0 && blk::contains(blocks, command.substr(1))) {
-		runBlock(command.substr(1), commands, currIndex);
 	} else if (commandIs(command, "/fail")) {
 		customFail(commandPlusNargs(untouched, 0), parseArgumentUntilEnd(command));
 	} else if (commandIs(command, "/assert")) {
@@ -365,6 +363,8 @@ void interpretCommand(const string& command, vector<string>& commands, int currI
 		customAssertVar(commandPlusNargs(untouched, 1), parseArgument(command, 1), parseArgumentUntilEnd(command, 2));
 	} else if (commandIs(command, "/asserttype")) {
 		customAssertType(commandPlusNargs(untouched, 2), parseArgument(command, 1), parseArgument(command, 2), parseArgumentUntilEnd(command, 3));
+	} else if (numArguments(command) == 0 && blk::contains(blocks, command.substr(1))) { // DO NOT MOVE - SHOULD HAVE LOWEST PRECEDENCE
+		runBlock(command.substr(1), commands, currIndex);
 	} else {
 		cout << ANSI_RED << "\"" << untouched << "\" is not a valid command.\n" << ANSI_NORMAL;
 	}
