@@ -23,6 +23,8 @@ That's about it. Have fun using LCL! 😀
 
 ## Version History
 
+v2.3 - Added `/gettype`, various assertion commands, and a simplified way of calling blocks (in addition to some small tweaks to existing features)
+
 v2.2 - Added "memory management", which allows the programmer to explicitly delete variables and blocks, as well as clean up temporary blocks created by the program
 
 v2.1 - Added internal name processing for `/while` loops, which fixed a bug that made different blocks share the same block name
