@@ -1,0 +1,39 @@
+// There are 5 separate things to test. Comment and/or uncomment any of the commands below (as necessary).
+
+// (1) direct failure ("/fail <message>")
+/fail Program should terminate.
+
+// (2) assert on values ("/assert <bool> <message>")
+/assert true Program should continue.
+/assert false Program should terminate.
+/assert True Program should continue.
+/assert wack Program should terminate.
+/store t1 true Bool
+/store f1 false Bool
+/assert {t1} Program should continue.
+/assert {f1} Program should terminate.
+/assert {nonExistentVariable} Program should continue but with warning.
+
+// (3) assert on variables ("/assertvar <var> <message>")
+/store t2 true Bool
+/store f2 false Bool
+/store notBool 17 Number
+/assertvar t2 Program should continue.
+/assertvar f2 Program should terminate.
+/assertvar notBool Program should continue but with warning.
+/assertvar nonExistentAgain Program should continue but with warning.
+
+// (4) assert on types ("/asserttype <var> <type> <message>")
+/store n 19 Number
+/store s 19 String
+/asserttype s String Program should continue.
+/asserttype s Number Program should terminate.
+/asserttype n Number Program should continue.
+/asserttype n String Program should terminate.
+/asserttype nonExistentYetAgain Bool Program should continue but with warning.
+
+// (5) making sure the assertions don't mess up the regular error detection and catching used by previous versions of the interpreter
+The next line is supposed to crash the program (in a non-assertion way) because of mismatched braces:
+See {this part lol!
+
+THIS LINE SHOULD NOT EXECUTE IF THE ANY ASSERTION FAILS! If the program is supposed to continue until here (with or without warning), you should see this message.

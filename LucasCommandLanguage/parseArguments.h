@@ -55,6 +55,24 @@ namespace parse {
         }
     }
 
+    string commandPlusNargs(const string& command, int n) {
+        string newString;
+        int spaceCount = 0;
+        for (int i = 0; i < command.size(); i++) {
+            if (command.at(i) != ' ') {
+                newString += command.at(i);
+            } else {
+                spaceCount++;
+                if (spaceCount > n) {
+                    break;
+                } else {
+                    newString += ' ';
+                }
+            }
+        }
+        return newString;
+    }
+
 }
 
 #endif

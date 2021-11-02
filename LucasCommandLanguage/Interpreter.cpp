@@ -26,6 +26,7 @@ const string INPUT_FILE = "../LucasCommandLanguage/inputFile/input.txt"; // file
 bool reuse_display = true; // using "/prev" will show special green message
 bool warn_type_change = true; // changing type of variable will show warning message
 bool use_blue = true; // most output is blue (instead of the system's default colour)
+bool non_assert_crash = true; // program crashed NOT because of an assertion
 
 int num_places = 3; // number of decimal places numerical display uses
 
@@ -37,9 +38,9 @@ vector<string> temp_commands; // all the commands in the current block being def
 vector<Block> blocks; // list of all blocks in the program
 
 // primary function for interpreting commands
-void interpretCommand(const string& command, vector<string>& commands, int currIndex);
+void interpretCommand(const string& command, vector<string>& commands, int currIndex, const string& untouched);
 
-// a testing function that executes when the main program terminates
+// a testing function that executes when the main program terminates (or crashes)
 void test(vector<string>& com);
 
 // general helpers
@@ -55,6 +56,7 @@ void createVar(const string& name, const string& val, const string& type);
 void updateVar(const string& name, const string& val);
 void printVar(const string& varname);
 void printVarValue(const string& varname);
+void getType(const string& strvar, const string& varname);
 
 // arithmetic helpers
 void add(const string& command);
@@ -115,6 +117,12 @@ void existVar(const string& boolvarname, const string& varname);
 void existBlock(const string& boolvarname, const string& blockname);
 void existTemps(const string& boolvarname);
 
+// assertion helpers
+void customFail(const string& command, const string& message);
+void customAssert(const string& command, bool boolvalue, const string& message);
+void customAssertVar(const string& command, const string& boolvarname, const string& message);
+void customAssertType(const string& command, const string& varname, const string& type, const string& message);
+
 int main() {
 
 	digits(num_places);
@@ -124,6 +132,7 @@ int main() {
 	commands.push_back("/stop");
 	
 	string command;
+	string untouchedCommand;
 	string prevCommand;
 	int currIndex = 0;
 
@@ -141,6 +150,12 @@ int main() {
 			prevCommand = command;
 			command = commands.at(currIndex);
 			currIndex++;
+			untouchedCommand = command;
+
+			if (beginsWith(command, "//")) {
+				// it's just a comment
+				continue;
+			}
 
 			if (block_mode_on) {
 				if (command == "/endblock") {
@@ -208,22 +223,23 @@ int main() {
 				break;
 			}
 
-			interpretCommand(command, commands, currIndex);
+			interpretCommand(command, commands, currIndex, untouchedCommand);
 
 		}
 
 	} catch (...) {
-		cout << ANSI_RED << "Program has crashed unexpectedly.\n"
-			 << "The command that crashed it is \"" << command << "\"\n" << ANSI_NORMAL;
+		if (non_assert_crash) {
+			cout << ANSI_RED << "Program has crashed unexpectedly.\n"
+				 << "The command that crashed it is \"" << untouchedCommand << "\"\n" << ANSI_NORMAL;
+		}
+		test(commands);
 	}
 
 }
 
-void interpretCommand(const string& command, vector<string>& commands, int currIndex) {
+void interpretCommand(const string& command, vector<string>& commands, int currIndex, const string& untouched) {
 
-	if (beginsWith(command, "//")) { // cannot use commandIs() because there may not be a space between the "//" and the comment itself
-		// ignore this command because it is a comment
-	} else if (commandIs(command, "/help") && numArguments(command) == 0) {
+	if (commandIs(command, "/help") && numArguments(command) == 0) {
 		cout << ANSI_GREEN << HELP_DIRECTORY << "\n" << ANSI_NORMAL;
 	} else if (commandIs(command, "/help") && numArguments(command) == 1) {
 		helpWith1Arg(parseArgument(command));
@@ -251,6 +267,8 @@ void interpretCommand(const string& command, vector<string>& commands, int currI
 		printVar(parseArgument(command));
 	} else if (commandIs(command, "/varval")) {
 		printVarValue(parseArgument(command));
+	} else if (commandIs(command, "/gettype")) {
+		getType(parseArgument(command, 1), parseArgument(command, 2));
 	} else if (commandIs(command, "/add")) {
 		add(command);
 	} else if (commandIs(command, "/sub")) {
@@ -337,13 +355,23 @@ void interpretCommand(const string& command, vector<string>& commands, int currI
 		existBlock(parseArgument(command, 1), parseArgument(command, 2));
 	} else if (commandIs(command, "/existtemps")) {
 		existTemps(parseArgument(command));
+	} else if (numArguments(command) == 0 && blk::contains(blocks, command.substr(1))) {
+		runBlock(command.substr(1), commands, currIndex);
+	} else if (commandIs(command, "/fail")) {
+		customFail(commandPlusNargs(untouched, 0), parseArgumentUntilEnd(command));
+	} else if (commandIs(command, "/assert")) {
+		customAssert(commandPlusNargs(untouched, 1), parseBooleanArgument(command, 1), parseArgumentUntilEnd(command, 2));
+	} else if (commandIs(command, "/assertvar")) {
+		customAssertVar(commandPlusNargs(untouched, 1), parseArgument(command, 1), parseArgumentUntilEnd(command, 2));
+	} else if (commandIs(command, "/asserttype")) {
+		customAssertType(commandPlusNargs(untouched, 2), parseArgument(command, 1), parseArgument(command, 2), parseArgumentUntilEnd(command, 3));
 	} else {
-		cout << ANSI_RED << "\"" << command << "\" is not a valid command.\n" << ANSI_NORMAL;
+		cout << ANSI_RED << "\"" << untouched << "\" is not a valid command.\n" << ANSI_NORMAL;
 	}
 
 }
 
-// THIS FUNCTION IS USED ONLY FOR TESTING, IT WILL BE EXECUTED WHEN THE MAIN PROGRAM TERMINATES
+// THIS FUNCTION IS USED ONLY FOR TESTING, IT WILL BE EXECUTED WHEN THE MAIN PROGRAM TERMINATES (OR CRASHES)
 // note: this function passes in the commands of the program by reference, so we can look at the commands for debugging purposes
 // note: some commands will be different when inspected at the end of execution because of modifications during the program execution
 void test(vector<string>& com) {
@@ -403,6 +431,8 @@ void helpWith2Arg(const string& spec1, const string& spec2) {
 			cout << ANSI_GREEN << COMMAND_HELP_CONTROL_FLOW << "\n" << ANSI_NORMAL;
 		} else if (spec2 == "memory") {
 			cout << ANSI_GREEN << COMMAND_HELP_MEMORY << "\n" << ANSI_NORMAL;
+		} else if (spec2 == "assert") {
+			cout << ANSI_GREEN << COMMAND_HELP_ASSERT << "\n" << ANSI_NORMAL;
 		} else {
 			cout << ANSI_RED << "\"/help commands " << spec2 << "\" does not display a valid help document, because \""
 			 	 << spec2 << "\" is not a valid category of commands.\n" << ANSI_NORMAL;
@@ -497,6 +527,15 @@ void printVarValue(const string& varname) {
 	} else {
 		cout << ANSI_RED << "There is currently no variable named \"" << varname << "\"\n" << ANSI_NORMAL;
 	}
+}
+
+void getType(const string& strvar, const string& varname) {
+	if (!contains(vars, varname)) {
+		cout << ANSI_RED << "There is currently no variable named \"" << varname << "\"\n" << ANSI_NORMAL;
+		return;
+	}
+	string type = find(vars, varname).datatype;
+	createVar(strvar, type, "String");
 }
 
 void add(const string& command) {
@@ -879,4 +918,42 @@ void existTemps(const string& boolvarname) {
 		}
 	}
 	createVar(boolvarname, boolval(exist), "Bool");
+}
+
+void customFail(const string& command, const string& message) {
+	cout << ANSI_RED << "An assertion has failed! The assertion that caused this is: \"" << command << "\"\n"
+	 	 << "Error message: " << message << "\n" << ANSI_NORMAL;
+	non_assert_crash = false;
+	throw runtime_error("assertion failed");
+}
+
+void customAssert(const string& command, bool boolvalue, const string& message) {
+	if (!boolvalue) {
+		customFail(command, message);
+	}
+}
+
+void customAssertVar(const string& command, const string& boolvarname, const string& message) {
+	if (!contains(vars, boolvarname)) {
+		cout << ANSI_RED << "Since the variable \"" << boolvarname << "\" does not currently exist, this assertion cannot proceed.\n"
+			 << "The program will now attempt to continue execution.\n" << ANSI_NORMAL;
+		return;
+	}
+	Variable boolvar = find(vars, boolvarname);
+	if (boolvar.datatype != "Bool") {
+		cout << ANSI_RED << "Since the type of the variable \"" << boolvarname << "\" is not \"Bool\", this assertion cannot proceed.\n"
+			 << "The program will now attempt to continue execution.\n" << ANSI_NORMAL;
+		return;
+	}
+	customAssert(command, boolvar.getBooleanValue(), message);
+}
+
+void customAssertType(const string& command, const string& varname, const string& type, const string& message) {
+	if (!contains(vars, varname)) {
+		cout << ANSI_RED << "Since the variable \"" << varname << "\" does not currently exist, this assertion cannot proceed.\n"
+			 << "The program will now attempt to continue execution.\n" << ANSI_NORMAL;
+		return;
+	}
+	string vartype = find(vars, varname).datatype;
+	customAssert(command, vartype == type, message);
 }

@@ -1,0 +1,9 @@
+/blockdef B
+/input b Bool Remain in the loop? 
+/input c Bool Want assertion to pass? 
+/line
+/assert {c} Assertion has failed! NO!!! :C
+/endblock
+
+/store b true Bool
+/while b B

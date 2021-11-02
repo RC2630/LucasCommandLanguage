@@ -1,0 +1,24 @@
+/input n Number Enter a number: 
+/input s String Enter a (spaceless) string: 
+/input b Bool Enter a boolean: 
+/line
+
+/gettype tn n
+/gettype ts s
+/gettype tb b
+
+The type of 'n' is {tn}
+The type of 's' is {ts}
+The type of 'b' is {tb}
+/line
+
+The value of 'n' is {n}
+The value of 's' is {s}
+The value of 'b' is {b}
+/line
+
+// THESE ARE SUPPOSED TO CAUSE ERRORS (SINCE 'r' DOES NOT EXIST)
+/gettype tr r
+The type of 'r' is {tr}
+The value of 'r' is {r}
+/line

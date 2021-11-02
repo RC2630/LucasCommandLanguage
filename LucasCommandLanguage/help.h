@@ -33,7 +33,8 @@ namespace help {
 		"/help commands string = display commands that operate on strings\n"
 		"/help commands blocks = display commands related to blocks\n"
 		"/help commands cflow = display commands related to control flow\n"
-		"/help commands memory = display commands related to memory";
+		"/help commands memory = display commands related to memory\n"
+		"/help commands assert = display commands related to assertions";
 
 	const string COMMAND_HELP_GENERAL =
 
@@ -66,7 +67,8 @@ namespace help {
 		"/store <varname> <value> <type> = store value in a variable called varname with datatype type (Number, Bool, or String)\n"
 		"/store <varname> <value> = update value in existing variable called varname, new value must be same type as old value\n"
 		"/printvar <varname> = display variable information\n"
-		"/varval <varname> = display only variable's value\n\n"
+		"/varval <varname> = display only variable's value\n"
+		"/gettype <strvar> <varname> = get the variable named varname's datatype, and store it in strvar (as a String)\n\n"
 
 		"Type \"/help variables\" for more details on how to use variables";
 
@@ -131,7 +133,8 @@ namespace help {
 
 		"/blockdef <blockname> = start the definition for a new block named blockname\n"
 		"/endblock = end the definition for the current block\n"
-		"/block <blockname> = execute the block named blockname\n\n"
+		"/block <blockname> = execute the block named blockname\n"
+		"/<blockname> = execute the block named blockname (shorthand for the \"/block\" command)\n\n"
 
 		"Type \"/help blocks\" for more details on how to use blocks";
 
@@ -159,6 +162,17 @@ namespace help {
 		"/existtemps <boolvar> = checks if there are any temporary blocks in the program, and stores result into boolean variable named boolvar\n\n"
 		
 		"Type \"/help memory\" for information on when and why you should use the deletion/cleaning commands";
+
+	const string COMMAND_HELP_ASSERT =
+
+		"LIST OF ASSERTION-RELATED COMMANDS:\n\n"
+
+		"/fail <message> = prints out message and terminate the program immediately\n"
+		"/assert <boolvalue> <message> = if boolvalue is false, prints out message and terminate the program immediately\n"
+		"/assertvar <boolvar> <message> = if value of boolvar is false, prints out message and terminate the program immediately\n"
+		"/asserttype <varname> <typename> <message> = if datatype of varname is not typename, prints out message and terminate the program immediately\n\n"
+		
+		"NOTE: For assertions that require the name of a variable, if that variable does not exist, an error message is displayed but the program will NOT terminate.";
 
 	const string VARIABLE_HELP =
 		
@@ -204,7 +218,7 @@ namespace help {
 
 		"Start the definition of a block with \"/blockdef <blockname>\" and end the definition with \"/endblock\".\n"
 		"Between these two commands, you can place any number of other commands; these form the body of the block.\n"
-		"The commands you put in the middle will not be executed until you explicitly run the block using \"/block <blockname>\".\n\n"
+		"The commands you put in the middle will not be executed until you explicitly run the block using \"/block <blockname>\" or \"/<blockname>\".\n\n"
 
 		"Note that you should not define any other blocks inside the definition for a block (no nested block definitions).\n"
 		"You should also not create multiple blocks with the same block name - doing so is undefined behaviour.\n"
