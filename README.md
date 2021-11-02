@@ -23,6 +23,8 @@ That's about it. Have fun using LCL! 😀
 
 ## Version History
 
+v2.2 - Added "memory management", which allows the programmer to explicitly delete variables and blocks, as well as clean up temporary blocks created by the program
+
 v2.1 - Added internal name processing for `/while` loops, which fixed a bug that made different blocks share the same block name
 
 v2.0 - BIG UPDATE! Added blocks (functions without arguments), control flow (`/if`, `/ifvar`, `/loop`, `/for`, `/while`), and a ton of example files that you can copy to `"input.txt"` and run! You can find the example files in the `examples` folder. Also, there is a practice problem (`"reverseStringProblem.txt"`) in the `examples` folder, so if you feel confident in LCL already, you can try that out 😀. The concise solution (without comments) and explanatory solution (with comments) are both in the `examples` folder as well - they are `"reverseStringSolution.txt"` and `"reverseStringExplanation.txt"`, respectively.
