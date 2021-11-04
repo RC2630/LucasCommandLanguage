@@ -67,8 +67,8 @@ namespace var {
 	}
 
 	bool contains(const vector<Variable>& v, const string& varname) {
-		for (const Variable& var : v) {
-			if (var.name == varname) {
+		for (int i = v.size() - 1; i >= 0; i--) {
+			if (v.at(i).name == varname) {
 				return true;
 			}
 		}
@@ -76,9 +76,9 @@ namespace var {
 	}
 
 	Variable& find(vector<Variable>& v, const string& varname) {
-		for (Variable& var : v) {
-			if (var.name == varname) {
-				return var;
+		for (int i = v.size() - 1; i >= 0; i--) {
+			if (v.at(i).name == varname) {
+				return v.at(i);
 			}
 		}
 		throw runtime_error("no matching variable");

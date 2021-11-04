@@ -159,6 +159,60 @@ namespace vecUtil {
         v = newVector;
     }
 
+    template <typename T>
+    int findIndex(const vector<T>& v, const T& e) {
+        for (int i = 0; i < v.size(); i++) {
+            if (v.at(i) == e) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    template <typename T>
+    void removeByIndex(vector<T>& v, int index) {
+        vector<T> newVector;
+        for (int i = 0; i < v.size(); i++) {
+            if (i != index) {
+                newVector.push_back(v.at(i));
+            }
+        }
+        v = newVector;
+    }
+
+    template <typename T>
+    void removeByIndexes(vector<T>& v, const vector<int>& indexes) {
+        vector<T> newVector;
+        for (int i = 0; i < v.size(); i++) {
+            if (!contains(indexes, i)) {
+                newVector.push_back(v.at(i));
+            }
+        }
+        v = newVector;
+    }
+
+    // given a vector of vectors, return a single vector that combines all the individual smaller vectors together
+    template <typename T>
+    vector<T> concatenate(const vector<vector<T>> vectors) {
+        vector<T> nv;
+        for (const vector<T>& v : vectors) {
+            for (int i = 0; i < v.size(); i++) {
+                nv.push_back(v.at(i));
+            }
+        }
+        return nv;
+    }
+
+    // given a vector v, return the portion of v that is v[startIndex..endIndex]
+    template <typename T>
+    vector<T> subvector(const vector<T>& v, int startIndex, int endIndex) {
+        vector<T> nv;
+        for (int i = startIndex; i <= endIndex; i++) {
+            nv.push_back(v.at(i));
+        }
+        return nv;
+    }
+
 }
 
 #endif

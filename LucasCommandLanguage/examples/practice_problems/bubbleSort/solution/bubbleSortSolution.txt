@@ -1,0 +1,78 @@
+// Here is the implementation of bubble sort in Java:
+//
+//  private static void sort(Integer[] a) {
+//    for (int i = a.length - 1; i > 0; i--) {
+//      for (int j = 1; j <= i; j++) {
+//        if (a[j - 1] > a[j]) {
+//          int t = a[j];
+//          a[j] = a[j - 1];
+//          a[j - 1] = t;
+//        }
+//      }
+//    }
+//  }
+//
+// Your task is to implement this algorithm in LCL. Here is what you will need to do:
+//
+// 1. You will take in a string by console. Each character in the string represents a single-digit positive integer.
+// 2. You will swap the positions of the characters in that string, such that after the swaps, the digits in the string are sorted. Use the bubble sort algorithm above.
+// 3. Remember that you can only compare numbers, not characters - cast the characters to numbers before comparing, then back to characters for the final answer.
+// 4. Your solution must work for input strings of any length.
+//
+// HAVE FUN!
+
+// DO NOT TOUCH THIS SECTION
+/input s String Enter your string here (only digits allowed, any length is OK): 
+/store og {s} String
+// END NO-TOUCH SECTION
+
+// YOUR SOLUTION HERE
+
+/blockdef outerLoop
+/while innerCond innerLoop
+/sub i [i] 1
+/greater outerCond [i] 0
+/store j 1 Number
+/le innerCond [j] [i]
+/endblock
+
+/blockdef innerLoop
+/sub jMinus1 [j] 1
+/charat s_jMinus1 {s} [jMinus1]
+/strtonum n_jMinus1 {s_jMinus1}
+/charat s_j {s} [j]
+/strtonum n_j {s_j}
+/greater ifCond [n_jMinus1] [n_j]
+/if {ifCond} then
+/add j [j] 1
+/le innerCond [j] [i]
+/endblock
+
+/blockdef then
+/add jPlus1 [j] 1
+/substr firstPart {s} 0 [jMinus1]
+/substr lastPart {s} [jPlus1] [last]
+/concat s {firstPart} {s_jMinus1} {lastPart}
+/sub jMinus2 [j] 2
+/substr firstPart {s} 0 [jMinus2]
+/substr lastPart {s} [j] [last]
+/concat s {firstPart} {s_j} {lastPart}
+/endblock
+
+/length last {s}
+/sub last [last] 1
+/store i [last] Number
+/greater outerCond [i] 0
+/store j 1 Number
+/le innerCond [j] [i]
+/while outerCond outerLoop
+/clean
+
+// END YOUR SOLUTION
+
+// DO NOT TOUCH THIS SECTION
+/line
+original string: {og}
+  sorted string: {s}
+/line
+// END NO-TOUCH SECTION

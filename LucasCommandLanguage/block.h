@@ -84,8 +84,8 @@ namespace blk {
 	}
 
 	bool contains(const vector<Block>& v, const string& blockname) {
-		for (const Block& block : v) {
-			if (block.name == blockname) {
+		for (int i = v.size() - 1; i >= 0; i--) {
+			if (v.at(i).name == blockname) {
 				return true;
 			}
 		}
@@ -93,9 +93,9 @@ namespace blk {
 	}
 
 	Block& find(vector<Block>& v, const string& blockname) {
-		for (Block& b : v) {
-			if (b.name == blockname) {
-				return b;
+		for (int i = v.size() - 1; i >= 0; i--) {
+			if (v.at(i).name == blockname) {
+				return v.at(i);
 			}
 		}
 		throw runtime_error("block not found");

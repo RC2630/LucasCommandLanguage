@@ -140,6 +140,36 @@ namespace strUtil {
         }
     }
 
+    string spaces(int n) {
+        string s;
+        for (int i = 1; i <= n; i++) {
+            s += " ";
+        }
+        return s;
+    }
+
+    // returns 0 if v is empty
+    int maxStringLength(const vector<string>& v) {
+        int max = 0;
+        for (const string& s : v) {
+            if (s.size() > max) {
+                max = s.size();
+            }
+        }
+        return max;
+    }
+
+    // returns 0 if v is empty
+    int minStringLength(const vector<string>& v) {
+        int min = maxStringLength(v);
+        for (const string& s : v) {
+            if (s.size() < min) {
+                min = s.size();
+            }
+        }
+        return min;
+    }
+
 }
 
 #endif
