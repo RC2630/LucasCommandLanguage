@@ -23,6 +23,8 @@ That's about it. Have fun using LCL! 😀
 
 ## Version History
 
+v2.3.1 - Tiny update. Attempted to improve efficiency (especially that of loops) by making variable and block finding/searching go from back to front (instead of from front to back). This is because more recently-created variables and blocks tend to be used more than older ones, and also because "temporary" blocks are always created at the end of the list of blocks maintained by the interpreter. This is supposed to ensure a lot faster finding/searching of these temporary blocks, especially when there is a long nested loop situation. However, the improvements (empirically) don't seem that great, so I will keep working on it.
+
 v2.3 - Added `/gettype`, various assertion commands, and a simplified way of calling blocks (in addition to some small tweaks to existing features)
 
 v2.2 - Added "memory management", which allows the programmer to explicitly delete variables and blocks, as well as clean up temporary blocks created by the program
