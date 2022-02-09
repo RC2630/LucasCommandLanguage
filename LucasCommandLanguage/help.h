@@ -18,7 +18,8 @@ namespace help {
 		"/help variables = display help document for variables (how to use variables, including examples)\n"
 		"/help blocks = display help document for blocks (how to use blocks, including examples)\n"
 		"/help memory = display help document for memory management and cleaning\n"
-		"/help lclinfo = display information on this programming language (LCL = Lucas Command Language), including copyright";
+		"/help lclinfo = display information on this programming language (LCL = Lucas Command Language), including copyright\n"
+		"/help special = display special features of LCL that you should be aware of";
 
 	const string COMMAND_HELP_DIRECTORY =
 
@@ -50,14 +51,19 @@ namespace help {
 
 		"/line = print 1 newline character\n"
 		"/line <n> = print n copies of the newline character\n"
+		"/space = print 1 space character\n"
+		"/space <n> = print n copies of the space character\n"
+		"/tab = print 1 tab (indent) character\n"
+		"/tab <n> = print n copies of the tab (indent) character\n\n"
+
 		"/digits <n> = use n decimal places for the display of all numerical types (0 <= n <= 12), note that calculations still use much higher precision than display though\n\n"
 
 		"/warntype <b> = set whether or not changing the type of a variable will display a warning message\n"
 		"/useblue <b> = set whether or not displaying verbatim lines will be in blue (if false, then it will be in the default colour)\n"
 		"/reusedisp <b> = set whether or not /prev will print reuse message whenever it is used\n\n"
 		
-		"/escprint <escmessage> = display escmessage verbatim, escaping all instances of \"/\", \"[]\", \"{}\", etc. (variables will NOT be replaced with their values)\n"
-		"/escvarprint <escvarmessage> = display escvarmessage verbatim, escaping all instances of \"/\", \"[]\", etc. but NOT \"{}\" (allowing for curly-brace-accessed variables to still work)\n"
+		"/escprint <escmessage> = display escmessage verbatim, escaping all instances of \"/\", \"[]\", \"{}\", \"//\", \";\", etc. (variables will NOT be replaced with their values)\n"
+		"/escvarprint <escvarmessage> = display escvarmessage verbatim, escaping all instances of \"/\", \"[]\", \"//\", \";\", etc. but NOT \"{}\" (allowing for curly-brace-accessed variables to still work)\n"
 		"/input <varname> <typename> <prompt> = display prompt, then wait for console input; this input is then stored into variable called varname with datatype typename (the input must not include any spaces)";
 
 	const string COMMAND_HELP_VARIABLES =
@@ -268,8 +274,28 @@ namespace help {
 		"That is perfectly fine - you will learn, you will improve, and you will master LCL very soon!\n\n"
 
 		"Some quick copyright information:\n"
-		"(c) Copyright - Lucas Qin, 2021\n"
+		"(c) Copyright - Lucas Qin, 2021-2022\n"
 		"Do not distribute the source code for LCL's interpreter without the permission of Lucas Qin.";
+
+	const string SPECIAL_HELP =
+
+		"SPECIAL FEATURES OF LCL:\n\n"
+
+		"Command lines can be indented - indentation helps keep the code readable and easier to debug as well.\n"
+		"Comments can be placed inline (i.e. at the end of a command line) with \"//\" (and optional surrounding spaces); this comment runs to the end of the line.\n"
+		"Multiple commands can be put onto 1 line by separating the commands using a semicolon (and optional surrounding spaces). Do this only when it doesn't make the code hard to read.\n\n"
+
+		"Semicolons and double-slashes in the middle of a line are escaped (as if they were regular characters) in escaped-print commands (\"/escprint\" and \"/escvarprint\").\n"
+		"This means you can still print semicolons and double-slashes easily, but do not attempt to print them without using these escape commands.\n\n"
+
+		"Also, just a note that displaying messages that begin with spaces or tabs will not work if no escaped-print command (\"/escprint\" or \"/escvarprint\") is used.\n"
+		"In this situation, you should either use the escape commands, or use the \"/space\" or \"/tab\" commands, for displaying these special characters instead.\n"
+		"Note that only messages with leading spaces or tabs are affected by this - spaces or tabs in the middle of a message will be okay in all situations.\n\n"
+
+		"A quick reminder that if you want ONE leading space for a message displayed through \"/escprint\", you will need TWO spaces between the \"/escprint\" and the first non-space character of your message.\n"
+		"This is because the first space is parsed as the separator between the command (\"/escprint\") and the argument (your message).\n"
+		"This pattern generalizes to multiple leading spaces, and to tabs, as well.\n"
+		"Take extra caution if you choose to use escaped-print commands to display leading spaces or tabs. You can also choose to use \"/space\" or \"/tab\", which do not have this special issue.";
 
 }
 

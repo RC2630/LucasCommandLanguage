@@ -42,6 +42,8 @@ namespace strUtil {
     int maxStringLength(const vector<string>& v);
     // returns 0 if v is empty
     int minStringLength(const vector<string>& v);
+    string removeLeadingCharacters(const string& s, char c);
+    string removeTrailingCharacters(const string& s, char c);
     string removeLeadingSpaces(const string& s);
     string removeTrailingSpaces(const string& s);
     string trim(const string& s);

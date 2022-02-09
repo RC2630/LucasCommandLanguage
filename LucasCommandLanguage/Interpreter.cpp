@@ -48,9 +48,16 @@ void test(vector<string>& com);
 void helpWith1Arg(const string& specific);
 void helpWith2Arg(const string& spec1, const string& spec2);
 void line(int n);
+void space(int n);
+void tab(int n);
 void digits(int n);
 void digitCommand(int n);
 void inputWithPrompt(const string& varname, const string& type, const string& prompt);
+
+// command preprocessing functions
+void removeIndents(string& command);
+void removeInlineComments(string& command);
+void spliceSemicolonCommands(string& command, vector<string>& commands, int spliceAtIndex);
 
 // variable-related helpers
 void createVar(const string& name, const string& val, const string& type);
@@ -153,6 +160,10 @@ int main() {
 			currIndex++;
 			untouchedCommand = command;
 
+			removeIndents(command);
+			removeInlineComments(command);
+			spliceSemicolonCommands(command, commands, currIndex);
+			
 			if (beginsWith(command, "//")) {
 				// it's just a comment
 				continue;
@@ -250,6 +261,14 @@ void interpretCommand(const string& command, vector<string>& commands, int currI
 		line(1);
 	} else if (commandIs(command, "/line") && numArguments(command) == 1) {
 		line(parseNumericalArgument(command));
+	} else if (commandIs(command, "/space") && numArguments(command) == 0) {
+		space(1);
+	} else if (commandIs(command, "/space") && numArguments(command) == 1) {
+		space(parseNumericalArgument(command));
+	} else if (commandIs(command, "/tab") && numArguments(command) == 0) {
+		tab(1);
+	} else if (commandIs(command, "/tab") && numArguments(command) == 1) {
+		tab(parseNumericalArgument(command));
 	} else if (commandIs(command, "/digits")) {
 		digitCommand(parseNumericalArgument(command));
 	} else if (commandIs(command, "/warntype")) {
@@ -405,6 +424,8 @@ void helpWith1Arg(const string& specific) {
 		cout << ANSI_GREEN << MEM_HELP << "\n" << ANSI_NORMAL;
 	} else if (specific == "lclinfo") {
 		cout << ANSI_GREEN << LCL_INFO << "\n" << ANSI_NORMAL;
+	} else if (specific == "special") {
+		cout << ANSI_GREEN << SPECIAL_HELP << "\n" << ANSI_NORMAL;
 	} else {
 		cout << ANSI_RED << "\"/help " << specific << "\" does not display a valid help document.\n" << ANSI_NORMAL;
 	}
@@ -449,6 +470,16 @@ void line(int n) {
 	}
 }
 
+void space(int n) {
+	cout << spaces(n);
+}
+
+void tab(int n) {
+	for (int i = 1; i <= n; i++) {
+		cout << "\t";
+	}
+}
+
 void digits(int n) {
 	cout << fixed << setprecision(n);
 	num_places = n;
@@ -475,6 +506,43 @@ void inputWithPrompt(const string& varname, const string& type, const string& pr
 		createVar(varname, doubleToString(stod(rawinput)), type);
 	} else if (type == "Bool") {
 		createVar(varname, boolval(parseBool(rawinput)), type);
+	}
+}
+
+void removeIndents(string& command) {
+	while (beginsWith(command, " ") || beginsWith(command, "\t")) {
+		command = removeLeadingSpaces(command);
+		command = removeLeadingCharacters(command, '\t');
+	}
+}
+
+void removeInlineComments(string& command) {
+	if (commandIs(command, "/escprint") || commandIs(command, "/escvarprint")) {
+		return;
+	}
+	if (strUtil::contains(command, "//")) {
+		int posInlineComment = command.find("//");
+		command = command.substr(0, posInlineComment);
+		while (endsWith(command, " ") || endsWith(command, "\t")) {
+			command = strUtil::removeTrailingSpaces(command);
+			command = strUtil::removeTrailingCharacters(command, '\t');
+		}
+	}
+}
+
+void spliceSemicolonCommands(string& command, vector<string>& commands, int spliceAtIndex) {
+	if (commandIs(command, "/escprint") || commandIs(command, "/escvarprint")) {
+		return;
+	}
+	if (strUtil::contains(command, ";")) {
+		int posSemicolon = command.find(";");
+		string otherPart = command.substr(posSemicolon + 1);
+		command = command.substr(0, posSemicolon);
+		while (endsWith(command, " ") || endsWith(command, "\t")) {
+			command = strUtil::removeTrailingSpaces(command);
+			command = strUtil::removeTrailingCharacters(command, '\t');
+		}
+		vecUtil::insertAtPos(commands, spliceAtIndex, otherPart);
 	}
 }
 

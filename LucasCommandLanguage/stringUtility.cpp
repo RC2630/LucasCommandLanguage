@@ -207,28 +207,36 @@ int strUtil::minStringLength(const vector<string>& v) {
     return min;
 }
 
-string strUtil::removeLeadingSpaces(const string& s) {
-    int indexFirstNonSpace = 0;
+string strUtil::removeLeadingCharacters(const string& s, char c) {
+    int indexFirstNonCharacter = 0;
     for (int pos = 0; pos < s.size(); pos++) {
-        if (s.at(pos) == ' ') {
-            indexFirstNonSpace++;
+        if (s.at(pos) == c) {
+            indexFirstNonCharacter++;
         } else {
             break;
         }
     }
-    return s.substr(indexFirstNonSpace);
+    return s.substr(indexFirstNonCharacter);
+}
+
+string strUtil::removeTrailingCharacters(const string& s, char c) {
+    int indexLastNonCharacter = s.size() - 1;
+    for (int pos = s.size() - 1; pos >= 0; pos--) {
+        if (s.at(pos) == c) {
+            indexLastNonCharacter--;
+        } else {
+            break;
+        }
+    }
+    return s.substr(0, indexLastNonCharacter + 1);
+}
+
+string strUtil::removeLeadingSpaces(const string& s) {
+    return removeLeadingCharacters(s, ' ');
 }
 
 string strUtil::removeTrailingSpaces(const string& s) {
-    int indexLastNonSpace = s.size() - 1;
-    for (int pos = s.size() - 1; pos >= 0; pos--) {
-        if (s.at(pos) == ' ') {
-            indexLastNonSpace--;
-        } else {
-            break;
-        }
-    }
-    return s.substr(0, indexLastNonSpace + 1);
+    return removeTrailingCharacters(s, ' ');
 }
 
 string strUtil::trim(const string& s) {
