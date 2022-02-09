@@ -25,11 +25,7 @@ namespace file {
     }
 
     // only use for strings!
-    void inputStrFrom(string& v_str, const string& filename) {
-        ifstream fin(filename);
-        getline(fin, v_str);
-        fin.close();
-    }
+    void inputStrFrom(string& v_str, const string& filename);
 
     template <typename T>
     void outputVecTo(const vector<T>& v, const string& filename) {
@@ -54,16 +50,7 @@ namespace file {
     }
 
     // only use for strings!
-    void inputStrVecFrom(vector<string>& v_var, const string& filename) {
-        ifstream fin(filename);
-        string temp;
-        while (!fin.fail()) {
-            getline(fin, temp);
-            v_var.push_back(temp);
-        }
-        v_var.pop_back();
-        fin.close();
-    }
+    void inputStrVecFrom(vector<string>& v_var, const string& filename);
 
     // type must match what is already in the file
     // do not use for strings!
@@ -77,12 +64,7 @@ namespace file {
 
     // original type in the file must be string
     // only use for strings!
-    void outputStrAddTo(const string& str, const string& filename) {
-        vector<string> tempv;
-        inputStrVecFrom(tempv, filename);
-        tempv.push_back(str);
-        outputVecTo(tempv, filename);
-    }
+    void outputStrAddTo(const string& str, const string& filename);
 
     // type must match what is already in the file
     // do not use for strings!
@@ -98,14 +80,7 @@ namespace file {
 
     // original type in the file must be string
     // only use for strings!
-    void outputStrVecAddTo(const vector<string>& v, const string& filename) {
-        vector<string> tempv;
-        inputStrVecFrom(tempv, filename);
-        for (const string& s : v) {
-            tempv.push_back(s);
-        }
-        outputVecTo(tempv, filename);
-    }
+    void outputStrVecAddTo(const vector<string>& v, const string& filename);
 
 }
 

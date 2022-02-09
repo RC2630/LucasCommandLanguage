@@ -13,38 +13,89 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\general">
+      <UniqueIdentifier>{f25297e4-03b5-451d-be2b-0371bca90149}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\general">
+      <UniqueIdentifier>{c5999283-8e79-411e-a4b7-b83ff66f2a5a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="stringUtility.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="vectorUtility.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="parseArguments.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="file.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="help.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="variable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ansi_codes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="numberUtility.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="block.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="abstractFunctions.h">
+      <Filter>Header Files\general</Filter>
+    </ClInclude>
+    <ClInclude Include="ansi_codes.h">
+      <Filter>Header Files\general</Filter>
+    </ClInclude>
+    <ClInclude Include="binaryUtility.h">
+      <Filter>Header Files\general</Filter>
+    </ClInclude>
+    <ClInclude Include="file.h">
+      <Filter>Header Files\general</Filter>
+    </ClInclude>
+    <ClInclude Include="mapUtility.h">
+      <Filter>Header Files\general</Filter>
+    </ClInclude>
+    <ClInclude Include="numberUtility.h">
+      <Filter>Header Files\general</Filter>
+    </ClInclude>
+    <ClInclude Include="parseArguments.h">
+      <Filter>Header Files\general</Filter>
+    </ClInclude>
+    <ClInclude Include="pipe.h">
+      <Filter>Header Files\general</Filter>
+    </ClInclude>
+    <ClInclude Include="randomUtility.h">
+      <Filter>Header Files\general</Filter>
+    </ClInclude>
+    <ClInclude Include="statisticsUtility.h">
+      <Filter>Header Files\general</Filter>
+    </ClInclude>
+    <ClInclude Include="stringUtility.h">
+      <Filter>Header Files\general</Filter>
+    </ClInclude>
+    <ClInclude Include="vectorUtility.h">
+      <Filter>Header Files\general</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Interpreter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="binaryUtility.cpp">
+      <Filter>Source Files\general</Filter>
+    </ClCompile>
+    <ClCompile Include="file.cpp">
+      <Filter>Source Files\general</Filter>
+    </ClCompile>
+    <ClCompile Include="numberUtility.cpp">
+      <Filter>Source Files\general</Filter>
+    </ClCompile>
+    <ClCompile Include="parseArguments.cpp">
+      <Filter>Source Files\general</Filter>
+    </ClCompile>
+    <ClCompile Include="randomUtility.cpp">
+      <Filter>Source Files\general</Filter>
+    </ClCompile>
+    <ClCompile Include="statisticsUtility.cpp">
+      <Filter>Source Files\general</Filter>
+    </ClCompile>
+    <ClCompile Include="stringUtility.cpp">
+      <Filter>Source Files\general</Filter>
+    </ClCompile>
+    <ClCompile Include="block.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="variable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

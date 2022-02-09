@@ -139,18 +139,33 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="abstractFunctions.h" />
     <ClInclude Include="ansi_codes.h" />
+    <ClInclude Include="binaryUtility.h" />
     <ClInclude Include="block.h" />
     <ClInclude Include="file.h" />
     <ClInclude Include="help.h" />
+    <ClInclude Include="mapUtility.h" />
     <ClInclude Include="numberUtility.h" />
     <ClInclude Include="parseArguments.h" />
+    <ClInclude Include="pipe.h" />
+    <ClInclude Include="randomUtility.h" />
+    <ClInclude Include="statisticsUtility.h" />
     <ClInclude Include="stringUtility.h" />
     <ClInclude Include="variable.h" />
     <ClInclude Include="vectorUtility.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="binaryUtility.cpp" />
+    <ClCompile Include="block.cpp" />
+    <ClCompile Include="file.cpp" />
     <ClCompile Include="Interpreter.cpp" />
+    <ClCompile Include="numberUtility.cpp" />
+    <ClCompile Include="parseArguments.cpp" />
+    <ClCompile Include="randomUtility.cpp" />
+    <ClCompile Include="statisticsUtility.cpp" />
+    <ClCompile Include="stringUtility.cpp" />
+    <ClCompile Include="variable.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

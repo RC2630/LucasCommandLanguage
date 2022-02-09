@@ -2,10 +2,11 @@
 #include "parseArguments.h"
 #include "vectorUtility.h"
 #include "stringUtility.h"
-#include "help.h"
-#include "variable.h"
 #include "ansi_codes.h"
 #include "numberUtility.h"
+
+#include "help.h"
+#include "variable.h"
 #include "block.h"
 
 #include <iomanip>

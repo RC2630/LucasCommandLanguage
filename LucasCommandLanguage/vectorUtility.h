@@ -3,6 +3,8 @@
 
 #include <vector>
 #include <iostream>
+#include <stdexcept>
+#include <algorithm>
 
 using namespace std;
 
@@ -211,6 +213,20 @@ namespace vecUtil {
             nv.push_back(v.at(i));
         }
         return nv;
+    }
+
+    template <typename T>
+    vector<T> reverse(const vector<T>& v) {
+        vector<T> reversed = v;
+        std::reverse(reversed.begin(), reversed.end());
+        return reversed;
+    }
+
+    template <typename T>
+    vector<T> sort(const vector<T>& v) {
+        vector<T> sorted = v;
+        std::sort(sorted.begin(), sorted.end());
+        return sorted;
     }
 
 }

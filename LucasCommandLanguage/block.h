@@ -12,108 +12,30 @@ namespace blk {
 
 	const string TEMP_BLOCK_PREFIX = "__temp__"; // reserved block name prefix for the interpreter to use
 
-	struct Block; // forward declaration of this struct
-	string uniqueNumber(const vector<Block>& blocks, const string& nameAllBeforeFinalUnderscore); // prototype for use later
-
 	struct Block {
 
 		string name;
 		vector<string> commands;
 
-		Block(const string& n) {
-			name = n;
-			commands = {};
-		}
-
-		Block(const string& n, const vector<string>& v) {
-			name = n;
-			commands = v;
-		}
-
-		void add(const string& com) {
-			commands.push_back(com);
-		}
-
-		bool empty() const {
-			return commands.empty();
-		}
-
-		void spliceInto(vector<string>& commands, int currIndex) const {
-			vecUtil::spliceAtPos(commands, currIndex, this->commands);
-		}
-
+		Block(const string& n);
+		Block(const string& n, const vector<string>& v);
+		void add(const string& com);
+		bool empty() const;
+		void spliceInto(vector<string>& commands, int currIndex) const;
 		// see cflowWhile() in Interpreter.cpp for details
-		string createTemp(vector<Block>& blocks, const string& condvarname) const {
-			string mainName = TEMP_BLOCK_PREFIX + this->name;
-			string newName = mainName + "_" + uniqueNumber(blocks, mainName);
-			Block newBlock(newName);
-			newBlock.add(string() + "/block " + this->name);
-			newBlock.add(string() + "/ifvar " + condvarname + " " + newName);
-			blocks.push_back(newBlock);
-			return newName;
-		}
+		string createTemp(vector<Block>& blocks, const string& condvarname) const;
 
 	};
 
-	bool operator == (const Block& block1, const Block& block2) {
-		return tie(block1.name, block1.commands) == tie(block2.name, block2.commands);
-	}
-
-	bool operator != (const Block& block1, const Block& block2) {
-		return !(block1 == block2);
-	}
-
-	bool sameExceptForNumber(const string& blockname, const string& nameAllBeforeFinalUnderscore) {
-		if (!strUtil::contains(blockname, "_")) {
-			return false; // because nameAllBeforeFinalUnderscore is guaranteed to have underscores (by definition)
-		}
-		int posLastUnderscore = strUtil::positionOfFinalOccurrence(blockname, '_');
-		string sub = blockname.substr(0, posLastUnderscore);
-		return sub == nameAllBeforeFinalUnderscore;
-	}
-
+	bool operator == (const Block& block1, const Block& block2);
+	bool operator != (const Block& block1, const Block& block2);
+	bool sameExceptForNumber(const string& blockname, const string& nameAllBeforeFinalUnderscore);
 	// used to prevent different blocks from having the same names
-	string uniqueNumber(const vector<Block>& blocks, const string& nameAllBeforeFinalUnderscore) {
-		int count = 0;
-		for (const Block& block : blocks) {
-			if (sameExceptForNumber(block.name, nameAllBeforeFinalUnderscore)) {
-				count++;
-			}
-		}
-		return to_string(count); // built-in to_string for integers
-	}
-
-	bool contains(const vector<Block>& v, const string& blockname) {
-		for (int i = v.size() - 1; i >= 0; i--) {
-			if (v.at(i).name == blockname) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	Block& find(vector<Block>& v, const string& blockname) {
-		for (int i = v.size() - 1; i >= 0; i--) {
-			if (v.at(i).name == blockname) {
-				return v.at(i);
-			}
-		}
-		throw runtime_error("block not found");
-	}
-
-	void remove(vector<Block>& v, const string& blockname) {
-		if (!contains(v, blockname)) {
-			return;
-		}
-		Block block = find(v, blockname);
-		vecUtil::removeFirstInstance(v, block);
-	}
-
-	ostream& operator << (ostream& out, const Block& block) {
-		using vecUtil::operator<<; // so I can use the << operator on block.commands
-		out << "name: " << block.name << " & commands: " << block.commands;
-		return out;
-	}
+	string uniqueNumber(const vector<Block>& blocks, const string& nameAllBeforeFinalUnderscore);
+	bool contains(const vector<Block>& v, const string& blockname);
+	Block& find(vector<Block>& v, const string& blockname);
+	void remove(vector<Block>& v, const string& blockname);
+	ostream& operator << (ostream& out, const Block& block);
 
 }
 
