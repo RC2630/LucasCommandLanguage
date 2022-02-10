@@ -15,13 +15,15 @@ This is the interpreter for the LCL (Lucas Command Language) programming languag
 Special notes:
 1. To save your file somewhere else, simply copy and paste `"input.txt"` to a different location (do NOT cut and paste or drag the file there). Make sure a copy of `"input.txt"` still exists inside the interpreter's relative path. Then, in your new location, feel free to rename the file to whatever makes the most sense.
 2. To run files other than the current `"input.txt"` inside the interpreter's relative path, first clear everything currently in `"input.txt"`, then simply copy the contents of the other file into `"input.txt"` and run it normally.
-3. The interpreter reads commands from `"input.txt"` line by line. Use maximum one command per line in the source code (`"input.txt"`). Do not place a comment and a non-comment command in the same line.
+3. The interpreter reads commands from `"input.txt"` line by line. Use maximum one command per line in the source code (`"input.txt"`) UNLESS you use semicolons to separate multiple commands on the same line.
 
 That's about it. Have fun using LCL! 😀
 
 ----------------------------------------------------------------------------------------------------------------------------
 
 ## Version History
+
+v2.4 - It's been a while since the last update. This one is not huge, but should increase code quality and ease of code writing. Additions include support for indentation, inline comments, and multiple commands on a single line. Also, there are new commands `/space` and `/tab` for displaying special characters, which can be useful in particular situations. New example file added in the `examples` folder, as usual.
 
 v2.3.1 - Tiny update. Attempted to improve efficiency (especially that of loops) by making variable and block finding/searching go from back to front (instead of from front to back). This is because more recently-created variables and blocks tend to be used more than older ones, and also because "temporary" blocks are always created at the end of the list of blocks maintained by the interpreter. This is supposed to ensure a lot faster finding/searching of these temporary blocks, especially when there is a long nested loop situation. However, the improvements (empirically) don't seem that great, so I will keep working on it.
 
