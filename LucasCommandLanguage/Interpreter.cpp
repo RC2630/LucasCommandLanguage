@@ -8,19 +8,23 @@
 #include "help.h"
 #include "variable.h"
 #include "block.h"
+#include "struct.h"
 
 #include <iomanip>
 #include <stdexcept>
 
 using namespace std;
+
 using namespace file;
 using namespace parse;
 using namespace vecUtil;
 using namespace strUtil;
+using namespace numUtil;
+
 using namespace help;
 using namespace var;
-using namespace numUtil;
 using namespace blk;
+using namespace srt;
 
 const string INPUT_FILE = "../LucasCommandLanguage/inputFile/input.txt"; // file path for the source code
 
@@ -37,6 +41,9 @@ bool block_mode_on = false; // the current command is being placed into a block 
 string curr_block_name; // name of the current block being defined
 vector<string> temp_commands; // all the commands in the current block being defined (so far)
 vector<Block> blocks; // list of all blocks in the program
+
+vector<Struct> structs; // list of all structs in the program
+vector<Object> objects; // list of all objects in the program
 
 // primary function for interpreting commands
 void interpretCommand(const string& command, vector<string>& commands, int currIndex, const string& untouched);
@@ -117,12 +124,18 @@ void cflowLoop(int numIterations, const string& blockname, vector<string>& comma
 void cflowFor(const string& numvarname, const string& blockname, vector<string>& commands, int currIndex);
 void cflowWhile(const string& condvarname, const string& blockname, vector<string>& commands, int currIndex);
 
-// memory related helpers
+// memory related helpers (part 1: deletion helpers)
 void delVar(const string& varname);
 void delBlock(const string& blockname);
+void delStruct(const string& srtname);
+void delObject(const string& objname);
 void cleanTemps();
+
+// memory related helpers (part 2: existence helpers)
 void existVar(const string& boolvarname, const string& varname);
 void existBlock(const string& boolvarname, const string& blockname);
+void existStruct(const string& boolvarname, const string& srtname);
+void existObject(const string& boolvarname, const string& objname);
 void existTemps(const string& boolvarname);
 
 // assertion helpers
@@ -130,6 +143,11 @@ void customFail(const string& command, const string& message);
 void customAssert(const string& command, bool boolvalue, const string& message);
 void customAssertVar(const string& command, const string& boolvarname, const string& message);
 void customAssertType(const string& command, const string& varname, const string& type, const string& message);
+void customAssertObjectType(const string& command, const string& objname, const string& srtname, const string& message);
+
+// struct and object helpers
+void structdef(const string& command);
+void construct(const string& command);
 
 int main() {
 
@@ -367,12 +385,20 @@ void interpretCommand(const string& command, vector<string>& commands, int currI
 		delVar(parseArgument(command));
 	} else if (commandIs(command, "/delblock")) {
 		delBlock(parseArgument(command));
+	} else if (commandIs(command, "/delstruct")) {
+		delStruct(parseArgument(command));
+	} else if (commandIs(command, "/delobject")) {
+		delObject(parseArgument(command));
 	} else if (commandIs(command, "/clean")) {
 		cleanTemps();
 	} else if (commandIs(command, "/existvar")) {
 		existVar(parseArgument(command, 1), parseArgument(command, 2));
 	} else if (commandIs(command, "/existblock")) {
 		existBlock(parseArgument(command, 1), parseArgument(command, 2));
+	} else if (commandIs(command, "/existstruct")) {
+		existStruct(parseArgument(command, 1), parseArgument(command, 2));
+	} else if (commandIs(command, "/existobject")) {
+		existObject(parseArgument(command, 1), parseArgument(command, 2));
 	} else if (commandIs(command, "/existtemps")) {
 		existTemps(parseArgument(command));
 	} else if (commandIs(command, "/fail")) {
@@ -383,6 +409,12 @@ void interpretCommand(const string& command, vector<string>& commands, int currI
 		customAssertVar(commandPlusNargs(untouched, 1), parseArgument(command, 1), parseArgumentUntilEnd(command, 2));
 	} else if (commandIs(command, "/asserttype")) {
 		customAssertType(commandPlusNargs(untouched, 2), parseArgument(command, 1), parseArgument(command, 2), parseArgumentUntilEnd(command, 3));
+	} else if (commandIs(command, "/assertobjecttype")) {
+		customAssertObjectType(commandPlusNargs(untouched, 2), parseArgument(command, 1), parseArgument(command, 2), parseArgumentUntilEnd(command, 3));
+	} else if (commandIs(command, "/structdef")) {
+		structdef(command);
+	} else if (commandIs(command, "/construct")) {
+		construct(command);
 	} else if (numArguments(command) == 0 && blk::contains(blocks, command.substr(1))) { // DO NOT MOVE - SHOULD HAVE LOWEST PRECEDENCE
 		runBlock(command.substr(1), commands, currIndex);
 	} else {
@@ -403,11 +435,28 @@ void test(vector<string>& com) {
 	if (vars.empty()) {
 		cout << ANSI_MAGENTA << "(none)\n" << ANSI_NORMAL;
 	}
+
 	cout << ANSI_YELLOW << "\nBlocks:\n\n" << ANSI_NORMAL;
 	for (const Block& block : blocks) {
 		cout << block.name << "\n";
 	}
 	if (blocks.empty()) {
+		cout << ANSI_MAGENTA << "(none)\n" << ANSI_NORMAL;
+	}
+
+	cout << ANSI_YELLOW << "\nStructs:\n\n" << ANSI_NORMAL;
+	for (const Struct& srt : structs) {
+		cout << srt.name << "\n";
+	}
+	if (structs.empty()) {
+		cout << ANSI_MAGENTA << "(none)\n" << ANSI_NORMAL;
+	}
+
+	cout << ANSI_YELLOW << "\nObjects:\n\n" << ANSI_NORMAL;
+	for (const Object& obj : objects) {
+		cout << obj.name << "\n";
+	}
+	if (objects.empty()) {
 		cout << ANSI_MAGENTA << "(none)\n" << ANSI_NORMAL;
 	}
 	*/
@@ -426,6 +475,8 @@ void helpWith1Arg(const string& specific) {
 		cout << ANSI_GREEN << LCL_INFO << "\n" << ANSI_NORMAL;
 	} else if (specific == "special") {
 		cout << ANSI_GREEN << SPECIAL_HELP << "\n" << ANSI_NORMAL;
+	} else if (specific == "struct") {
+		cout << ANSI_GREEN << STRUCT_HELP << "\n" << ANSI_NORMAL;
 	} else {
 		cout << ANSI_RED << "\"/help " << specific << "\" does not display a valid help document.\n" << ANSI_NORMAL;
 	}
@@ -455,6 +506,8 @@ void helpWith2Arg(const string& spec1, const string& spec2) {
 			cout << ANSI_GREEN << COMMAND_HELP_MEMORY << "\n" << ANSI_NORMAL;
 		} else if (spec2 == "assert") {
 			cout << ANSI_GREEN << COMMAND_HELP_ASSERT << "\n" << ANSI_NORMAL;
+		} else if (spec2 == "struct") {
+			cout << ANSI_GREEN << COMMAND_HELP_STRUCT << "\n" << ANSI_NORMAL;
 		} else {
 			cout << ANSI_RED << "\"/help commands " << spec2 << "\" does not display a valid help document, because \""
 			 	 << spec2 << "\" is not a valid category of commands.\n" << ANSI_NORMAL;
@@ -956,6 +1009,14 @@ void delBlock(const string& blockname) {
 	blk::remove(blocks, blockname);
 }
 
+void delStruct(const string& srtname) {
+	srt::deleteStruct(structs, objects, vars, srtname);
+}
+
+void delObject(const string& objname) {
+	srt::deleteObject(objects, vars, objname);
+}
+
 void cleanTemps() {
 	vector<string> namesOfBlocksToDelete;
 	for (const Block& block : blocks) {
@@ -975,6 +1036,16 @@ void existVar(const string& boolvarname, const string& varname) {
 
 void existBlock(const string& boolvarname, const string& blockname) {
 	bool exist = blk::contains(blocks, blockname);
+	createVar(boolvarname, boolval(exist), "Bool");
+}
+
+void existStruct(const string& boolvarname, const string& srtname) {
+	bool exist = srt::containsStruct(structs, srtname);
+	createVar(boolvarname, boolval(exist), "Bool");
+}
+
+void existObject(const string& boolvarname, const string& objname) {
+	bool exist = srt::containsObject(objects, objname);
 	createVar(boolvarname, boolval(exist), "Bool");
 }
 
@@ -1025,4 +1096,42 @@ void customAssertType(const string& command, const string& varname, const string
 	}
 	string vartype = find(vars, varname).datatype;
 	customAssert(command, vartype == type, message);
+}
+
+void customAssertObjectType(const string& command, const string& objname, const string& srtname, const string& message) {
+	if (!containsObject(objects, objname)) {
+		cout << ANSI_RED << "Since the object \"" << objname << "\" does not currently exist, this assertion cannot proceed.\n"
+			 << "The program will now attempt to continue execution.\n" << ANSI_NORMAL;
+		return;
+	}
+	if (!containsStruct(structs, srtname)) {
+		cout << ANSI_RED << "Since the struct \"" << srtname << "\" does not currently exist, this assertion cannot proceed.\n"
+			 << "The program will now attempt to continue execution.\n" << ANSI_NORMAL;
+		return;
+	}
+	string structtype = findObject(objects, objname).typeName();
+	customAssert(command, structtype == srtname, message);
+}
+
+void structdef(const string& command) {
+	string structName = parseArgument(command, 1);
+	vector<string> fieldInfo;
+	for (int i = 2; i <= numArguments(command); i++) {
+		fieldInfo.push_back(parseArgument(command, i));
+	}
+	structs.push_back(Struct(structName, fieldInfo));
+}
+
+void construct(const string& command) {
+	string objectName = parseArgument(command, 1);
+	string typeName = parseArgument(command, 2);
+	if (!srt::containsStruct(structs, typeName)) {
+		cout << ANSI_RED << "There is currently no struct named \"" << typeName << "\".\n" << ANSI_NORMAL;
+		return;
+	}
+	vector<string> fieldInitValues;
+	for (int i = 3; i <= numArguments(command); i++) {
+		fieldInitValues.push_back(parseArgument(command, i));
+	}
+	objects.push_back(Object(objectName, srt::findStruct(structs, typeName), fieldInitValues, vars));
 }

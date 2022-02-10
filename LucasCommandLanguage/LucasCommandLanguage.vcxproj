@@ -152,6 +152,7 @@
     <ClInclude Include="randomUtility.h" />
     <ClInclude Include="statisticsUtility.h" />
     <ClInclude Include="stringUtility.h" />
+    <ClInclude Include="struct.h" />
     <ClInclude Include="variable.h" />
     <ClInclude Include="vectorUtility.h" />
   </ItemGroup>
@@ -165,6 +166,7 @@
     <ClCompile Include="randomUtility.cpp" />
     <ClCompile Include="statisticsUtility.cpp" />
     <ClCompile Include="stringUtility.cpp" />
+    <ClCompile Include="struct.cpp" />
     <ClCompile Include="variable.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

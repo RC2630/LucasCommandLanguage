@@ -1,0 +1,21 @@
+// example about points
+
+/structdef Point x Number y Number
+/construct p Point 1 2
+p = ({p.x}, {p.y}) before addition
+
+/add p.x [p.x] 5
+/add p.y [p.y] 5
+p = ({p.x}, {p.y}) after addition ; /line
+
+// example about students
+
+/structdef Student name String grade Number studentNumber Number
+/construct rosa Student Rosa 12 12870119
+/construct john Student John 10 38199281
+
+{rosa.name} is a grade {rosa.grade} student, while {john.name} is a grade {john.grade} student.
+{rosa.name}'s student number is {rosa.studentNumber}, while {john.name}'s student number is {john.studentNumber}.
+
+/sub diff [rosa.grade] [john.grade]
+{rosa.name} is {diff} years older than {john.name}. ; /line

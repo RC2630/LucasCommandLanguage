@@ -1,0 +1,13 @@
+/blockdef BlueLine
+	/line
+	-------------------------------------------------------------
+	/line
+/endblock
+
+/help                 ; /BlueLine
+/help commands        ; /BlueLine
+/help commands memory ; /BlueLine
+/help commands assert ; /BlueLine
+/help commands struct ; /BlueLine
+/help memory          ; /BlueLine
+/help struct          ; /BlueLine

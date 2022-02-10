@@ -1,0 +1,14 @@
+// feel free to comment/uncomment so that you can explore struct/object deletion in more depth!
+
+/structdef Student name String age Number
+/structdef Point x Number y Number
+
+/construct lucas Student Lucas 19
+/construct jackie Student Jackie 19
+/construct justin Student Justin 20
+
+/construct p1 Point 1 2
+/construct p2 Point 3 4
+
+/delobject jackie
+/delstruct Point

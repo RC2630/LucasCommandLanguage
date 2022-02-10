@@ -1,0 +1,17 @@
+// feel free to comment/uncomment anything as you see fit, so you can experiment with the /assertobjecttype command!
+
+/structdef A a Number b Number
+/structdef B p Bool q Bool
+
+/construct inst_a A 1 2
+/construct inst_b B true false
+
+/assertobjecttype nonExistentObject nonExistentStruct This one has a non-existent object and a non-existent struct.
+/assertobjecttype inst_a nonExistentStruct This one has a real object and a non-existent struct.
+/assertobjecttype nonExistentObject A This one has a non-existent object and a real struct.
+
+/assertobjecttype inst_a B This one should fail.
+/assertobjecttype inst_b A This one should fail as well.
+
+/assertobjecttype inst_a A This one should pass.
+/assertobjecttype inst_b B This one should pass as well.

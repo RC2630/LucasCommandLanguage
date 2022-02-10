@@ -19,7 +19,8 @@ namespace help {
 		"/help blocks = display help document for blocks (how to use blocks, including examples)\n"
 		"/help memory = display help document for memory management and cleaning\n"
 		"/help lclinfo = display information on this programming language (LCL = Lucas Command Language), including copyright\n"
-		"/help special = display special features of LCL that you should be aware of";
+		"/help special = display special features of LCL that you should be aware of\n"
+		"/help struct = display help document for structs and objects";
 
 	const string COMMAND_HELP_DIRECTORY =
 
@@ -35,7 +36,8 @@ namespace help {
 		"/help commands blocks = display commands related to blocks\n"
 		"/help commands cflow = display commands related to control flow\n"
 		"/help commands memory = display commands related to memory\n"
-		"/help commands assert = display commands related to assertions";
+		"/help commands assert = display commands related to assertions\n"
+		"/help commands struct = display commands related to structs and objects";
 
 	const string COMMAND_HELP_GENERAL =
 
@@ -161,10 +163,14 @@ namespace help {
 
 		"/delvar <varname> = delete variable named varname if such variable exists, otherwise do nothing\n"
 		"/delblock <blockname> = delete block named blockname if such block exists, otherwise do nothing\n"
+		"/delstruct <structname> = delete struct named structname if such struct exists, otherwise do nothing\n"
+		"/delobject <objectname> = delete object named objectname if such object exists, otherwise do nothing\n"
 		"/clean = clean up all temporary blocks (these get created when \"/while\" is used); if there are no temporary blocks, this command does nothing\n\n"
 		
 		"/existvar <boolvar> <varname> = checks if variable named varname exists, and stores result into boolean variable named boolvar\n"
 		"/existblock <boolvar> <blockname> = checks if block named blockname exists, and stores result into boolean variable named boolvar\n"
+		"/existstruct <boolvar> <structname> = checks if struct named structname exists, and stores result into boolean variable named boolvar\n"
+		"/existobject <boolvar> <objectname> = checks if object named objectname exists, and stores result into boolean variable named boolvar\n"
 		"/existtemps <boolvar> = checks if there are any temporary blocks in the program, and stores result into boolean variable named boolvar\n\n"
 		
 		"Type \"/help memory\" for information on when and why you should use the deletion/cleaning commands";
@@ -173,13 +179,23 @@ namespace help {
 
 		"LIST OF ASSERTION-RELATED COMMANDS:\n\n"
 
-		"/fail <message> = prints out message and terminate the program immediately\n"
-		"/assert <boolvalue> <message> = if boolvalue is false, prints out message and terminate the program immediately\n"
-		"/assertvar <boolvar> <message> = if value of boolvar is false, prints out message and terminate the program immediately\n"
-		"/asserttype <varname> <typename> <message> = if datatype of varname is not typename, prints out message and terminate the program immediately\n\n"
+		"/fail <message> = prints out message and terminates the program immediately\n"
+		"/assert <boolvalue> <message> = if boolvalue is false, prints out message and terminates the program immediately\n"
+		"/assertvar <boolvar> <message> = if value of boolvar is false, prints out message and terminates the program immediately\n"
+		"/asserttype <varname> <typename> <message> = if datatype of varname is not typename, prints out message and terminates the program immediately\n"
+		"/assertobjecttype <objectname> <structname> <message> = if struct-type of objectname is not structname, prints out message and terminates the program immediately\n\n"
 		
 		"NOTE: For assertions that require the name of a variable, if that variable does not exist, an error message is displayed but the program will NOT terminate.";
 
+	const string COMMAND_HELP_STRUCT =
+
+		"LIST OF STRUCT AND OBJECT RELATED COMMANDS:\n\n"
+		
+		"/structdef <structname> <fieldname_1> <fieldtype_1> <fieldname_2> <fieldtype_2> ... <fieldname_n> <fieldtype_n> = define a new struct with the given structname and field information\n"
+		"/construct <objectname> <structname> <fieldvalue_1> <fieldvalue_2> ... <fieldvalue_n> = instantiate a new object of type structname, with the given objectname and initial field values\n\n"
+		
+		"Type \"/help struct\" for information on what structs and objects are, and how to use them";
+	
 	const string VARIABLE_HELP =
 		
 		"HELP WITH VARIABLES:\n\n"
@@ -257,6 +273,11 @@ namespace help {
 		"explicit deletion will cause BOTH the inner and outer loops' temporary blocks to be deleted.\n"
 		"Therefore, wait until all layers of the nested loop are finished before performing the deletion.\n\n"
 
+		"Deleting structs and objects require special caution.\n"
+		"When a struct is deleted, all objects of that type are also deleted. All field variables corresponding to any of these objects are also deleted.\n"
+		"When an object is deleted, all field variables of that object are also deleted.\n"
+		"You should not attempt to delete individual fields of an object manually. Doing so is undefined behaviour.\n\n"
+
 		"Type \"/help commands memory\" for a list of commands that perform these deletion operations";
 
 	const string LCL_INFO =
@@ -296,6 +317,25 @@ namespace help {
 		"This is because the first space is parsed as the separator between the command (\"/escprint\") and the argument (your message).\n"
 		"This pattern generalizes to multiple leading spaces, and to tabs, as well.\n"
 		"Take extra caution if you choose to use escaped-print commands to display leading spaces or tabs. You can also choose to use \"/space\" or \"/tab\", which do not have this special issue.";
+
+	const string STRUCT_HELP =
+
+		"HELP WITH STRUCTS AND OBJECTS:\n\n"
+		
+		"Structs are customly defined compound types, which hold one or more fields of primitive data types.\n"
+		"Objects are instances of structs. The datatype of an object is always a struct.\n\n"
+
+		"Structs can be useful in modeling naturally compound data, such as points (x, y), colour (r, g, b), or student (name, age, grade).\n\n"
+
+		"Structs contain fields. Each field has a field name and a field type.\n"
+		"When creating objects, initial values of each of its fields are provided in the same order as the fields in its struct.\n\n"
+
+		"Each field of an object is a variable, which, for the most part, behaves just like any other variable.\n"
+		"You can pass the field as a variable to any command that takes in variable names, and use \"{}\" or \"[]\" to get its value, as usual.\n"
+		"The only notable exception is that variables that are fields of objects cannot be deleted directly through \"/delvar\". Instead, objects should be deleted in their entirety by using \"/delobject\".\n"
+		"The variables that are fields of objects have names of the form \"<objectname>.<fieldname>\", so for example, the variable that is the field x of object p has variable name \"p.x\".\n\n"
+		
+		"Type \"/help commands struct\" for a list of commands related to structs and objects";
 
 }
 
