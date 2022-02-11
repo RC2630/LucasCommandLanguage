@@ -17,15 +17,11 @@ bool srt::Struct::operator != (const Struct& other) const {
 
 srt::Object::Object(const string& name_, const Struct& type_, const vector<string>& fieldInitValues, vector<Variable>& vars) {
 	name = name_;
-	type = type_;
+	structTypename = type_.name;
 	for (int i = 0; i < fieldInitValues.size(); i++) {
 		vars.push_back(Variable(name_ + "." + type_.fieldsAndTypes.at(i).first, fieldInitValues.at(i), type_.fieldsAndTypes.at(i).second));
-		fields.push_back(&vars.back());
+		fieldnames.push_back(vars.back().name);
 	}
-}
-
-string srt::Object::typeName() const {
-	return type.name;
 }
 
 bool srt::Object::operator == (const Object& other) const {
@@ -93,7 +89,7 @@ void srt::deleteStruct(vector<Struct>& structs, vector<Object>& objects, vector<
 	Struct srt = findStruct(structs, srtname);
 	vector<string> namesToDelete;
 	for (const Object& obj : objects) {
-		if (obj.typeName() == srtname) {
+		if (obj.structTypename == srtname) {
 			namesToDelete.push_back(string(obj.name));
 		}
 	}

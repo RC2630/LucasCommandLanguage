@@ -1,0 +1,12 @@
+/structdef Student name String grade Number studentNumber Number
+/inherit FancyStudent Student favCourseSubject String favCourseNumber Number markForFavCourse Number
+
+/construct lucas FancyStudent Lucas 14 12345 CPSC 123 95
+/construct boris Student Boris 12 13579
+
+{lucas.name} is a grade {lucas.grade} student, with student number {lucas.studentNumber}.
+{lucas.name}'s favourite course is {lucas.favCourseSubject} {lucas.favCourseNumber}, and he got {lucas.markForFavCourse}% on this course! ; /line
+
+{boris.name} is a grade {boris.grade} student, with student number {boris.studentNumber}.
+//{boris.name}'s favourite course is {boris.favCourseSubject} {boris.favCourseNumber}, and he got {boris.markForFavCourse}% on this course! ; /line
+We do not know what {boris.name}'s favourite course is. ; /line

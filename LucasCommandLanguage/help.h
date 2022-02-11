@@ -181,7 +181,7 @@ namespace help {
 
 		"/fail <message> = prints out message and terminates the program immediately\n"
 		"/assert <boolvalue> <message> = if boolvalue is false, prints out message and terminates the program immediately\n"
-		"/assertvar <boolvar> <message> = if value of boolvar is false, prints out message and terminates the program immediately\n"
+		"/assertvar <boolvar> <message> = if value of variable named boolvar is false, prints out message and terminates the program immediately\n"
 		"/asserttype <varname> <typename> <message> = if datatype of varname is not typename, prints out message and terminates the program immediately\n"
 		"/assertobjecttype <objectname> <structname> <message> = if struct-type of objectname is not structname, prints out message and terminates the program immediately\n\n"
 		
@@ -192,7 +192,12 @@ namespace help {
 		"LIST OF STRUCT AND OBJECT RELATED COMMANDS:\n\n"
 		
 		"/structdef <structname> <fieldname_1> <fieldtype_1> <fieldname_2> <fieldtype_2> ... <fieldname_n> <fieldtype_n> = define a new struct with the given structname and field information\n"
-		"/construct <objectname> <structname> <fieldvalue_1> <fieldvalue_2> ... <fieldvalue_n> = instantiate a new object of type structname, with the given objectname and initial field values\n\n"
+		"/construct <objectname> <structname> <fieldvalue_1> <fieldvalue_2> ... <fieldvalue_n> = instantiate a new object of type structname, with the given objectname and initial field values\n"
+		"/setdefault <structname> <fieldvalue_1> <fieldvalue_2> ... <fieldvalue_n> = sets the default constructor to initialize the object with the given field values\n"
+		"/consdefault <objectname> <structname> = instantiate a new object with the default constructor set by \"/setdefault\"\n"
+		"/copyobject <destobject> <sourceobject> = copy construction or copy assignment of source object into dest object, depending on if dest object already exists or not\n"
+		"/getobjecttype <strvar> <objname> = get the object named objname's struct-type, and store its name in strvar (as a String)\n"
+		"/inherit <substructname> <superstructname> <newfieldname_1> <newfieldtype_1> ... <newfieldname_n> <newfieldtype_n> = define a new struct with all of superstructname's fields, plus the given new fields\n\n"
 		
 		"Type \"/help struct\" for information on what structs and objects are, and how to use them";
 	

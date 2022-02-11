@@ -4,6 +4,7 @@
 #include "stringUtility.h"
 #include "ansi_codes.h"
 #include "numberUtility.h"
+#include "abstractFunctions.h"
 
 #include "help.h"
 #include "variable.h"
@@ -20,6 +21,7 @@ using namespace parse;
 using namespace vecUtil;
 using namespace strUtil;
 using namespace numUtil;
+using namespace absFunc;
 
 using namespace help;
 using namespace var;
@@ -148,6 +150,11 @@ void customAssertObjectType(const string& command, const string& objname, const 
 // struct and object helpers
 void structdef(const string& command);
 void construct(const string& command);
+void setDefault(const string& command);
+void consDefault(const string& command);
+void copyObject(const string& command);
+void getObjectType(const string& strvar, const string& objname);
+void inherit(const string& command);
 
 int main() {
 
@@ -415,6 +422,16 @@ void interpretCommand(const string& command, vector<string>& commands, int currI
 		structdef(command);
 	} else if (commandIs(command, "/construct")) {
 		construct(command);
+	} else if (commandIs(command, "/setdefault")) {
+		setDefault(command);
+	} else if (commandIs(command, "/consdefault")) {
+		consDefault(command);
+	} else if (commandIs(command, "/copyobject")) {
+		copyObject(command);
+	} else if (commandIs(command, "/getobjecttype")) {
+		getObjectType(parseArgument(command, 1), parseArgument(command, 2));
+	} else if (commandIs(command, "/inherit")) {
+		inherit(command);
 	} else if (numArguments(command) == 0 && blk::contains(blocks, command.substr(1))) { // DO NOT MOVE - SHOULD HAVE LOWEST PRECEDENCE
 		runBlock(command.substr(1), commands, currIndex);
 	} else {
@@ -1109,7 +1126,7 @@ void customAssertObjectType(const string& command, const string& objname, const 
 			 << "The program will now attempt to continue execution.\n" << ANSI_NORMAL;
 		return;
 	}
-	string structtype = findObject(objects, objname).typeName();
+	string structtype = findObject(objects, objname).structTypename;
 	customAssert(command, structtype == srtname, message);
 }
 
@@ -1134,4 +1151,88 @@ void construct(const string& command) {
 		fieldInitValues.push_back(parseArgument(command, i));
 	}
 	objects.push_back(Object(objectName, srt::findStruct(structs, typeName), fieldInitValues, vars));
+}
+
+void setDefault(const string& command) {
+	string srtname = parseArgument(command, 1);
+	if (!srt::containsStruct(structs, srtname)) {
+		cout << ANSI_RED << "There is currently no struct named \"" << srtname << "\".\n" << ANSI_NORMAL;
+		return;
+	}
+	Struct& srt = findStruct(structs, srtname);
+	for (int i = 2; i <= numArguments(command); i++) {
+		srt.defaultValues.push_back(parseArgument(command, i));
+	}
+}
+
+void consDefault(const string& command) {
+	string objectName = parseArgument(command, 1);
+	string typeName = parseArgument(command, 2);
+	if (!srt::containsStruct(structs, typeName)) {
+		cout << ANSI_RED << "There is currently no struct named \"" << typeName << "\".\n" << ANSI_NORMAL;
+		return;
+	}
+	vector<string> defaultValues = findStruct(structs, typeName).defaultValues;
+	if (defaultValues.empty()) {
+		cout << ANSI_RED << "The struct \"" << typeName << "\" does not have a default constructor yet. Make one using the \"/setdefault\" command first, before using \"/consdefault\".\n" << ANSI_NORMAL;
+		return;
+	}
+	objects.push_back(Object(objectName, srt::findStruct(structs, typeName), defaultValues, vars));
+}
+
+void copyObject(const string& command) {
+	string destObjname = parseArgument(command, 1);
+	string sourceObjname = parseArgument(command, 2);
+	if (!srt::containsObject(objects, sourceObjname)) {
+		cout << ANSI_RED << "There is currently no source object named \"" << sourceObjname << "\" to copy from.\n" << ANSI_NORMAL;
+		return;
+	}
+	Object& sourceObject = findObject(objects, sourceObjname);
+	if (srt::containsObject(objects, destObjname)) {
+		// copy assignment
+		Object& destObject = findObject(objects, destObjname);
+		if (destObject.structTypename != sourceObject.structTypename) {
+			cout << ANSI_RED << "The type of dest object (" << destObject.structTypename << ") is not the same as the type of source object (" << sourceObject.structTypename << ").\n" << ANSI_NORMAL;
+			return;
+		}
+		for (int i = 0; i < sourceObject.fieldnames.size(); i++) {
+			string valueToCopy = var::find(vars, sourceObject.fieldnames.at(i)).value;
+			var::find(vars, destObject.fieldnames.at(i)).value = valueToCopy;
+		}
+	} else {
+		// copy constructor
+		vector<string> fieldInitValues;
+		for (const string& fieldname : sourceObject.fieldnames) {
+			fieldInitValues.push_back(var::find(vars, fieldname).value);
+		}
+		objects.push_back(Object(destObjname, findStruct(structs, sourceObject.structTypename), fieldInitValues, vars));
+	}
+}
+
+void getObjectType(const string& strvar, const string& objname) {
+	if (!containsObject(objects, objname)) {
+		cout << ANSI_RED << "There is currently no object named \"" << objname << "\"\n" << ANSI_NORMAL;
+		return;
+	}
+	string type = findObject(objects, objname).structTypename;
+	createVar(strvar, type, "String");
+}
+
+void inherit(const string& command) {
+	string subsrtname = parseArgument(command, 1);
+	string supersrtname = parseArgument(command, 2);
+	if (!containsStruct(structs, supersrtname)) {
+		cout << ANSI_RED << "There is currently no super-struct named \"" << supersrtname << "\" to inherit from.\n" << ANSI_NORMAL;
+		return;
+	}
+	Struct& superstruct = findStruct(structs, supersrtname);
+	vector<string> fieldInfo;
+	for (const pair<string, string>& fieldAndType : superstruct.fieldsAndTypes) {
+		fieldInfo.push_back(fieldAndType.first);
+		fieldInfo.push_back(fieldAndType.second);
+	}
+	for (int i = 3; i <= numArguments(command); i++) {
+		fieldInfo.push_back(parseArgument(command, i));
+	}
+	structs.push_back(Struct(subsrtname, fieldInfo));
 }

@@ -14,6 +14,7 @@ namespace srt {
 
 		string name;
 		vector<pair<string, string>> fieldsAndTypes;
+		vector<string> defaultValues;
 
 		Struct() = default;
 		Struct(const string& name_, const vector<string>& fieldsAndTypesUnpaired);
@@ -25,11 +26,10 @@ namespace srt {
 	struct Object {
 
 		string name;
-		Struct type;
-		vector<Variable*> fields;
+		string structTypename;
+		vector<string> fieldnames;
 
 		Object(const string& name_, const Struct& type_, const vector<string>& fieldInitValues, vector<Variable>& vars);
-		string typeName() const;
 		bool operator == (const Object& other) const;
 		bool operator != (const Object& other) const;
 

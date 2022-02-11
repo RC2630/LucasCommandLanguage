@@ -1,0 +1,35 @@
+/structdef Point x Number y Number
+/structdef Person name String age Number
+
+/construct boringPoint Point 1 2
+/construct lucas Person Lucas 19
+
+// source object does not exist (error)
+/copyobject newPoint fancyPoint
+/line
+
+// destination object does not exist (copy constructor)
+/copyobject anotherBoringPoint boringPoint
+/copyobject lucasClone lucas
+anotherBoringPoint: ({anotherBoringPoint.x}, {anotherBoringPoint.y})
+lucasClone: ({lucasClone.name}, {lucasClone.age})
+/line
+
+// destination object exists, but the type does not match (error)
+/construct jackie Person Jackie 19
+/copyobject jackie boringPoint
+/line
+
+// destination object exists, and the type matches (copy assignment)
+/construct evenMoreBoringPoint Point 0 0
+/construct someRandomPerson Person Rando 47
+/useblue false ; BEFORE COPYING: ; /useblue true
+evenMoreBoringPoint: ({evenMoreBoringPoint.x}, {evenMoreBoringPoint.y})
+someRandomPerson: ({someRandomPerson.name}, {someRandomPerson.age})
+/line
+/copyobject evenMoreBoringPoint boringPoint
+/copyobject someRandomPerson lucas
+/useblue false ; AFTER COPYING: ; /useblue true
+evenMoreBoringPoint: ({evenMoreBoringPoint.x}, {evenMoreBoringPoint.y})
+someRandomPerson: ({someRandomPerson.name}, {someRandomPerson.age})
+/line
