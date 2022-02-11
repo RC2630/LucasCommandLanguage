@@ -23,6 +23,8 @@ That's about it. Have fun using LCL! 😀
 
 ## Version History
 
+v3.1 - Added default constructors, copy constructors, copy assignment, inheritance, and the ability to get the datatype (these are all utility operations for objects or structs). More example files are included, as well.
+
 v3.0 - BIG UPDATE! Added structs and objects, and commands related to them. Structs can only hold fields of primitive types at the moment, but that may change somewhere down the line! Example files for structs are provided in the `examples` folder, as usual.
 
 v2.4 - It's been a while since the last update. This one is not huge, but should increase code quality and ease of code writing. Additions include support for indentation, inline comments, and multiple commands on a single line. Also, there are new commands `/space` and `/tab` for displaying special characters, which can be useful in particular situations. New example file added in the `examples` folder, as usual.
