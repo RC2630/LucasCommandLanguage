@@ -1,0 +1,14 @@
+// all of the following should crash
+
+// struct definition with invalid types
+/structdef Point x Integer y Integer
+
+// struct definition with self-reference
+/structdef TooAmbitious x Number y String z TooAmbitious
+
+// struct definition with type declared later in the program
+/structdef B a Number b Number c A
+/structdef A x Bool y Bool
+
+// just to make sure crashing actually causes a crash
+THIS LINE SHOULD NOT EXECUTE! ; /line

@@ -1,0 +1,48 @@
+// THIS FILE DIRECTLY EXPANDS ON THE PREVIOUS FILE (nestedStructObject.txt)
+
+// 2 layer nesting
+
+/structdef Course subject String code Number
+/structdef Student name String year Number favCourse Course leastFavCourse Course
+
+/construct lucas Student Lucas 2 CPSC 123 ENGL 321
+
+{lucas.name} is a year {lucas.year} student.
+His favourite course is {lucas.favCourse.subject} {lucas.favCourse.code}, and his least favourite course is {lucas.leastFavCourse.subject} {lucas.leastFavCourse.code}.
+/line
+
+// 3 layer nesting
+
+/structdef StudyGroup name String course Course stu1 Student stu2 Student
+
+/construct cpsc228 Course CPSC 228
+/construct cpsc228studyGroup StudyGroup CPSC-228-Study-Group {cpsc228.subject} {cpsc228.code} {lucas.name} {lucas.year} {lucas.favCourse.subject} {lucas.favCourse.code} {lucas.leastFavCourse.subject} {lucas.leastFavCourse.code} Jackie 2 MATH 393 EOSC 188
+
+{cpsc228studyGroup.name} is a study group for {cpsc228studyGroup.course.subject} {cpsc228studyGroup.course.code}.
+{cpsc228studyGroup.stu1.name} is one of the members, and {cpsc228studyGroup.stu2.name} is the other member.
+It turns out that {cpsc228studyGroup.stu2.favCourse.subject} {cpsc228studyGroup.stu2.favCourse.code} is {cpsc228studyGroup.stu2.name}'s favourite course! ; /line
+
+// placeholders (default constructor)
+
+/setdefault StudyGroup STUDY-GROUP-PLACEHOLDER-NAME ABCD 100 Student1 0 BEST 263 WRST 362 Student2 0 GOOD 512 ABOM 215
+/consdefault defaultStudyGroup StudyGroup
+
+{defaultStudyGroup.name} is a study group for {defaultStudyGroup.course.subject} {defaultStudyGroup.course.code}.
+{defaultStudyGroup.stu1.name} is one of the members, and {defaultStudyGroup.stu2.name} is the other member.
+It turns out that {defaultStudyGroup.stu2.favCourse.subject} {defaultStudyGroup.stu2.favCourse.code} is {defaultStudyGroup.stu2.name}'s favourite course! ; /line
+
+// copying the CPSC 228 study group to the default study group (using copy assignment)
+
+/copyobject defaultStudyGroup cpsc228studyGroup
+
+{defaultStudyGroup.name} is a study group for {defaultStudyGroup.course.subject} {defaultStudyGroup.course.code}.
+{defaultStudyGroup.stu1.name} is one of the members, and {defaultStudyGroup.stu2.name} is the other member.
+It turns out that {defaultStudyGroup.stu2.favCourse.subject} {defaultStudyGroup.stu2.favCourse.code} is {defaultStudyGroup.stu2.name}'s favourite course! ; /line
+
+// copying the CPSC 228 study group to a new study group (using copy constructor)
+
+/copyobject newStudyGroup cpsc228studyGroup
+
+{newStudyGroup.name} is a study group for {newStudyGroup.course.subject} {newStudyGroup.course.code}.
+{newStudyGroup.stu1.name} is one of the members, and {newStudyGroup.stu2.name} is the other member.
+It turns out that {newStudyGroup.stu2.favCourse.subject} {newStudyGroup.stu2.favCourse.code} is {newStudyGroup.stu2.name}'s favourite course! ; /line

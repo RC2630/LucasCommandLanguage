@@ -24,9 +24,11 @@ namespace var {
 		Variable(const string& varname, const string& data);
 		Variable(const string& varname, bool data);
 		Variable(const string& varname, const string& data, const string& type);
+
 		string getStringValue() const;
 		double getNumericalValue() const;
 		bool getBooleanValue() const;
+		string getAppropriateValue() const;
 
 	};
 
@@ -38,6 +40,7 @@ namespace var {
 	ostream& operator << (ostream& out, const Variable& var);
 	void replaceVariableReferencesWithRoundedValues(string& s, vector<Variable>& vars, int numPlaces);
 	void replaceVariableReferencesWithFullPrecisionValues(string& s, vector<Variable>& vars);
+	bool isPrimitive(const string& type);
 
 }
 

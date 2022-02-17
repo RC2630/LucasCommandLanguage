@@ -19,6 +19,7 @@ namespace blk {
 
 		Block(const string& n);
 		Block(const string& n, const vector<string>& v);
+
 		void add(const string& com);
 		bool empty() const;
 		void spliceInto(vector<string>& commands, int currIndex) const;

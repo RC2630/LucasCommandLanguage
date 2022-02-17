@@ -1,0 +1,39 @@
+// finding the average point given five 3D points p1 ... p5
+
+/structdef Point x Number y Number z Number
+/setdefault Point 0 0 0
+
+/consdefault tempPoint Point
+
+/blockdef inputPoint
+	/input tempPoint.x Number Enter the x value of a point: 
+	/input tempPoint.y Number Enter the y value of a point: 
+	/input tempPoint.z Number Enter the z value of a point: 
+	/line
+/endblock
+
+/blockdef dispPoint
+	({tempPoint.x}, {tempPoint.y}, {tempPoint.z})
+/endblock
+
+/inputPoint ; /copyobject p1 tempPoint
+/inputPoint ; /copyobject p2 tempPoint
+/inputPoint ; /copyobject p3 tempPoint
+/inputPoint ; /copyobject p4 tempPoint
+/inputPoint ; /copyobject p5 tempPoint
+
+/useblue false ; Points: ; /useblue true
+/copyobject tempPoint p1 ; /dispPoint
+/copyobject tempPoint p2 ; /dispPoint
+/copyobject tempPoint p3 ; /dispPoint
+/copyobject tempPoint p4 ; /dispPoint
+/copyobject tempPoint p5 ; /dispPoint ; /line
+
+/consdefault averagePoint Point
+/add averagePoint.x [p1.x] [p2.x] [p3.x] [p4.x] [p5.x]
+/add averagePoint.y [p1.y] [p2.y] [p3.y] [p4.y] [p5.y]
+/add averagePoint.z [p1.z] [p2.z] [p3.z] [p4.z] [p5.z]
+/div averagePoint.x [averagePoint.x] 5 ; /div averagePoint.y [averagePoint.y] 5 ; /div averagePoint.z [averagePoint.z] 5
+
+/useblue false ; Average point: ; /useblue true
+/copyobject tempPoint averagePoint ; /dispPoint ; /line

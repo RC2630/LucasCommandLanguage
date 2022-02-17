@@ -36,6 +36,18 @@ bool var::Variable::getBooleanValue() const {
 	return strUtil::parseBool(value);
 }
 
+string var::Variable::getAppropriateValue() const {
+	if (datatype == "Number") {
+		return numUtil::toStringRemoveTrailingZeros(getNumericalValue());
+	} else if (datatype == "Bool") {
+		return strUtil::boolval(getBooleanValue());
+	} else if (datatype == "String") {
+		return getStringValue();
+	} else {
+		throw runtime_error("invalid primitive data type");
+	}
+}
+
 bool var::operator == (const Variable& v1, const Variable& v2) {
 	return tie(v1.name, v1.value, v1.datatype) == tie(v2.name, v2.value, v2.datatype);
 }
@@ -127,4 +139,8 @@ void var::replaceVariableReferencesWithFullPrecisionValues(string& s, vector<Var
 		}
 	}
 	s = newString;
+}
+
+bool var::isPrimitive(const string& type) {
+	return type == "Number" || type == "Bool" || type == "String";
 }

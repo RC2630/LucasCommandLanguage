@@ -1,9 +1,19 @@
 #include "struct.h"
 
-srt::Struct::Struct(const string& name_, const vector<string>& fieldsAndTypesUnpaired) {
+// this constructor throws a runtime error if a self-reference is detected,
+// and throws an invalid argument exception if an invalid type is detected
+srt::Struct::Struct(const string& name_, const vector<string>& fieldsAndTypesUnpaired, const vector<Struct>& structs) {
 	name = name_;
 	for (int i = 0; i < fieldsAndTypesUnpaired.size(); i += 2) {
-		fieldsAndTypes.push_back({fieldsAndTypesUnpaired.at(i), fieldsAndTypesUnpaired.at(i + 1)});
+		string field = fieldsAndTypesUnpaired.at(i);
+		string type = fieldsAndTypesUnpaired.at(i + 1);
+		if (type == name) {
+			throw runtime_error(type); // runtime error indicates self-reference
+		}
+		if (!var::isPrimitive(type) && !srt::containsStruct(structs, type)) {
+			throw invalid_argument(type); // invalid argument indicates invalid type
+		}
+		fieldsAndTypes.push_back({field, type});
 	}
 }
 
@@ -15,12 +25,40 @@ bool srt::Struct::operator != (const Struct& other) const {
 	return name != other.name;
 }
 
-srt::Object::Object(const string& name_, const Struct& type_, const vector<string>& fieldInitValues, vector<Variable>& vars) {
+bool srt::Struct::containsStructAsInner(const string& innerSrtname) const {
+	for (const pair<string, string>& fieldAndType : fieldsAndTypes) {
+		if (fieldAndType.second == innerSrtname) {
+			return true;
+		}
+	}
+	return false;
+}
+
+// if you are calling this constructor from outside (i.e. non-recursively),
+// you MUST provide an int variable set to 0 for the fieldInitValuesIndex parameter
+// ALSO, this constructor throws an exception on a non-existent inner struct type, so please catch it
+srt::Object::Object(const string& name_, const Struct& type_, const vector<string>& fieldInitValues,
+					vector<Variable>& vars, vector<Object>& objects, vector<Struct>& structs, int& fieldInitValuesIndex) {
 	name = name_;
 	structTypename = type_.name;
-	for (int i = 0; i < fieldInitValues.size(); i++) {
-		vars.push_back(Variable(name_ + "." + type_.fieldsAndTypes.at(i).first, fieldInitValues.at(i), type_.fieldsAndTypes.at(i).second));
-		fieldnames.push_back(vars.back().name);
+	for (const pair<string, string>& fieldAndType : type_.fieldsAndTypes) {
+		string fieldname = fieldAndType.first;
+		string fieldtype = fieldAndType.second;
+		if (var::isPrimitive(fieldtype)) {
+			vars.push_back(Variable(name_ + "." + fieldname, fieldInitValues.at(fieldInitValuesIndex), fieldtype));
+			fieldnames.push_back(vars.back().name);
+			fieldInitValuesIndex++;
+		} else {
+			// we need to be very careful about what needs to be fed into the recursive call
+			string innerName = name_ + "." + fieldname;
+			if (!srt::containsStruct(structs, fieldtype)) {
+				throw invalid_argument(fieldtype);
+			}
+			Struct& innerType = srt::findStruct(structs, fieldtype);
+			// and now, we trust the natural recursion ...
+			objects.push_back(Object(innerName, innerType, fieldInitValues, vars, objects, structs, fieldInitValuesIndex));
+			objFieldnames.push_back(objects.back().name);
+		}
 	}
 }
 
@@ -67,6 +105,15 @@ srt::Object& srt::findObject(vector<Object>& objects, const string& objname) {
 	throw runtime_error("no matching object");
 }
 
+bool srt::containsStructAsInner(const vector<Struct>& structs, const string& innerSrtname) {
+	for (const Struct& srt : structs) {
+		if (srt.containsStructAsInner(innerSrtname)) {
+			return true;
+		}
+	}
+	return false;
+}
+
 void srt::deleteObject(vector<Object>& objects, vector<Variable>& vars, const string& objname) {
 	if (!containsObject(objects, objname)) {
 		return;
@@ -79,11 +126,22 @@ void srt::deleteObject(vector<Object>& objects, vector<Variable>& vars, const st
 		}
 	}
 	vecUtil::removeByIndexes(vars, indexesToRemove);
+	for (const string& innerObjname : obj.objFieldnames) {
+		// recursively delete inner objects
+		deleteObject(objects, vars, innerObjname);
+	}
 	vecUtil::removeFirstInstance(objects, obj);
 }
 
+// no recursive inner struct deletion is necessary,
+// since an outer struct's deletion does NOT logically result in its inner structs' deletion as well
+// (unlike outer/inner objects, for which recursive deletion DOES make sense)
 void srt::deleteStruct(vector<Struct>& structs, vector<Object>& objects, vector<Variable>& vars, const string& srtname) {
 	if (!containsStruct(structs, srtname)) {
+		return;
+	}
+	if (containsStructAsInner(structs, srtname)) {
+		cout << ANSI_RED << "The struct you are attempting to delete (" << srtname << ") is an inner struct of at least 1 other struct. Therefore, the deletion cannot proceed.\n" << ANSI_NORMAL;
 		return;
 	}
 	Struct srt = findStruct(structs, srtname);
@@ -97,4 +155,31 @@ void srt::deleteStruct(vector<Struct>& structs, vector<Object>& objects, vector<
 		deleteObject(objects, vars, nameToDelete);
 	}
 	vecUtil::removeFirstInstance(structs, srt);
+}
+
+void srt::attemptStructDefinition(const string& name, const vector<string>& fieldAndTypesUnpaired,
+								  vector<Struct>& structs, bool& nonAssertCrash) {
+	try {
+		structs.push_back(Struct(name, fieldAndTypesUnpaired, structs));
+	} catch (const invalid_argument& e) {
+		cout << ANSI_RED << "An invalid type (" << e.what() << ") has been detected. Program will now terminate.\n" << ANSI_NORMAL;
+		nonAssertCrash = false; // this special error is treated like an assertion
+		throw runtime_error("invalid type"); // do not catch this (except in main()'s catch-all)
+	} catch (const runtime_error& e) {
+		cout << ANSI_RED << "A self-reference on a struct (" << e.what() << ") has been detected. Program will now terminate.\n" << ANSI_NORMAL;
+		nonAssertCrash = false; // this special error is treated like an assertion
+		throw runtime_error("self-reference"); // do not catch this (except in main()'s catch-all)
+	}
+}
+
+void srt::attemptObjectConstruction(const string& name, const Struct& type, const vector<string>& fieldInitValues,
+									vector<Variable>& vars, vector<Object>& objects, vector<Struct>& structs, bool& nonAssertCrash) {
+	try {
+		int i = 0;
+		objects.push_back(Object(name, type, fieldInitValues, vars, objects, structs, i));
+	} catch (const invalid_argument& e) {
+		cout << ANSI_RED << "A non-existent inner struct (" << e.what() << ") has been detected. Program will now terminate.\n" << ANSI_NORMAL;
+		nonAssertCrash = false; // this special error is treated like an assertion
+		throw runtime_error("non-existent inner struct"); // do not catch this (except in main()'s catch-all)
+	}
 }

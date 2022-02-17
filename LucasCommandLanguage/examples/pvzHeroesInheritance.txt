@@ -1,0 +1,16 @@
+/structdef Minion name String strength Number health Number
+/inherit Zombie Minion brain Number
+/inherit Plant Minion sun Number
+
+/structdef Ground gp1 Plant gp2 Plant gp3 Plant gz1 Zombie gz2 Zombie gz3 Zombie
+/inherit Field Ground hp Plant wp Plant hz Zombie wz Zombie
+
+/construct f Field sunflower 0 1 1 wall-nut 0 6 1 podfather 2 2 3 conehead 2 2 2 buckethead 3 4 4 rodeo-garg 5 9 7 kernel-pult 1 1 1 cattail 3 2 3 imp 1 1 1 swabbie 1 1 0
+
+Current status of the field:
+On the height lane, we have {f.hp.name} ({f.hp.sun}/{f.hp.strength}/{f.hp.health}) and {f.hz.name} ({f.hz.brain}/{f.hz.strength}/{f.hz.health})
+On the 1st ground lane, we have {f.gp1.name} ({f.gp1.sun}/{f.gp1.strength}/{f.gp1.health}) and {f.gz1.name} ({f.gz1.brain}/{f.gz1.strength}/{f.gz1.health})
+On the 2nd ground lane, we have {f.gp2.name} ({f.gp2.sun}/{f.gp2.strength}/{f.gp2.health}) and {f.gz2.name} ({f.gz2.brain}/{f.gz2.strength}/{f.gz2.health})
+On the 3rd ground lane, we have {f.gp3.name} ({f.gp3.sun}/{f.gp3.strength}/{f.gp3.health}) and {f.gz3.name} ({f.gz3.brain}/{f.gz3.strength}/{f.gz3.health})
+On the water lane, we have {f.wp.name} ({f.wp.sun}/{f.wp.strength}/{f.wp.health}) and {f.wz.name} ({f.wz.brain}/{f.wz.strength}/{f.wz.health})
+/line

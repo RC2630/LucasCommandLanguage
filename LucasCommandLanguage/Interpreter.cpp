@@ -34,8 +34,11 @@ bool reuse_display = true; // using "/prev" will show special green message
 bool warn_type_change = true; // changing type of variable will show warning message
 bool use_blue = true; // most output is blue (instead of the system's default colour)
 bool non_assert_crash = true; // program crashed NOT because of an assertion
+bool debug_on_termination = false; // program will output debug information when it terminates
 
 int num_places = 3; // number of decimal places numerical display uses
+
+string top_level_crash_message = "none"; // the top-level crash message that results from the exception that triggered main()'s catch-all
 
 vector<Variable> vars; // list of all variables in the program
 
@@ -51,7 +54,7 @@ vector<Object> objects; // list of all objects in the program
 void interpretCommand(const string& command, vector<string>& commands, int currIndex, const string& untouched);
 
 // a testing function that executes when the main program terminates (or crashes)
-void test(vector<string>& com);
+void debugOnTermination(vector<string>& com);
 
 // general helpers
 void helpWith1Arg(const string& specific);
@@ -152,6 +155,9 @@ void structdef(const string& command);
 void construct(const string& command);
 void setDefault(const string& command);
 void consDefault(const string& command);
+void copyAssignment(const Object& sourceObject, const Object& destObject);
+void nestedCopyConstruction(const Object& sourceNestedObject, vector<string>& fieldInitValues);
+void copyConstruction(const Object& sourceObject, const string& destObjname);
 void copyObject(const string& command);
 void getObjectType(const string& strvar, const string& objname);
 void inherit(const string& command);
@@ -256,7 +262,9 @@ int main() {
 
 			if (command == "/stop") {
 				cout << ANSI_GREEN << "Program has terminated.\n" << ANSI_NORMAL;
-				test(commands);
+				if (debug_on_termination) {
+					debugOnTermination(commands);
+				}
 				break;
 			}
 
@@ -264,12 +272,15 @@ int main() {
 
 		}
 
-	} catch (...) {
+	} catch (const exception& e) {
 		if (non_assert_crash) {
 			cout << ANSI_RED << "Program has crashed unexpectedly.\n"
 				 << "The command that crashed it is \"" << untouchedCommand << "\"\n" << ANSI_NORMAL;
 		}
-		test(commands);
+		top_level_crash_message = e.what();
+		if (debug_on_termination) {
+			debugOnTermination(commands);
+		}
 	}
 
 }
@@ -302,6 +313,8 @@ void interpretCommand(const string& command, vector<string>& commands, int currI
 		use_blue = parseBooleanArgument(command);
 	} else if (commandIs(command, "/reusedisp")) {
 		reuse_display = parseBooleanArgument(command);
+	} else if (commandIs(command, "/debug")) {
+		debug_on_termination = parseBooleanArgument(command);
 	} else if (commandIs(command, "/input")) {
 		inputWithPrompt(parseArgument(command, 1), parseArgument(command, 2), parseArgumentUntilEnd(command, 3));
 	} else if (commandIs(command, "/store") && numArguments(command) == 3) {
@@ -443,11 +456,13 @@ void interpretCommand(const string& command, vector<string>& commands, int currI
 // THIS FUNCTION IS USED ONLY FOR TESTING, IT WILL BE EXECUTED WHEN THE MAIN PROGRAM TERMINATES (OR CRASHES)
 // note: this function passes in the commands of the program by reference, so we can look at the commands for debugging purposes
 // note: some commands will be different when inspected at the end of execution because of modifications during the program execution
-void test(vector<string>& com) {
-	/*
+void debugOnTermination(vector<string>& com) {
+	
 	cout << ANSI_YELLOW << "\nVariables:\n\n" << ANSI_NORMAL;
 	for (const Variable& var : vars) {
-		cout << var.name << "\n";
+		cout << var.name << ANSI_RED << " = " << ANSI_GREEN
+			 << var.getAppropriateValue() << ANSI_RED << " (" << ANSI_BLUE
+			 << var.datatype << ANSI_RED << ")\n" << ANSI_NORMAL;
 	}
 	if (vars.empty()) {
 		cout << ANSI_MAGENTA << "(none)\n" << ANSI_NORMAL;
@@ -476,7 +491,13 @@ void test(vector<string>& com) {
 	if (objects.empty()) {
 		cout << ANSI_MAGENTA << "(none)\n" << ANSI_NORMAL;
 	}
-	*/
+
+	if (top_level_crash_message == "none") {
+		cout << ANSI_GREEN << "\nProgram execution finished without an exception.\n" << ANSI_NORMAL;
+	} else {
+		cout << ANSI_RED << "\nTop-level crash message: " << top_level_crash_message << "\n" << ANSI_NORMAL;
+	}
+	
 }
 
 void helpWith1Arg(const string& specific) {
@@ -1136,7 +1157,7 @@ void structdef(const string& command) {
 	for (int i = 2; i <= numArguments(command); i++) {
 		fieldInfo.push_back(parseArgument(command, i));
 	}
-	structs.push_back(Struct(structName, fieldInfo));
+	srt::attemptStructDefinition(structName, fieldInfo, structs, non_assert_crash);
 }
 
 void construct(const string& command) {
@@ -1150,7 +1171,7 @@ void construct(const string& command) {
 	for (int i = 3; i <= numArguments(command); i++) {
 		fieldInitValues.push_back(parseArgument(command, i));
 	}
-	objects.push_back(Object(objectName, srt::findStruct(structs, typeName), fieldInitValues, vars));
+	srt::attemptObjectConstruction(objectName, srt::findStruct(structs, typeName), fieldInitValues, vars, objects, structs, non_assert_crash);
 }
 
 void setDefault(const string& command) {
@@ -1177,7 +1198,55 @@ void consDefault(const string& command) {
 		cout << ANSI_RED << "The struct \"" << typeName << "\" does not have a default constructor yet. Make one using the \"/setdefault\" command first, before using \"/consdefault\".\n" << ANSI_NORMAL;
 		return;
 	}
-	objects.push_back(Object(objectName, srt::findStruct(structs, typeName), defaultValues, vars));
+	srt::attemptObjectConstruction(objectName, srt::findStruct(structs, typeName), defaultValues, vars, objects, structs, non_assert_crash);
+}
+
+void copyAssignment(const Object& sourceObject, const Object& destObject) {
+	for (int i = 0; i < sourceObject.fieldnames.size(); i++) {
+		string valueToCopy = var::find(vars, sourceObject.fieldnames.at(i)).value;
+		var::find(vars, destObject.fieldnames.at(i)).value = valueToCopy;
+	}
+	// recursively copy inner objects
+	for (int i = 0; i < sourceObject.objFieldnames.size(); i++) {
+		Object& objectToCopySource = srt::findObject(objects, sourceObject.objFieldnames.at(i));
+		Object& objectToCopyDest = srt::findObject(objects, destObject.objFieldnames.at(i));
+		copyAssignment(objectToCopySource, objectToCopyDest);
+	}
+}
+
+void nestedCopyConstruction(const Object& sourceNestedObject, vector<string>& fieldInitValues) {
+	Struct& sourceNestedStruct = srt::findStruct(structs, sourceNestedObject.structTypename);
+	int indexNestedPrimitive = 0;
+	int indexDoublyNestedObject = 0;
+	for (const pair<string, string>& nestedFieldAndType : sourceNestedStruct.fieldsAndTypes) {
+		if (var::isPrimitive(nestedFieldAndType.second)) {
+			fieldInitValues.push_back(var::find(vars, sourceNestedObject.fieldnames.at(indexNestedPrimitive)).value);
+			indexNestedPrimitive++;
+		} else {
+			// recursion again!
+			Object& doublyNestedObjectToCopy = srt::findObject(objects, sourceNestedObject.objFieldnames.at(indexDoublyNestedObject));
+			nestedCopyConstruction(doublyNestedObjectToCopy, fieldInitValues);
+			indexDoublyNestedObject++;
+		}
+	}
+}
+
+void copyConstruction(const Object& sourceObject, const string& destObjname) {
+	vector<string> fieldInitValues;
+	Struct& sourceStruct = srt::findStruct(structs, sourceObject.structTypename);
+	int indexPrimitive = 0;
+	int indexNestedObject = 0;
+	for (const pair<string, string>& fieldAndType : sourceStruct.fieldsAndTypes) {
+		if (var::isPrimitive(fieldAndType.second)) {
+			fieldInitValues.push_back(var::find(vars, sourceObject.fieldnames.at(indexPrimitive)).value);
+			indexPrimitive++;
+		} else {
+			Object& nestedObjectToCopy = srt::findObject(objects, sourceObject.objFieldnames.at(indexNestedObject));
+			nestedCopyConstruction(nestedObjectToCopy, fieldInitValues);
+			indexNestedObject++;
+		}
+	}
+	srt::attemptObjectConstruction(destObjname, sourceStruct, fieldInitValues, vars, objects, structs, non_assert_crash);
 }
 
 void copyObject(const string& command) {
@@ -1195,17 +1264,10 @@ void copyObject(const string& command) {
 			cout << ANSI_RED << "The type of dest object (" << destObject.structTypename << ") is not the same as the type of source object (" << sourceObject.structTypename << ").\n" << ANSI_NORMAL;
 			return;
 		}
-		for (int i = 0; i < sourceObject.fieldnames.size(); i++) {
-			string valueToCopy = var::find(vars, sourceObject.fieldnames.at(i)).value;
-			var::find(vars, destObject.fieldnames.at(i)).value = valueToCopy;
-		}
+		copyAssignment(sourceObject, destObject);
 	} else {
 		// copy constructor
-		vector<string> fieldInitValues;
-		for (const string& fieldname : sourceObject.fieldnames) {
-			fieldInitValues.push_back(var::find(vars, fieldname).value);
-		}
-		objects.push_back(Object(destObjname, findStruct(structs, sourceObject.structTypename), fieldInitValues, vars));
+		copyConstruction(sourceObject, destObjname);
 	}
 }
 
@@ -1234,5 +1296,5 @@ void inherit(const string& command) {
 	for (int i = 3; i <= numArguments(command); i++) {
 		fieldInfo.push_back(parseArgument(command, i));
 	}
-	structs.push_back(Struct(subsrtname, fieldInfo));
+	srt::attemptStructDefinition(subsrtname, fieldInfo, structs, non_assert_crash);
 }

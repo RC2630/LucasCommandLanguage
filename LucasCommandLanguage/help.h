@@ -62,7 +62,8 @@ namespace help {
 
 		"/warntype <b> = set whether or not changing the type of a variable will display a warning message\n"
 		"/useblue <b> = set whether or not displaying verbatim lines will be in blue (if false, then it will be in the default colour)\n"
-		"/reusedisp <b> = set whether or not /prev will print reuse message whenever it is used\n\n"
+		"/reusedisp <b> = set whether or not /prev will print reuse message whenever it is used\n"
+		"/debug <b> = set whether or not debugging information will be displayed when the program terminates (or crashes)\n\n"
 		
 		"/escprint <escmessage> = display escmessage verbatim, escaping all instances of \"/\", \"[]\", \"{}\", \"//\", \";\", etc. (variables will NOT be replaced with their values)\n"
 		"/escvarprint <escvarmessage> = display escvarmessage verbatim, escaping all instances of \"/\", \"[]\", \"//\", \";\", etc. but NOT \"{}\" (allowing for curly-brace-accessed variables to still work)\n"
@@ -283,6 +284,12 @@ namespace help {
 		"When an object is deleted, all field variables of that object are also deleted.\n"
 		"You should not attempt to delete individual fields of an object manually. Doing so is undefined behaviour.\n\n"
 
+		"Specifically for deleting nested structs and objects:\n"
+		"As before, deleting individual fields is undefined behaviour, whether the field is an object or a variable.\n"
+		"Deleting the outer object removes all fields, including recursively removing all field objects and their fields.\n"
+		"Deleting the inner struct is not allowed. If you attempt to do that, an error message will appear and no deletion will occur.\n"
+		"Deleting the outer struct removes all objects of that struct's type, as before, but now according to the nested object deletion rules above.\n\n"
+
 		"Type \"/help commands memory\" for a list of commands that perform these deletion operations";
 
 	const string LCL_INFO =
@@ -327,18 +334,26 @@ namespace help {
 
 		"HELP WITH STRUCTS AND OBJECTS:\n\n"
 		
-		"Structs are customly defined compound types, which hold one or more fields of primitive data types.\n"
+		"Structs are customly defined compound types, which hold one or more fields of primitive or compound data types.\n"
 		"Objects are instances of structs. The datatype of an object is always a struct.\n\n"
 
 		"Structs can be useful in modeling naturally compound data, such as points (x, y), colour (r, g, b), or student (name, age, grade).\n\n"
 
 		"Structs contain fields. Each field has a field name and a field type.\n"
-		"When creating objects, initial values of each of its fields are provided in the same order as the fields in its struct.\n\n"
+		"When creating objects, initial values of each of its fields are provided in the same order as the fields in its struct.\n"
+		"Specifically for nested object creation, the inner object's fields are treated as multiple separate fields in construction.\n\n"
 
-		"Each field of an object is a variable, which, for the most part, behaves just like any other variable.\n"
+		"Each field of an object is either a variable or a nested object.\n\n"
+
+		"If the field is a variable, it will, for the most part, behave just like any other variable.\n"
 		"You can pass the field as a variable to any command that takes in variable names, and use \"{}\" or \"[]\" to get its value, as usual.\n"
 		"The only notable exception is that variables that are fields of objects cannot be deleted directly through \"/delvar\". Instead, objects should be deleted in their entirety by using \"/delobject\".\n"
 		"The variables that are fields of objects have names of the form \"<objectname>.<fieldname>\", so for example, the variable that is the field x of object p has variable name \"p.x\".\n\n"
+
+		"Similarly, if the field is a nested object, it will, for the most part, behave just like any other object.\n"
+		"Deleting inner objects are forbidden, just like deleting field variables.\n"
+		"The inner objects that are fields of outer objects have names of the same form as the field variables of that outer object.\n"
+		"As an example, the name \"p.x.y\" refers to the object p's inner object x's field (variable or inner object) y.\n\n"
 		
 		"Type \"/help commands struct\" for a list of commands related to structs and objects";
 
