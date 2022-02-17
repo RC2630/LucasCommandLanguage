@@ -23,6 +23,8 @@ That's about it. Have fun using LCL! 😀
 
 ## Version History
 
+v3.2 - Added support for nested structs and objects. No longer is the case where structs/objects can only contain primitive fields! Full support for object copying, struct/object deletion, inheritance, etc. are available for nested structs/objects, and there is guaranteed full backwards compatibility with old LCL programs. A new command (`/debug`) is also added, as well as more example files.
+
 v3.1 - Added default constructors, copy constructors, copy assignment, inheritance, and the ability to get the datatype (these are all utility operations for objects or structs). More example files are included, as well.
 
 v3.0 - BIG UPDATE! Added structs and objects, and commands related to them. Structs can only hold fields of primitive types at the moment, but that may change somewhere down the line! Example files for structs are provided in the `examples` folder, as usual.
