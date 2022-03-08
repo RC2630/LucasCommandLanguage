@@ -16,6 +16,7 @@ Special notes:
 1. To save your file somewhere else, simply copy and paste `"input.txt"` to a different location (do NOT cut and paste or drag the file there). Make sure a copy of `"input.txt"` still exists inside the interpreter's relative path. Then, in your new location, feel free to rename the file to whatever makes the most sense.
 2. To run files other than the current `"input.txt"` inside the interpreter's relative path, first clear everything currently in `"input.txt"`, then simply copy the contents of the other file into `"input.txt"` and run it normally.
 3. The interpreter reads commands from `"input.txt"` line by line. Use maximum one command per line in the source code (`"input.txt"`) UNLESS you use semicolons to separate multiple commands on the same line.
+4. The interpreter runs in C++17 or later. You need to make sure the C++ compiler you are using can support at least C++17.
 
 That's about it. Have fun using LCL! 😀
 
