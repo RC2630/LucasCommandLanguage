@@ -5,6 +5,8 @@
 #include <vector>
 #include <string>
 
+#include "mapUtility.h"
+
 using namespace std;
 
 namespace file {
@@ -81,6 +83,99 @@ namespace file {
     // original type in the file must be string
     // only use for strings!
     void outputStrVecAddTo(const vector<string>& v, const string& filename);
+
+    void clearFile(const string& filename);
+
+    template <typename K, typename V>
+    void outputMapTo(const map<K, V>& m, const string& keysFilename, const string& valuesFilename) {
+        auto [keys, values] = mapUtil::pairOfVectorify(m);
+        outputVecTo(keys, keysFilename);
+        outputVecTo(values, valuesFilename);
+    }
+
+    // use this if K != string, V != string
+    template <typename K, typename V>
+    void inputMapFrom(map<K, V>& m, const string& keysFilename, const string& valuesFilename) {
+        vector<K> keys;
+        vector<V> values;
+        inputVecFrom(keys, keysFilename);
+        inputVecFrom(values, valuesFilename);
+        if (keys.size() != values.size()) {
+            throw runtime_error("keys and values have different sizes");
+        }
+        for (int i = 0; i < keys.size(); i++) {
+            m.insert({keys.at(i), values.at(i)});
+        }
+    }
+
+    // use this if K == string, V != string
+    template <typename V>
+    void inputMapFrom_stringKey(map<string, V>& m, const string& keysFilename, const string& valuesFilename) {
+        vector<string> keys;
+        vector<V> values;
+        inputStrVecFrom(keys, keysFilename);
+        inputVecFrom(values, valuesFilename);
+        if (keys.size() != values.size()) {
+            throw runtime_error("keys and values have different sizes");
+        }
+        for (int i = 0; i < keys.size(); i++) {
+            m.insert({keys.at(i), values.at(i)});
+        }
+    }
+
+    // use this if K != string, V == string
+    template <typename K>
+    void inputMapFrom_stringValue(map<K, string>& m, const string& keysFilename, const string& valuesFilename) {
+        vector<K> keys;
+        vector<string> values;
+        inputVecFrom(keys, keysFilename);
+        inputStrVecFrom(values, valuesFilename);
+        if (keys.size() != values.size()) {
+            throw runtime_error("keys and values have different sizes");
+        }
+        for (int i = 0; i < keys.size(); i++) {
+            m.insert({keys.at(i), values.at(i)});
+        }
+    }
+
+    // use this if K == string, V == string
+    void inputMapFrom_stringKeyValue(map<string, string>& m, const string& keysFilename, const string& valuesFilename);
+
+    // use this if K != string, V != string
+    template <typename K, typename V>
+    void outputMapAddTo(const map<K, V>& m, const string& keysFilename, const string& valuesFilename) {
+        map<K, V> tempm;
+        inputMapFrom(tempm, keysFilename, valuesFilename);
+        for (const auto& pair : m) {
+            tempm.insert(pair);
+        }
+        outputMapTo(tempm, keysFilename, valuesFilename);
+    }
+
+    // use this if K == string, V != string
+    template <typename V>
+    void outputMapAddTo_stringKey(const map<string, V>& m, const string& keysFilename, const string& valuesFilename) {
+        map<string, V> tempm;
+        inputMapFrom_stringKey(tempm, keysFilename, valuesFilename);
+        for (const auto& pair : m) {
+            tempm.insert(pair);
+        }
+        outputMapTo(tempm, keysFilename, valuesFilename);
+    }
+
+    // use this if K != string, V == string
+    template <typename K>
+    void outputMapAddTo_stringValue(const map<K, string>& m, const string& keysFilename, const string& valuesFilename) {
+        map<K, string> tempm;
+        inputMapFrom_stringValue(tempm, keysFilename, valuesFilename);
+        for (const auto& pair : m) {
+            tempm.insert(pair);
+        }
+        outputMapTo(tempm, keysFilename, valuesFilename);
+    }
+
+    // use this if K == string, V == string
+    void outputMapAddTo_stringKeyValue(const map<string, string>& m, const string& keysFilename, const string& valuesFilename);
 
 }
 

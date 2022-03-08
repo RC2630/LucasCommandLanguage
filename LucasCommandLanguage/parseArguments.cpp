@@ -9,6 +9,12 @@ string parse::parseArgumentHelper(const string& command) {
 
 // parses the position-th argument of the command
 string parse::parseArgument(const string& command, int position) {
+    if (position > numArguments(command)) {
+        throw invalid_argument("position (" + to_string(position) + ") > # of arguments (" + to_string(numArguments(command)) + ")");
+    }
+    if (position == 0) {
+        return getCommandName(command);
+    }
     string processedCommand = removeChars(command, ' ', position - 1);
     string argument = parseArgumentHelper(processedCommand);
     return removeAllAfterChar(argument, ' ');
@@ -31,6 +37,12 @@ bool parse::parseBooleanArgument(const string& command, int position) {
 // parse 1 until the end returns "arg1 arg2 arg3 arg4 arg5"
 // parse 3 until the end returns "arg3 arg4 arg5"
 string parse::parseArgumentUntilEnd(const string& command, int position) {
+    if (position > numArguments(command)) {
+        throw invalid_argument("position (" + to_string(position) + ") > # of arguments (" + to_string(numArguments(command)) + ")");
+    }
+    if (position == 0) {
+        return command;
+    }
     string processedCommand = removeChars(command, ' ', position - 1);
     string argument = parseArgumentHelper(processedCommand);
     return argument;
@@ -50,6 +62,12 @@ bool parse::commandIs(const string& command, const string& commandName) {
 
 // returns a trimmed version of the command consisting only of the command name and the first n arguments
 string parse::commandPlusNargs(const string& command, int n) {
+    if (n > numArguments(command)) {
+        throw invalid_argument("n (" + to_string(n) + ") > # of arguments (" + to_string(numArguments(command)) + ")");
+    }
+    if (n == 0) {
+        return getCommandName(command);
+    }
     string newString;
     int spaceCount = 0;
     for (int i = 0; i < command.size(); i++) {
@@ -65,4 +83,8 @@ string parse::commandPlusNargs(const string& command, int n) {
         }
     }
     return newString;
+}
+
+string parse::getCommandName(const string& command) {
+    return strUtil::removeAllAfterChar(command, ' ');
 }

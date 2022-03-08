@@ -6,6 +6,8 @@
 using namespace std;
 using namespace strUtil;
 
+// for all parse functions, argument 0 refers to the command name itself, and the actual arguments are indexed in a 1-based way
+
 namespace parse {
 
     // this is a HELPER function - do NOT call this function outside of this file (parseArguments.h)
@@ -32,6 +34,7 @@ namespace parse {
     bool commandIs(const string& command, const string& commandName);
     // returns a trimmed version of the command consisting only of the command name and the first n arguments
     string commandPlusNargs(const string& command, int n);
+    string getCommandName(const string& command);
 
 }
 

@@ -9,12 +9,7 @@
 
 using namespace std;
 
-class RandUtil {
-
-    // do not touch this variable from outside this file (not like you can anyways now that it is private)
-    bool initialized;
-
-public:
+struct RandUtil {
 
     RandUtil();
     int randint(int a, int b);
@@ -36,11 +31,6 @@ public:
         }
         return v.at(randint(0, v.size() - 1));
     }
-
-private:
-
-    // highly recommended to not directly call this function from outside this file (not like you can anyways now that it is private)
-    void init();
 
 };
 

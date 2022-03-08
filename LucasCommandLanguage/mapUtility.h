@@ -57,6 +57,44 @@ namespace mapUtil {
         return m;
     }
 
+    template <typename K, typename V>
+    map<K, V> makeMapFromVectorOfPairs(const vector<pair<K, V>>& pairs) {
+        map<K, V> m;
+        for (const auto& pair : pairs) {
+            m.insert(pair);
+        }
+        return m;
+    }
+
+    template <typename K, typename V>
+    pair<vector<K>, vector<V>> pairOfVectorify(const map<K, V>& m) {
+        vector<K> keys;
+        vector<V> values;
+        for (const auto& [key, value] : m) {
+            keys.push_back(key);
+            values.push_back(value);
+        }
+        return {keys, values};
+    }
+
+    template <typename K, typename V>
+    vector<K> getKeys(const map<K, V>& m) {
+        vector<K> keys;
+        for (const auto& [key, value] : m) {
+            keys.push_back(key);
+        }
+        return keys;
+    }
+
+    template <typename K, typename V>
+    vector<V> getValues(const map<K, V>& m) {
+        vector<V> values;
+        for (const auto& [key, value] : m) {
+            values.push_back(value);
+        }
+        return values;
+    }
+
 }
 
 #endif

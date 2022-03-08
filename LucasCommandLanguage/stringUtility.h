@@ -5,6 +5,7 @@
 #include <vector>
 #include <algorithm>
 #include <stdexcept>
+#include <cctype>
 
 using namespace std;
 
@@ -17,12 +18,14 @@ namespace strUtil {
     string sort(const string& s);
     bool endsWith(const string& s, const string& subs);
     string removeChars(const string& s, char toRemove, int num);
+    // removes everything after (and including) the first occurrence of remAfter in s
     string removeAllAfterChar(const string& s, char remAfter);
     // returns the position in s of the first occurrence of c (throws exception if c is not in s)
     int positionOfFirstOccurrence(const string& s, char c);
     // returns the position in s of the final occurrence of c (throws exception if c is not in s)
     int positionOfFinalOccurrence(const string& s, char c);
     vector<int> positionsOfAllOccurrences(const string& s, char c);
+    // removes everything before (but NOT including) the first occurrence of remBefore in s
     string removeAllBeforeChar(const string& s, char remBefore);
     int numOccurrences(const string& s, char c);
     string removeAllOccurrencesOfChar(const string& s, char c);
@@ -53,6 +56,10 @@ namespace strUtil {
     vector<string> fillSpacesTo(const vector<string>& v, int size);
     vector<string> fillSpacesToMaxPlusN(const vector<string>& v, int n = 0);
     vector<string> quotify(const vector<string>& v);
+    vector<string> spaceSplit(const string& s);
+    string toUpper(const string& s);
+    string toLower(const string& s);
+    bool equalsIgnoreCase(const string& s1, const string& s2);
 }
 
 #endif

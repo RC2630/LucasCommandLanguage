@@ -50,6 +50,7 @@ string strUtil::removeChars(const string& s, char toRemove, int num) {
     return newString;
 }
 
+// removes everything after (and including) the first occurrence of remAfter in s
 string strUtil::removeAllAfterChar(const string& s, char remAfter) {
     if (!contains(s, charToString(remAfter))) {
         return s;
@@ -95,6 +96,7 @@ vector<int> strUtil::positionsOfAllOccurrences(const string& s, char c) {
     return positions;
 }
 
+// removes everything before (but NOT including) the first occurrence of remBefore in s
 string strUtil::removeAllBeforeChar(const string& s, char remBefore) {
     if (!contains(s, charToString(remBefore))) {
         return s;
@@ -291,4 +293,43 @@ vector<string> strUtil::quotify(const vector<string>& v) {
         quoted.push_back("\"" + s + "\"");
     }
     return quoted;
+}
+
+vector<string> strUtil::spaceSplit(const string& s) {
+    vector<string> v;
+    string temp;
+    for (char c : s) {
+        if (c == ' ') {
+            if (!temp.empty()) {
+                v.push_back(temp);
+                temp.clear();
+            }
+        } else {
+            temp += c;
+        }
+    }
+    if (!temp.empty()) {
+        v.push_back(temp);
+    }
+    return v;
+}
+
+string strUtil::toUpper(const string& s) {
+    string n;
+    for (char c : s) {
+        n += (char) toupper(c);
+    }
+    return n;
+}
+
+string strUtil::toLower(const string& s) {
+    string n;
+    for (char c : s) {
+        n += (char) tolower(c);
+    }
+    return n;
+}
+
+bool strUtil::equalsIgnoreCase(const string& s1, const string& s2) {
+    return toUpper(s1) == toUpper(s2);
 }

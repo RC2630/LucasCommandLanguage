@@ -3,7 +3,7 @@
 // only use for strings!
 void file::inputStrFrom(string& v_str, const string& filename) {
     ifstream fin(filename);
-    getline(fin, v_str);
+    getline(fin >> ws, v_str);
     fin.close();
 }
 
@@ -12,7 +12,7 @@ void file::inputStrVecFrom(vector<string>& v_var, const string& filename) {
     ifstream fin(filename);
     string temp;
     while (!fin.fail()) {
-        getline(fin, temp);
+        getline(fin >> ws, temp);
         v_var.push_back(temp);
     }
     v_var.pop_back();
@@ -37,4 +37,34 @@ void file::outputStrVecAddTo(const vector<string>& v, const string& filename) {
         tempv.push_back(s);
     }
     outputVecTo(tempv, filename);
+}
+
+void file::clearFile(const string& filename) {
+    ofstream fout(filename);
+    fout << "";
+    fout.close();
+}
+
+// use this if K == string, V == string
+void file::inputMapFrom_stringKeyValue(map<string, string>& m, const string& keysFilename, const string& valuesFilename) {
+    vector<string> keys;
+    vector<string> values;
+    inputStrVecFrom(keys, keysFilename);
+    inputStrVecFrom(values, valuesFilename);
+    if (keys.size() != values.size()) {
+        throw runtime_error("keys and values have different sizes");
+    }
+    for (int i = 0; i < keys.size(); i++) {
+        m.insert({keys.at(i), values.at(i)});
+    }
+}
+
+// use this if K == string, V == string
+void file::outputMapAddTo_stringKeyValue(const map<string, string>& m, const string& keysFilename, const string& valuesFilename) {
+    map<string, string> tempm;
+    inputMapFrom_stringKeyValue(tempm, keysFilename, valuesFilename);
+    for (const auto& pair : m) {
+        tempm.insert(pair);
+    }
+    outputMapTo(tempm, keysFilename, valuesFilename);
 }
