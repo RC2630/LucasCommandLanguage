@@ -1,0 +1,22 @@
+/debug true
+
+/store n1 124 Number
+/store n2 3424 Number
+/store n3 126374 Number
+/store n4 2937 Number
+/store n5 128927349 Number
+
+/times n [n1] [n2]
+/sub n [n] [n3]
+/times n [n] [n4]
+/add n [n] [n5]
+
+n1 = {n1}
+n2 = {n2}
+n3 = {n3}
+n4 = {n4}
+n5 = {n5}
+
+/line ; n = {n}
+
+/line

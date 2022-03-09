@@ -1,0 +1,4 @@
+/add a 1 2 ... // L1
+       3 4 5 ... // L2
+       6 7 ; /not b true ; /escvarprint a = {a} ; b = {b} ... // L3
+/debug true ; /line

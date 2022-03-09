@@ -316,10 +316,17 @@ namespace help {
 
 		"Command lines can be indented - indentation helps keep the code readable and easier to debug as well.\n"
 		"Comments can be placed inline (i.e. at the end of a command line) with \"//\" (and optional surrounding spaces); this comment runs to the end of the line.\n"
-		"Multiple commands can be put onto 1 line by separating the commands using a semicolon (and optional surrounding spaces). Do this only when it doesn't make the code hard to read.\n\n"
+		"Multiple commands can be put onto 1 line by separating the commands using a semicolon (and optional surrounding spaces). Do this only when it doesn't make the code hard to read.\n"
+		"Long commands can be written on multiple lines, where \"...\" (with optional leading but not trailing spaces) is used to mark the line continuation.\n\n"
 
-		"Semicolons and double-slashes in the middle of a line are escaped (as if they were regular characters) in escaped-print commands (\"/escprint\" and \"/escvarprint\").\n"
-		"This means you can still print semicolons and double-slashes easily, but do not attempt to print them without using these escape commands.\n\n"
+		"Just a note for line continuation: if two lines (L1 and L2) are written using line continuation, then the \"...\" is (only) placed at the end of L1, NOT at the beginning of L2 or anywhere else.\n"
+		"There must be nothing (except for maybe a comment) after the \"...\" on L1.\n"
+		"Also, only \"...\" at the end of a line (comments aside) will be processed as line continuation; \"...\" in the middle or beginning of a line are not considered special characters.\n"
+		"Regardless of trailing space/tab and indentation choices, when L1 and L2 are combined, all leading/trailing spaces/tabs are removed, and a single space is placed between the contents of L1 and L2.\n"
+		"Also, you are responsible for supplying an L2 for any L1 that ends with \"...\". If L1 ends with \"...\" but there is no L2, then it is undefined behaviour.\n\n"
+
+		"Semicolons, triple-dots, and double-slashes in a line are escaped (as if they were regular characters) in escaped-print commands (\"/escprint\" and \"/escvarprint\").\n"
+		"This means you can still print semicolons, triple-dots, and double-slashes easily, but do not attempt to print them without using these escape commands.\n\n"
 
 		"Also, just a note that displaying messages that begin with spaces or tabs will not work if no escaped-print command (\"/escprint\" or \"/escvarprint\") is used.\n"
 		"In this situation, you should either use the escape commands, or use the \"/space\" or \"/tab\" commands, for displaying these special characters instead.\n"

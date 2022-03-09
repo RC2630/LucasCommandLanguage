@@ -67,9 +67,14 @@ void digitCommand(int n);
 void inputWithPrompt(const string& varname, const string& type, const string& prompt);
 
 // command preprocessing functions
+bool isEscapeCommand(const string& command);
 void removeIndents(string& command);
 void removeInlineComments(string& command);
 void spliceSemicolonCommands(string& command, vector<string>& commands, int spliceAtIndex);
+void lineContinuation(string& command, vector<string>& commands, int currIndex);
+bool hasComment(const string& command);
+bool endsWithDots(const string& command);
+void preprocess(string& command, vector<string>& commands, int currIndex);
 
 // variable-related helpers
 void createVar(const string& name, const string& val, const string& type);
@@ -191,9 +196,7 @@ int main() {
 			currIndex++;
 			untouchedCommand = command;
 
-			removeIndents(command);
-			removeInlineComments(command);
-			spliceSemicolonCommands(command, commands, currIndex);
+			preprocess(command, commands, currIndex - 1); // the true current index is currIndex - 1, because currIndex is the index of the next instruction at this point
 			
 			if (beginsWith(command, "//")) {
 				// it's just a comment
@@ -600,6 +603,135 @@ void inputWithPrompt(const string& varname, const string& type, const string& pr
 	}
 }
 
+/*
+
+ A command is considered an escape command if it is "/escprint" or "/escvarprint".
+ Normally, these would appear at the beginning of a line (barring indentation).
+ Since a pre-condition of this function is that indentation has already been removed, we will not consider it here.
+ Another pre-condition is that the previous line in the program, if it ends with "...", should have its "..." be already processed.
+
+ HOW THIS FUNCTION WORKS:
+
+ This function is meant to return true if ANY command in the given input is an escape command.
+ Taking the pre-conditions into account, we notice that the only way for a command to be an escape command,
+ is for it to be (1) at the beginning of a line, or (2) following a semicolon.
+ The (1) case is trivial. The (2) case needs more thought, though.
+
+ In the (2) case, the semicolon could be escaped. Alternatively, the command right after the semicolon could also be escaped.
+ If either of these is escaped, then the escape command in question is NOT actually an escape command.
+ We will proceed by proving that the command right after the semicolon could only be escaped IFF the semicolon is escaped.
+
+ To escape something, we need to either use a comment or an escape command.
+ Both will have their escaping effect extend until the end of the line.
+ We will assume that the semicolon is escaped, and the command right afterwards is not.
+ The semicolon being escaped implies that there is a comment or escape command to the left of the semicolon in the line.
+ We know that the command is right after the semicolon, and so it will be to the right of the semicolon.
+ This is also to the right of the escaper.
+ Since we don't have a way to unescape things at the moment, the escape effect will extend to the command in question as well.
+ This causes a contradiction, so it's proved.
+
+ Now, we will assume that the semicolon is not escaped, and the command is.
+ The semicolon being not escaped implies that there is no escaper to the left of it.
+ In order for the command to be escaped, it needs an escaper to the left of it.
+ But the only things left of the command is (i) the semicolon and (ii) the things left of the semicolon.
+ We know (ii) does not contain any escapers, from above. (i) is not an escaper because it's just a semicolon.
+ And so the command cannot be escaped. Again, a contradiction, and another proof is now done.
+
+ Combining the above 2 results, we get that the semicolon being escaped <-> the command following it being escaped.
+ Therefore, we can simplify the cases of this function in the (2) case to the semicolon being either escaped, or not escaped.
+ And we don't need to worry about the escaped-ness of the command following the ";" anymore.
+
+ At this point, we can see the general structure of our function, in pseudocode:
+
+	if (escape command at beginning of line) {
+		return true
+	} else {
+		for all ";" in the line {
+			if (the ";" is not escaped AND escape command immediately following the ";") {
+				return true
+			}
+		}
+		return false
+	}
+
+ Obviously, it is a bit more complicated than that.
+ In order to know whether the ";" is escaped or not, we need to see if there is an escaper to the left of it.
+ And to check if there is an escaper to the left of it, we need to use this function, which causes recursion and added complexity.
+ And so can we avoid it?
+
+ It turns out that we can instead try traversing the given input from left to right.
+ By the time we reach a semicolon, the ";" is either escaped or not.
+ If it is escaped, it is either escaped by a comment or an escape command.
+ If it is escaped by an escape command, then the function should have returned true already,
+ because the escape command should be to the left of the semicolon.
+ If it is a comment, then we need to do something a little trickier, as we will soon see.
+
+ If the semicolon is not escaped, then there is no escape command or comment to the left of it.
+ We already showed that there cannot be an escape command to the left of it at this stage in the function.
+ So if it's not escaped, there's no comment to the left of it, period. And vice versa. And so it becomes a biconditional again.
+ In other words, there is a comment to the left of ";" <-> the ";" is escaped.
+
+ If we reached a comment from walking left to right through the input, then we know the rest of the input will all be escaped.
+ This is true regardless of whether the comment is escaped itself or not.
+ We can show this formally.
+
+ If the comment itself is not escaped, then the rest of the input will be escaped by the current comment in question.
+ If the comment itself is escaped by a previous comment, then everything from the previous comment to the rest of the input will be escaped.
+ If the comment itself is escaped by a previous escape command, then we should have returned true already, so this should not happen.
+
+ And so we can safely assume the rest of the input is escaped AS SOON AS we hit a comment, regardless of the escaped-ness of that comment.
+
+ Let's update our pseudocode:
+
+	if (escape command at beginning of line) {
+		return true
+	} else {
+		traverse the input from left to right {
+			if (we encounter "//") {
+				return false
+			}
+			if (we encounter ";" AND escape command immediately following the ";") {
+				return true
+			}
+		}
+		return false
+	}
+
+ Now, this is much more implementable, and so let's get started with the implementation, then!
+
+*/
+bool isEscapeCommand(const string& command) {
+	if (commandIs(command, "/escprint") || commandIs(command, "/escvarprint")) {
+		return true;
+	} else {
+		bool slash = false;
+		for (int i = 0; i < command.size(); i++) {
+
+			if (command.at(i) == '/') {
+				if (!slash) { // first slash
+					slash = true;
+				} else { // second slash
+					return false;
+				}
+			} else {
+				slash = false; // resetting the slash flag
+			}
+
+			if (command.at(i) == ';') {
+				// to check if there is an escape command right after the ";", we will check if the substring from after the ";" to the end
+				// of command starts with an escape command, but don't forget to deal with spaces/tabs in between
+				string afterSemicolon = command.substr(i + 1);
+				removeIndents(afterSemicolon);
+				if (commandIs(afterSemicolon, "/escprint") || commandIs(afterSemicolon, "/escvarprint")) {
+					return true;
+				}
+			}
+
+		}
+		return false;
+	}
+}
+
 void removeIndents(string& command) {
 	while (beginsWith(command, " ") || beginsWith(command, "\t")) {
 		command = removeLeadingSpaces(command);
@@ -608,7 +740,7 @@ void removeIndents(string& command) {
 }
 
 void removeInlineComments(string& command) {
-	if (commandIs(command, "/escprint") || commandIs(command, "/escvarprint")) {
+	if (isEscapeCommand(command)) {
 		return;
 	}
 	if (strUtil::contains(command, "//")) {
@@ -623,7 +755,7 @@ void removeInlineComments(string& command) {
 
 void spliceSemicolonCommands(string& command, vector<string>& commands, int spliceAtIndex) {
 	if (commandIs(command, "/escprint") || commandIs(command, "/escvarprint")) {
-		return;
+		return; // this is okay, no need to use isEscapeCommand() since we don't need to check for ";" when trying to process it (lol)
 	}
 	if (strUtil::contains(command, ";")) {
 		int posSemicolon = command.find(";");
@@ -634,6 +766,50 @@ void spliceSemicolonCommands(string& command, vector<string>& commands, int spli
 			command = strUtil::removeTrailingCharacters(command, '\t');
 		}
 		vecUtil::insertAtPos(commands, spliceAtIndex, otherPart);
+	}
+}
+
+void lineContinuation(string& command, vector<string>& commands, int currIndex) {
+	if (isEscapeCommand(command)) {
+		return;
+	}
+	if (strUtil::endsWith(command, "...")) {
+		string mainPart = command.substr(0, command.size() - 3); // the part of the command without the "..."
+		while (endsWith(mainPart, " ") || endsWith(mainPart, "\t")) {
+			mainPart = strUtil::removeTrailingSpaces(mainPart);
+			mainPart = strUtil::removeTrailingCharacters(mainPart, '\t');
+		}
+		string nextCommand = commands.at(currIndex + 1);
+		vecUtil::removeByIndex(commands, currIndex + 1);
+		removeIndents(nextCommand);
+		command = mainPart + " " + nextCommand; // mainPart has trailing spaces/tabs removed, and nextCommand has leading ones removed
+	}
+}
+
+bool hasComment(const string& command) {
+	if (isEscapeCommand(command)) {
+		return false; // by definition, these commands will print the "..." or "//" instead of treating them like special characters
+	} else {
+		return strUtil::contains(command, "//");
+	}
+}
+
+bool endsWithDots(const string& command) {
+	if (isEscapeCommand(command)) {
+		return false; // by definition, these commands will print the "..." or "//" instead of treating them like special characters
+	} else {
+		return strUtil::endsWith(command, "...");
+	}
+}
+
+void preprocess(string& command, vector<string>& commands, int currIndex) {
+	removeIndents(command);
+	bool firstTime = true;
+	while (firstTime || hasComment(command) || endsWithDots(command)) {
+		removeInlineComments(command);
+		lineContinuation(command, commands, currIndex);
+		spliceSemicolonCommands(command, commands, currIndex + 1);
+		firstTime = false;
 	}
 }
 
