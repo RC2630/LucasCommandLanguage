@@ -91,6 +91,21 @@ namespace numUtil {
     int numCombinations(int total, int choose);
     int multinomialCoefficient(int n, const vector<int>& ks);
 
+    // THE FOLLOWING FUNCTIONS WORK WITH STRING REPRESENTATIONS OF DECIMAL NUMBERS
+    // NOTE: THEY ALL SIMPLIFY num BEFORE PROCEEDING
+    int numDecimalPlaces(const string& num);
+    string roundToNplaces(const string& num, int n);
+
+    // THESE ARE ALL HELPERS FOR simplify(), YOU ARE RECOMMENDED TO NOT USE THEM DIRECTLY
+    bool hasTrailingZeros(const string& num);
+    string removeTrailingZeros(const string& num);
+    bool hasLeadingZeros(const string& num);
+    string removeLeadingZeros(const string& num);
+
+    // removes leading 0's (except for 1 if before decimal point), adds leading 0 if decimal starts with a dot, removes redundant + sign
+    // removes trailing decimal point and trailing 0's after decimal point, turns -0 into 0
+    string simplify(const string& num);
+
 }
 
 #endif

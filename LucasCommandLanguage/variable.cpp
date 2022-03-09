@@ -112,7 +112,7 @@ void var::replaceVariableReferencesWithRoundedValues(string& s, vector<Variable>
 			if (var.datatype == "String" || var.datatype == "Bool") {
 				newString += var.value;
 			} else if (var.datatype == "Number") {
-				newString += numUtil::toStringRemoveTrailingZeros(numUtil::round(var.getNumericalValue(), numPlaces));
+				newString += numUtil::roundToNplaces(var.value, numPlaces);
 			}
 		}
 	}

@@ -174,3 +174,123 @@ int numUtil::multinomialCoefficient(int n, const vector<int>& ks) {
     int prodKfacts = accumulate(kFacts.begin(), kFacts.end(), 1, [](int a, int b) { return a * b; });
     return factorial(n) / prodKfacts;
 }
+
+int numUtil::numDecimalPlaces(const string& num) {
+    string simplified = simplify(num);
+    if (!strUtil::contains(simplified, ".")) {
+        return 0;
+    } else {
+        string after = strUtil::removeAllBeforeChar(simplified, '.');
+        return after.size() - 1;
+    }
+}
+
+string numUtil::roundToNplaces(const string& num, int n) {
+    string simplified = simplify(num);
+    if (simplified.at(0) == '-') {
+        string rounded = roundToNplaces(simplified.substr(1), n);
+        return (rounded == "0") ? "0" : ("-" + rounded);
+    }
+    if (numDecimalPlaces(simplified) <= n) {
+        return simplified;
+    }
+    string extraDigits = simplified.substr(simplified.size() - (numDecimalPlaces(simplified) - n));
+    string keptPart = simplified.substr(0, simplified.size() - (numDecimalPlaces(simplified) - n));
+    if (extraDigits.at(0) >= '5') {
+        // round up
+        int currIndex = keptPart.size() - 1;
+        while (currIndex >= 0) {
+            if (keptPart.at(currIndex) == '.') {
+                // ignore the dot
+                currIndex--;
+                continue;
+            }
+            int currDigit = keptPart.at(currIndex) - 48; // ASCII conversion
+            if (currDigit + 1 <= 9) {
+                keptPart.at(currIndex)++;
+                return simplify(keptPart);
+            } else {
+                keptPart.at(currIndex) = '0';
+                currIndex--;
+            }
+        }
+        // by this point, all digits are exhausted and set to 0 (currIndex == -1)
+        keptPart = '1' + keptPart;
+        return simplify(keptPart);
+    } else {
+        // round down
+        return simplify(keptPart);
+    }
+}
+
+bool numUtil::hasTrailingZeros(const string& num) {
+    if (!strUtil::contains(num, ".")) {
+        return false;
+    }
+    return num.back() == '0';
+}
+
+string numUtil::removeTrailingZeros(const string& num) {
+    if (!hasTrailingZeros(num)) {
+        return num;
+    } else {
+        return strUtil::removeTrailingCharacters(num, '0');
+    }
+}
+
+bool numUtil::hasLeadingZeros(const string& num) {
+    return num.at(0) == '0';
+}
+
+string numUtil::removeLeadingZeros(const string& num) {
+    if (!hasLeadingZeros(num)) {
+        return num;
+    } else {
+        string temp = strUtil::removeLeadingCharacters(num, '0');
+        return temp.empty() ? "0" : temp;
+    }
+}
+
+// removes leading 0's (except for 1 if before decimal point), adds leading 0 if decimal starts with a dot, removes redundant + sign
+// removes trailing decimal point and trailing 0's after decimal point, turns -0 into 0
+string numUtil::simplify(const string& num) {
+    if (num == "" || num == ".") {
+        return "0";
+    }
+    if (hasTrailingZeros(num)) {
+        return simplify(removeTrailingZeros(num));
+    }
+    if (num.back() == '.') {
+        return simplify(num.substr(0, num.size() - 1));
+    }
+    if (num.at(0) == '+') {
+        return simplify(num.substr(1));
+    }
+    if (num.at(0) == '-') {
+        string allElse = num.substr(1);
+        if (strUtil::removeAllOccurrencesOfChar(allElse, '0') == "") {
+            return "0";
+        } else {
+            return "-" + simplify(allElse);
+        }
+    }
+    if (!strUtil::contains(num, ".")) {
+        if (hasLeadingZeros(num)) {
+            return removeLeadingZeros(num);
+        } else {
+            return num;
+        }
+    } else {
+        string almostProcessed;
+        if (hasLeadingZeros(num)) {
+            almostProcessed = removeLeadingZeros(num);
+        } else {
+            almostProcessed = num;
+        }
+        if (almostProcessed.at(0) == '.') {
+            return "0" + almostProcessed;
+        } else {
+            return almostProcessed;
+        }
+    }
+}

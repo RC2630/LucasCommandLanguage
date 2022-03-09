@@ -69,7 +69,7 @@ string strUtil::removeAllAfterChar(const string& s, char remAfter) {
 // returns the position in s of the first occurrence of c (throws exception if c is not in s)
 int strUtil::positionOfFirstOccurrence(const string& s, char c) {
     for (int i = 0; i < s.size(); i++) {
-        if (s.at(i) == 'c') {
+        if (s.at(i) == c) {
             return i;
         }
     }
@@ -89,7 +89,7 @@ int strUtil::positionOfFinalOccurrence(const string& s, char c) {
 vector<int> strUtil::positionsOfAllOccurrences(const string& s, char c) {
     vector<int> positions;
     for (int i = 0; i < s.size(); i++) {
-        if (s.at(i) == 'c') {
+        if (s.at(i) == c) {
             positions.push_back(i);
         }
     }
