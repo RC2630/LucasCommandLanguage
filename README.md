@@ -24,6 +24,8 @@ That's about it. Have fun using LCL! 😀
 
 ## Version History
 
+v3.4 - Added string representation for objects
+
 v3.3 - Fixed a bug causing large numbers to not round properly in display. Also added line continuants, which allow one command to be written on multiple lines, a feature that is helpful for writing exceptionally long commands (or display messages).
 
 v3.2 - Added support for nested structs and objects. No longer is the case where structs/objects can only contain primitive fields! Full support for object copying, struct/object deletion, inheritance, etc. are available for nested structs/objects, and there is guaranteed full backwards compatibility with old LCL programs. A new command (`/debug`) is also added, as well as more example files.
