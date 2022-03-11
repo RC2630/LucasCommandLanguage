@@ -15,7 +15,7 @@ This is the interpreter for the LCL (Lucas Command Language) programming languag
 Special notes:
 1. To save your file somewhere else, simply copy and paste `"input.txt"` to a different location (do NOT cut and paste or drag the file there). Make sure a copy of `"input.txt"` still exists inside the interpreter's relative path. Then, in your new location, feel free to rename the file to whatever makes the most sense.
 2. To run files other than the current `"input.txt"` inside the interpreter's relative path, first clear everything currently in `"input.txt"`, then simply copy the contents of the other file into `"input.txt"` and run it normally.
-3. The interpreter reads commands from `"input.txt"` line by line. Use maximum one command per line in the source code (`"input.txt"`) UNLESS you use semicolons to separate multiple commands on the same line.
+3. The interpreter reads commands from `"input.txt"` line by line. Use maximum one command per line in the source code (`"input.txt"`) UNLESS you use semicolons to separate multiple commands on the same line. Multiple lines can represent the same command if line continuants (`...`) are used.
 4. The interpreter runs in C++17 or later. You need to make sure the C++ compiler you are using can support at least C++17.
 
 That's about it. Have fun using LCL! 😀
@@ -23,6 +23,8 @@ That's about it. Have fun using LCL! 😀
 ----------------------------------------------------------------------------------------------------------------------------
 
 ## Version History
+
+v3.3 - Fixed a bug causing large numbers to not round properly in display. Also added line continuants, which allow one command to be written on multiple lines, a feature that is helpful for writing exceptionally long commands (or display messages).
 
 v3.2 - Added support for nested structs and objects. No longer is the case where structs/objects can only contain primitive fields! Full support for object copying, struct/object deletion, inheritance, etc. are available for nested structs/objects, and there is guaranteed full backwards compatibility with old LCL programs. A new command (`/debug`) is also added, as well as more example files.
 
