@@ -166,6 +166,7 @@ void copyConstruction(const Object& sourceObject, const string& destObjname);
 void copyObject(const string& command);
 void getObjectType(const string& strvar, const string& objname);
 void inherit(const string& command);
+void stringRep(const string& srtname, const string& rep);
 
 int main() {
 
@@ -184,7 +185,7 @@ int main() {
 
 	if (commands.size() == 1) { // the only command is "/stop" (i.e. the source code is empty)
 		cout << ANSI_GREEN << "The source code is empty.\n"
-			 << "Type \"/help\" in the source code if you need help getting started with this programmming language.\n\n" << ANSI_NORMAL;
+			 << "Type " << ANSI_YELLOW << "/help" << ANSI_GREEN << " in the source code if you need help getting started with this programmming language.\n\n" << ANSI_NORMAL;
 	}
 
 	try {
@@ -226,7 +227,7 @@ int main() {
 				continue;
 			}
 
-			replaceVariableReferencesWithRoundedValues(command, vars, num_places);
+			replaceVariableReferencesWithRoundedValues(command, vars, objects, structs, num_places);
 
 			if (commandIs(command, "/escvarprint")) {
 				string message = parseArgumentUntilEnd(command);
@@ -237,7 +238,7 @@ int main() {
 				continue;
 			}
 
-			replaceVariableReferencesWithFullPrecisionValues(command, vars);
+			replaceVariableReferencesWithFullPrecisionValues(command, vars, objects, structs);
 
 			if (command == "/prev") {
 				if (prevCommand == "" || prevCommand == "/prev") {
@@ -245,7 +246,7 @@ int main() {
 					continue;
 				} else {
 					if (reuse_display) {
-						cout << ANSI_GREEN << "Reusing previous command \"" << prevCommand << "\" ......\n" << ANSI_NORMAL;
+						cout << ANSI_GREEN << "Reusing previous command " << ANSI_YELLOW << prevCommand << ANSI_GREEN << " ......\n" << ANSI_NORMAL;
 					}
 					command = prevCommand;
 				}
@@ -278,7 +279,7 @@ int main() {
 	} catch (const exception& e) {
 		if (non_assert_crash) {
 			cout << ANSI_RED << "Program has crashed unexpectedly.\n"
-				 << "The command that crashed it is \"" << untouchedCommand << "\"\n" << ANSI_NORMAL;
+				 << "The command that crashed it is " << ANSI_YELLOW << untouchedCommand << ANSI_RED << ".\n" << ANSI_NORMAL;
 		}
 		top_level_crash_message = e.what();
 		if (debug_on_termination) {
@@ -448,10 +449,12 @@ void interpretCommand(const string& command, vector<string>& commands, int currI
 		getObjectType(parseArgument(command, 1), parseArgument(command, 2));
 	} else if (commandIs(command, "/inherit")) {
 		inherit(command);
+	} else if (commandIs(command, "/stringrep")) {
+		stringRep(parseArgument(command, 1), parseArgumentUntilEnd(command, 2));
 	} else if (numArguments(command) == 0 && blk::contains(blocks, command.substr(1))) { // DO NOT MOVE - SHOULD HAVE LOWEST PRECEDENCE
 		runBlock(command.substr(1), commands, currIndex);
 	} else {
-		cout << ANSI_RED << "\"" << untouched << "\" is not a valid command.\n" << ANSI_NORMAL;
+		cout << ANSI_YELLOW << untouched << ANSI_RED << " is not a valid command.\n" << ANSI_NORMAL;
 	}
 
 }
@@ -498,7 +501,7 @@ void debugOnTermination(vector<string>& com) {
 	if (top_level_crash_message == "none") {
 		cout << ANSI_GREEN << "\nProgram execution finished without an exception.\n" << ANSI_NORMAL;
 	} else {
-		cout << ANSI_RED << "\nTop-level crash message: " << top_level_crash_message << "\n" << ANSI_NORMAL;
+		cout << ANSI_RED << "\nTop-level crash message: " << ANSI_YELLOW << top_level_crash_message << ANSI_RED << ".\n" << ANSI_NORMAL;
 	}
 	
 }
@@ -519,7 +522,7 @@ void helpWith1Arg(const string& specific) {
 	} else if (specific == "struct") {
 		cout << ANSI_GREEN << STRUCT_HELP << "\n" << ANSI_NORMAL;
 	} else {
-		cout << ANSI_RED << "\"/help " << specific << "\" does not display a valid help document.\n" << ANSI_NORMAL;
+		cout << ANSI_YELLOW << "/help " << specific << ANSI_RED << " does not display a valid help document.\n" << ANSI_NORMAL;
 	}
 }
 
@@ -550,11 +553,11 @@ void helpWith2Arg(const string& spec1, const string& spec2) {
 		} else if (spec2 == "struct") {
 			cout << ANSI_GREEN << COMMAND_HELP_STRUCT << "\n" << ANSI_NORMAL;
 		} else {
-			cout << ANSI_RED << "\"/help commands " << spec2 << "\" does not display a valid help document, because \""
+			cout << ANSI_YELLOW << "/help commands " << spec2 << ANSI_RED << " does not display a valid help document, because \""
 			 	 << spec2 << "\" is not a valid category of commands.\n" << ANSI_NORMAL;
 		}
 	} else {
-		cout << ANSI_RED << "\"/help " << spec1 << " " << spec2 << "\" does not display a valid help document.\n" << ANSI_NORMAL;
+		cout << ANSI_YELLOW << "/help " << spec1 << " " << spec2 << ANSI_RED << " does not display a valid help document.\n" << ANSI_NORMAL;
 	}
 }
 
@@ -583,7 +586,7 @@ void digitCommand(int n) {
 	if (0 <= n && n <= 12) {
 		digits(n);
 	} else {
-		cout << ANSI_RED << "\"/digits " << n << "\" is not valid because /digits requires 0 <= n <= 12\n" << ANSI_NORMAL;
+		cout << ANSI_YELLOW << "/digits " << n << ANSI_RED << " is not valid because " << ANSI_YELLOW << "/digits" << ANSI_RED << " requires 0 <= n <= 12.\n" << ANSI_NORMAL;
 	}
 }
 
@@ -836,7 +839,7 @@ void updateVar(const string& name, const string& val) {
 	// however, if the variable does exist but the new value's type is not the same as the old, then it will be UNDEFINED BEHAVIOUR!
 	if (!contains(vars, name)) {
 		cout << ANSI_RED << "You are trying to update a non-existent variable.\n"
-			    "Use /store with 3 arguments (including type) if you want to create a new variable.\n" << ANSI_NORMAL;
+			    "Use " << ANSI_YELLOW << "/store" << ANSI_RED << " with 3 arguments (including type) if you want to create a new variable.\n" << ANSI_NORMAL;
 		return;
 	}
 	// overwrite old value with new value
@@ -848,7 +851,7 @@ void printVar(const string& varname) {
 	if (contains(vars, varname)) {
 		cout << find(vars, varname) << "\n";
 	} else {
-		cout << ANSI_RED << "There is currently no variable named \"" << varname << "\"\n" << ANSI_NORMAL;
+		cout << ANSI_RED << "There is currently no variable named \"" << varname << "\".\n" << ANSI_NORMAL;
 	}
 }
 
@@ -861,13 +864,13 @@ void printVarValue(const string& varname) {
 			cout << stod(var.value);
 		}
 	} else {
-		cout << ANSI_RED << "There is currently no variable named \"" << varname << "\"\n" << ANSI_NORMAL;
+		cout << ANSI_RED << "There is currently no variable named \"" << varname << "\".\n" << ANSI_NORMAL;
 	}
 }
 
 void getType(const string& strvar, const string& varname) {
 	if (!contains(vars, varname)) {
-		cout << ANSI_RED << "There is currently no variable named \"" << varname << "\"\n" << ANSI_NORMAL;
+		cout << ANSI_RED << "There is currently no variable named \"" << varname << "\".\n" << ANSI_NORMAL;
 		return;
 	}
 	string type = find(vars, varname).datatype;
@@ -1150,12 +1153,12 @@ void cflowIf(bool condition, const string& blockname, vector<string>& commands, 
 
 void cflowIfvar(const string& boolvarname, const string& blockname, vector<string>& commands, int currIndex) {
 	if (!contains(vars, boolvarname)) {
-		cout << ANSI_RED << "/ifvar or /while cannot execute because the boolean variable \"" << boolvarname << "\" is not found.\n" << ANSI_NORMAL;
+		cout << ANSI_YELLOW << "/ifvar" << ANSI_RED << " or " << ANSI_YELLOW << "/while" << ANSI_RED << " cannot execute because the boolean variable \"" << boolvarname << "\" is not found.\n" << ANSI_NORMAL;
 		return;
 	}
 	Variable boolvar = find(vars, boolvarname);
 	if (boolvar.datatype != "Bool") {
-		cout << ANSI_RED << "/ifvar or /while cannot execute because the variable \"" << boolvarname << "\" is not of type Bool.\n" << ANSI_NORMAL;
+		cout << ANSI_YELLOW << "/ifvar" << ANSI_RED << " or " << ANSI_YELLOW << "/while" << ANSI_RED << " cannot execute because the variable \"" << boolvarname << "\" is not of type Bool.\n" << ANSI_NORMAL;
 		return;
 	}
 	cflowIf(boolvar.getBooleanValue(), blockname, commands, currIndex);
@@ -1169,12 +1172,12 @@ void cflowLoop(int numIterations, const string& blockname, vector<string>& comma
 
 void cflowFor(const string& numvarname, const string& blockname, vector<string>& commands, int currIndex) {
 	if (!contains(vars, numvarname)) {
-		cout << ANSI_RED << "/for cannot execute because the numerical variable \"" << numvarname << "\" is not found.\n" << ANSI_NORMAL;
+		cout << ANSI_YELLOW << "/for" << ANSI_RED << " cannot execute because the numerical variable \"" << numvarname << "\" is not found.\n" << ANSI_NORMAL;
 		return;
 	}
 	Variable numvar = find(vars, numvarname);
 	if (numvar.datatype != "Number") {
-		cout << ANSI_RED << "/for cannot execute because the variable \"" << numvarname << "\" is not of type Number.\n" << ANSI_NORMAL;
+		cout << ANSI_YELLOW << "/for" << ANSI_RED << " cannot execute because the variable \"" << numvarname << "\" is not of type Number.\n" << ANSI_NORMAL;
 		return;
 	}
 	cflowLoop(numvar.getNumericalValue(), blockname, commands, currIndex);
@@ -1275,8 +1278,8 @@ void existTemps(const string& boolvarname) {
 }
 
 void customFail(const string& command, const string& message) {
-	cout << ANSI_RED << "An assertion has failed! The assertion that caused this is: \"" << command << "\"\n"
-	 	 << "Error message: " << message << "\n" << ANSI_NORMAL;
+	cout << ANSI_RED << "An assertion has failed! The assertion that caused this is: " << ANSI_YELLOW << command << ANSI_RED << ".\n"
+	 	 << "Error message: " << ANSI_YELLOW << message << ANSI_RED << ".\n" << ANSI_NORMAL;
 	non_assert_crash = false;
 	throw runtime_error("assertion failed");
 }
@@ -1371,7 +1374,9 @@ void consDefault(const string& command) {
 	}
 	vector<string> defaultValues = findStruct(structs, typeName).defaultValues;
 	if (defaultValues.empty()) {
-		cout << ANSI_RED << "The struct \"" << typeName << "\" does not have a default constructor yet. Make one using the \"/setdefault\" command first, before using \"/consdefault\".\n" << ANSI_NORMAL;
+		cout << ANSI_RED << "The struct \"" << typeName << "\" does not have a default constructor yet. "
+			 << "Make one using the " << ANSI_YELLOW << "/setdefault" << ANSI_RED << " command first, "
+			 << "before using " << ANSI_YELLOW << "/consdefault" << ANSI_RED << ".\n" << ANSI_NORMAL;
 		return;
 	}
 	srt::attemptObjectConstruction(objectName, srt::findStruct(structs, typeName), defaultValues, vars, objects, structs, non_assert_crash);
@@ -1449,7 +1454,7 @@ void copyObject(const string& command) {
 
 void getObjectType(const string& strvar, const string& objname) {
 	if (!containsObject(objects, objname)) {
-		cout << ANSI_RED << "There is currently no object named \"" << objname << "\"\n" << ANSI_NORMAL;
+		cout << ANSI_RED << "There is currently no object named \"" << objname << "\".\n" << ANSI_NORMAL;
 		return;
 	}
 	string type = findObject(objects, objname).structTypename;
@@ -1473,4 +1478,23 @@ void inherit(const string& command) {
 		fieldInfo.push_back(parseArgument(command, i));
 	}
 	srt::attemptStructDefinition(subsrtname, fieldInfo, structs, non_assert_crash);
+}
+
+void stringRep(const string& srtname, const string& rep) {
+	if (!containsStruct(structs, srtname)) {
+		cout << ANSI_RED << "There is currently no struct named \"" << srtname << "\".\n" << ANSI_NORMAL;
+		return;
+	}
+	Struct& srt = findStruct(structs, srtname);
+	vector<string> parts = strUtil::partsSplitByOpenCloseDelimiters(rep, '<', '>');
+	for (const string& part : parts) {
+		if (strUtil::contains(part, "<")) { // has angle brackets
+			string fieldname = part.substr(1, part.size() - 2); // removes angle brackets
+			if (!vecUtil::contains(srt.getFields(), fieldname)) {
+				cout << ANSI_RED << "The struct \"" << srt.name << "\" does not have a field named \"" << fieldname << "\".\n" << ANSI_NORMAL;
+				return;
+			}
+		}
+	}
+	srt.rep = rep;
 }

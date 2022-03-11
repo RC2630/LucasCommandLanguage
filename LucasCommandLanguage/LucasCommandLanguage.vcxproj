@@ -144,6 +144,7 @@
     <ClInclude Include="ansi_codes.h" />
     <ClInclude Include="binaryUtility.h" />
     <ClInclude Include="block.h" />
+    <ClInclude Include="customPrint.h" />
     <ClInclude Include="file.h" />
     <ClInclude Include="help.h" />
     <ClInclude Include="mapUtility.h" />
@@ -160,6 +161,7 @@
   <ItemGroup>
     <ClCompile Include="binaryUtility.cpp" />
     <ClCompile Include="block.cpp" />
+    <ClCompile Include="customPrint.cpp" />
     <ClCompile Include="file.cpp" />
     <ClCompile Include="Interpreter.cpp" />
     <ClCompile Include="numberUtility.cpp" />

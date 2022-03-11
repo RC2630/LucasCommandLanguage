@@ -1,0 +1,63 @@
+/debug true
+
+/structdef Point x Number y Number
+/structdef Person name String age Number
+
+/store PI 3.1415926 Number
+/store PHI 1.618034 Number
+
+/construct p Point [PI] [PHI]
+/construct lucas Person Lucas 19
+
+// case 1: struct does not exist
+/stringrep DoesNotExist hello buddy
+
+// case 2: struct exists, but field doesn't
+/stringrep Point (<x>, <y>, <z>)
+
+// case 3: successful rep definition
+/stringrep Point (<x>, <y>)
+
+// case 4: no replacement
+Hi, my name is Lucas!
+
+// case 5: variable replacement (rounded)
+PI = {PI}, PHI = {PHI}
+
+// case 6: variable replacement (unrounded)
+PI = [PI], PHI = [PHI]
+
+// case 7: object replacement (rounded)
+p = {p}
+
+// case 8: object replacement (unrounded)
+p = [p]
+
+// case 9: variable and object replacement (rounded)
+PI = {PI}, PHI = {PHI}, p = {p}
+
+// case 10: variable and object replacement (unrounded)
+PI = [PI], PHI = [PHI], p = [p]
+
+// case 11: no suitable string rep (main object)
+lucas = {lucas}
+
+// case 12: no variable or object matches name
+jackie = {jackie}
+
+// case 13: no suitable string rep (inner object)
+/structdef Student self Person id Number
+/stringrep Student STUDENT: <self>, ID: <id>
+/construct lucas_s Student {lucas.name} {lucas.age} 12345678
+{lucas_s}
+
+// case 14: object replacement with inner objects
+/stringrep Person <name> (aged <age>)
+{lucas_s}
+
+// case 15: object replacement with even more inner objects
+/structdef TwoStudents stu1 Student stu2 Student
+/stringrep TwoStudents (1) <stu1> & (2) <stu2>
+/construct lucas_jackie TwoStudents {lucas_s.self.name} {lucas_s.self.age} {lucas_s.id} ...
+				    Jackie 20 87654321
+Here is some information about Lucas and Jackie: {lucas_jackie}

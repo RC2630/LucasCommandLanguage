@@ -6,6 +6,10 @@
 #include <stdexcept>
 #include <utility>
 
+namespace var {
+	struct Variable; // definition found in "variable.h"
+}
+
 using namespace var;
 
 namespace srt {
@@ -15,6 +19,7 @@ namespace srt {
 		string name;
 		vector<pair<string, string>> fieldsAndTypes;
 		vector<string> defaultValues;
+		string rep;
 
 		Struct() = default;
 		// this constructor throws a runtime error if a self-reference is detected,
@@ -24,6 +29,8 @@ namespace srt {
 		bool operator == (const Struct& other) const;
 		bool operator != (const Struct& other) const;
 		bool containsStructAsInner(const string& innerSrtname) const;
+		vector<string> getFields() const;
+		vector<string> getTypes() const;
 
 	};
 
@@ -42,6 +49,10 @@ namespace srt {
 
 		bool operator == (const Object& other) const;
 		bool operator != (const Object& other) const;
+
+		// throws runtime_error if no suitable string representation is found on this object or one of its inner objects
+		// the parameter numPlaces is greater or equal to 0 if we should round, and is equal to -1 if we should NOT round
+		string getRep(int numPlaces, vector<Variable>& vars, vector<Object>& objects, vector<Struct>& structs) const;
 
 	};
 

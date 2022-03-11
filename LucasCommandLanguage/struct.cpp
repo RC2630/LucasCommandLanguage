@@ -34,6 +34,22 @@ bool srt::Struct::containsStructAsInner(const string& innerSrtname) const {
 	return false;
 }
 
+vector<string> srt::Struct::getFields() const {
+	vector<string> fields;
+	for (const auto& [field, type] : fieldsAndTypes) {
+		fields.push_back(field);
+	}
+	return fields;
+}
+
+vector<string> srt::Struct::getTypes() const {
+	vector<string> types;
+	for (const auto& [field, type] : fieldsAndTypes) {
+		types.push_back(type);
+	}
+	return types;
+}
+
 // if you are calling this constructor from outside (i.e. non-recursively),
 // you MUST provide an int variable set to 0 for the fieldInitValuesIndex parameter
 // ALSO, this constructor throws an exception on a non-existent inner struct type, so please catch it
@@ -68,6 +84,44 @@ bool srt::Object::operator == (const Object& other) const {
 
 bool srt::Object::operator != (const Object& other) const {
 	return name != other.name;
+}
+
+// throws runtime_error if no suitable string representation is found on this object or one of its inner objects
+// the parameter numPlaces is greater or equal to 0 if we should round, and is equal to -1 if we should NOT round
+string srt::Object::getRep(int numPlaces, vector<Variable>& vars, vector<Object>& objects, vector<Struct>& structs) const {
+	Struct& srt = findStruct(structs, this->structTypename);
+	if (srt.rep.empty()) {
+		throw runtime_error("no suitable string representation found");
+	}
+	string rep;
+	vector<string> parts = strUtil::partsSplitByOpenCloseDelimiters(srt.rep, '<', '>');
+	for (const string& part : parts) {
+		if (!strUtil::contains(part, "<")) {
+			// this part doesn't have angle brackets
+			rep += part;
+		} else {
+			// this part has angle brackets
+			string fieldname = part.substr(1, part.size() - 2); // removes angle brackets
+			fieldname = this->name + "." + fieldname; // "personalize" the fieldname for the current object
+			if (var::contains(vars, fieldname)) {
+				// this is a variable field
+				Variable& field = var::find(vars, fieldname);
+				if (numPlaces == -1) { // full precision
+					rep += field.value;
+				} else { // should round
+					if (field.datatype == "String" || field.datatype == "Bool") {
+						rep += field.value;
+					} else if (field.datatype == "Number") {
+						rep += numUtil::roundToNplaces(field.value, numPlaces);
+					}
+				}
+			} else if (containsObject(objects, fieldname)) {
+				// this is an inner object field
+				rep += findObject(objects, fieldname).getRep(numPlaces, vars, objects, structs);
+			}
+		}
+	}
+	return rep;
 }
 
 bool srt::containsStruct(const vector<Struct>& structs, const string& srtname) {

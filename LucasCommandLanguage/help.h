@@ -47,7 +47,7 @@ namespace help {
 		"<any non-empty line that doesn't start with \"/\"> = display the line verbatim\n"
 		"// <anything> = just a comment (the space between // and comment is not required, but it looks nicer with the space)\n\n"
 
-		"/help = display help directory (for details on specific help commands, type /help)\n"
+		"/help = display help directory (for details on specific help commands, type \"/help\")\n"
 		"/stop = terminate program\n"
 		"/prev = reuse previous command\n\n"
 
@@ -62,7 +62,7 @@ namespace help {
 
 		"/warntype <b> = set whether or not changing the type of a variable will display a warning message\n"
 		"/useblue <b> = set whether or not displaying verbatim lines will be in blue (if false, then it will be in the default colour)\n"
-		"/reusedisp <b> = set whether or not /prev will print reuse message whenever it is used\n"
+		"/reusedisp <b> = set whether or not \"/prev\" will print reuse message whenever it is used\n"
 		"/debug <b> = set whether or not debugging information will be displayed when the program terminates (or crashes)\n\n"
 		
 		"/escprint <escmessage> = display escmessage verbatim, escaping all instances of \"/\", \"[]\", \"{}\", \"//\", \";\", etc. (variables will NOT be replaced with their values)\n"
@@ -198,7 +198,8 @@ namespace help {
 		"/consdefault <objectname> <structname> = instantiate a new object with the default constructor set by \"/setdefault\"\n"
 		"/copyobject <destobject> <sourceobject> = copy construction or copy assignment of source object into dest object, depending on if dest object already exists or not\n"
 		"/getobjecttype <strvar> <objname> = get the object named objname's struct-type, and store its name in strvar (as a String)\n"
-		"/inherit <substructname> <superstructname> <newfieldname_1> <newfieldtype_1> ... <newfieldname_n> <newfieldtype_n> = define a new struct with all of superstructname's fields, plus the given new fields\n\n"
+		"/inherit <substructname> <superstructname> <newfieldname_1> <newfieldtype_1> ... <newfieldname_n> <newfieldtype_n> = define a new struct with all of superstructname's fields, plus the given new fields\n"
+		"/stringrep <structname> <rep> = sets the string representation of objects of the given struct type, where fields and inner objects are placed inside angle brackets (\"<...>\")\n\n"
 		
 		"Type \"/help struct\" for information on what structs and objects are, and how to use them";
 	
@@ -218,16 +219,14 @@ namespace help {
 		"(Note that the 2 methods behave identically for string and boolean variables)\n\n"
 
 		"Method 1: type { followed by the variable's name, then } (ex. type {var} to access the variable var).\n"
-		"This method will replace the variable with its rounded value to the number of decimal places set using /digits (3 by default).\n"
+		"This method will replace the variable with its rounded value to the number of decimal places set using \"/digits\" (3 by default).\n"
 		"This is most optimally used for displaying values of variables.\n"
-		"Example usage:\n"
-		"I go to school {n} times a week!\n\n"
+		"Example usage: \"I go to school {n} times a week!\"\n\n"
 		
 		"Method 2: type [ followed by the variable's name, then ] (ex. type [var] to access the variable var).\n"
-		"This method will replace the variable with its exact, full-precision value, regardless of /digits.\n"
+		"This method will replace the variable with its exact, full-precision value, regardless of \"/digits\".\n"
 		"This is most optimally used for performing arithmetic with numerical variables.\n"
-		"Example usage:\n"
-		"/add sum [n1] [n2] [n3]\n\n"
+		"Example usage: \"/add sum [n1] [n2] [n3]\"\n\n"
 
 		"Technically, variables can be used to store commands as well - simply store the command as a String.\n"
 		"However, the no-space rule still applies, so any commands stored as variables cannot have spaces in them.\n"
@@ -361,6 +360,11 @@ namespace help {
 		"Deleting inner objects are forbidden, just like deleting field variables.\n"
 		"The inner objects that are fields of outer objects have names of the same form as the field variables of that outer object.\n"
 		"As an example, the name \"p.x.y\" refers to the object p's inner object x's field (variable or inner object) y.\n\n"
+
+		"Objects and variables must not be named the same thing. For example, there cannot be a variable and an object both named \"bob\" at any given time in the program.\n"
+		"When objects are used surrounded by braces (\"{...}\") or square brackets (\"[...]\"), they are replaced with their string representation.\n"
+		"If an object does not have a string representation (or some of its inner objects do not have one), the program will let you know that.\n"
+		"Note that just like using {} or [] for variables, {} will replace numerical values with their rounded values, while [] will use full precision.\n\n"
 		
 		"Type \"/help commands struct\" for a list of commands related to structs and objects";
 

@@ -69,6 +69,9 @@
     <ClInclude Include="struct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="customPrint.h">
+      <Filter>Header Files\general</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Interpreter.cpp">
@@ -103,6 +106,9 @@
     </ClCompile>
     <ClCompile Include="struct.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="customPrint.cpp">
+      <Filter>Source Files\general</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

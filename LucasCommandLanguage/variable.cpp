@@ -93,7 +93,8 @@ ostream& var::operator << (ostream& out, const Variable& var) {
 	return out;
 }
 
-void var::replaceVariableReferencesWithRoundedValues(string& s, vector<Variable>& vars, int numPlaces) {
+void var::replaceVariableReferencesWithRoundedValues(string& s, vector<Variable>& vars,
+													 vector<srt::Object>& objects, vector<srt::Struct>& structs, int numPlaces) {
 	vector<string> parts = strUtil::partsSplitByOpenCloseDelimiters(s, '{', '}');
 	string newString;
 	for (const string& part : parts) {
@@ -103,23 +104,35 @@ void var::replaceVariableReferencesWithRoundedValues(string& s, vector<Variable>
 		} else {
 			// this part has braces
 			string noBraces = part.substr(1, part.size() - 2); // removes opening and closing braces
-			if (!contains(vars, noBraces)) {
-				cout << ANSI_RED << "There is currently no variable named \"" << noBraces << "\"\n" << ANSI_NORMAL;
+			if (var::contains(vars, noBraces)) {
+				Variable& var = find(vars, noBraces);
+				if (var.datatype == "String" || var.datatype == "Bool") {
+					newString += var.value;
+				} else if (var.datatype == "Number") {
+					newString += numUtil::roundToNplaces(var.value, numPlaces);
+				}
+			} else if (srt::containsObject(objects, noBraces)) {
+				srt::Object& obj = srt::findObject(objects, noBraces);
+				try {
+					newString += obj.getRep(numPlaces, vars, objects, structs);
+				} catch (const runtime_error& e) { // no suitable string representation
+					cout << ANSI_RED << "No suitable string representation found for object \"" << obj.name << "\".\n"
+				 		 << "This could be due to no suitable string representation for one or more of its inner objects.\n" << ANSI_NORMAL;
+					s = "";
+					return;
+				}
+			} else {
+				cout << ANSI_RED << "There is currently no variable or object named \"" << noBraces << "\".\n" << ANSI_NORMAL;
 				s = "";
 				return;
-			}
-			Variable var = find(vars, noBraces);
-			if (var.datatype == "String" || var.datatype == "Bool") {
-				newString += var.value;
-			} else if (var.datatype == "Number") {
-				newString += numUtil::roundToNplaces(var.value, numPlaces);
 			}
 		}
 	}
 	s = newString;
 }
 
-void var::replaceVariableReferencesWithFullPrecisionValues(string& s, vector<Variable>& vars) {
+void var::replaceVariableReferencesWithFullPrecisionValues(string& s, vector<Variable>& vars,
+														   vector<srt::Object>& objects, vector<srt::Struct>& structs) {
 	vector<string> parts = strUtil::partsSplitByOpenCloseDelimiters(s, '[', ']');
 	string newString;
 	for (const string& part : parts) {
@@ -129,13 +142,24 @@ void var::replaceVariableReferencesWithFullPrecisionValues(string& s, vector<Var
 		} else {
 			// this part has square brackets
 			string noSquareBrackets = part.substr(1, part.size() - 2); // removes opening and closing square brackets
-			if (!contains(vars, noSquareBrackets)) {
-				cout << ANSI_RED << "There is currently no variable named \"" << noSquareBrackets << "\"\n" << ANSI_NORMAL;
+			if (var::contains(vars, noSquareBrackets)) {
+				Variable& var = var::find(vars, noSquareBrackets);
+				newString += var.value;
+			} else if (srt::containsObject(objects, noSquareBrackets)) {
+				srt::Object& obj = srt::findObject(objects, noSquareBrackets);
+				try {
+					newString += obj.getRep(-1, vars, objects, structs); // no rounding
+				} catch (const runtime_error& e) { // no suitable string representation
+					cout << ANSI_RED << "No suitable string representation found for object \"" << obj.name << "\".\n"
+						 << "This could be due to no suitable string representation for one or more of its inner objects.\n" << ANSI_NORMAL;
+					s = "";
+					return;
+				}
+			} else {
+				cout << ANSI_RED << "There is currently no variable or object named \"" << noSquareBrackets << "\".\n" << ANSI_NORMAL;
 				s = "";
 				return;
 			}
-			Variable var = find(vars, noSquareBrackets);
-			newString += var.value;
 		}
 	}
 	s = newString;

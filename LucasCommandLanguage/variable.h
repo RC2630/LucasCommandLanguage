@@ -10,7 +10,14 @@
 #include "stringUtility.h"
 #include "numberUtility.h"
 
+#include "struct.h"
+
 using namespace std;
+
+namespace srt {
+	struct Struct; // definition found in "struct.h"
+	struct Object; // definition found in "struct.h"
+}
 
 namespace var {
 
@@ -38,8 +45,10 @@ namespace var {
 	Variable& find(vector<Variable>& v, const string& varname);
 	void remove(vector<Variable>& v, const string& varname);
 	ostream& operator << (ostream& out, const Variable& var);
-	void replaceVariableReferencesWithRoundedValues(string& s, vector<Variable>& vars, int numPlaces);
-	void replaceVariableReferencesWithFullPrecisionValues(string& s, vector<Variable>& vars);
+	void replaceVariableReferencesWithRoundedValues(string& s, vector<Variable>& vars,
+													vector<srt::Object>& objects, vector<srt::Struct>& structs, int numPlaces);
+	void replaceVariableReferencesWithFullPrecisionValues(string& s, vector<Variable>& vars,
+														  vector<srt::Object>& objects, vector<srt::Struct>& structs);
 	bool isPrimitive(const string& type);
 
 }
