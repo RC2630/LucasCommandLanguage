@@ -35,6 +35,7 @@ bool warn_type_change = true; // changing type of variable will show warning mes
 bool use_blue = true; // most output is blue (instead of the system's default colour)
 bool non_assert_crash = true; // program crashed NOT because of an assertion
 bool debug_on_termination = false; // program will output debug information when it terminates
+bool line_continuation_space = true; // line continuation marker ("...") causes a space to be inserted between the two lines
 
 int num_places = 3; // number of decimal places numerical display uses
 
@@ -319,6 +320,8 @@ void interpretCommand(const string& command, vector<string>& commands, int currI
 		reuse_display = parseBooleanArgument(command);
 	} else if (commandIs(command, "/debug")) {
 		debug_on_termination = parseBooleanArgument(command);
+	} else if (commandIs(command, "/lcspace")) {
+		line_continuation_space = parseBooleanArgument(command);
 	} else if (commandIs(command, "/input")) {
 		inputWithPrompt(parseArgument(command, 1), parseArgument(command, 2), parseArgumentUntilEnd(command, 3));
 	} else if (commandIs(command, "/store") && numArguments(command) == 3) {
@@ -785,7 +788,8 @@ void lineContinuation(string& command, vector<string>& commands, int currIndex) 
 		string nextCommand = commands.at(currIndex + 1);
 		vecUtil::removeByIndex(commands, currIndex + 1);
 		removeIndents(nextCommand);
-		command = mainPart + " " + nextCommand; // mainPart has trailing spaces/tabs removed, and nextCommand has leading ones removed
+		string maybeSpace = line_continuation_space ? " " : "";
+		command = mainPart + maybeSpace + nextCommand; // mainPart has trailing spaces/tabs removed, and nextCommand has leading ones removed
 	}
 }
 
@@ -1490,6 +1494,9 @@ void stringRep(const string& srtname, const string& rep) {
 	for (const string& part : parts) {
 		if (strUtil::contains(part, "<")) { // has angle brackets
 			string fieldname = part.substr(1, part.size() - 2); // removes angle brackets
+			if (fieldname.empty()) { // newline
+				continue;
+			}
 			if (!vecUtil::contains(srt.getFields(), fieldname)) {
 				cout << ANSI_RED << "The struct \"" << srt.name << "\" does not have a field named \"" << fieldname << "\".\n" << ANSI_NORMAL;
 				return;

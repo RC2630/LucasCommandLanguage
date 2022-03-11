@@ -102,8 +102,12 @@ string srt::Object::getRep(int numPlaces, vector<Variable>& vars, vector<Object>
 		} else {
 			// this part has angle brackets
 			string fieldname = part.substr(1, part.size() - 2); // removes angle brackets
+			if (fieldname.empty()) { // newline
+				rep += "\n";
+				continue;
+			}
 			fieldname = this->name + "." + fieldname; // "personalize" the fieldname for the current object
-			if (var::contains(vars, fieldname)) {
+			if (vecUtil::contains(this->fieldnames, fieldname)) {
 				// this is a variable field
 				Variable& field = var::find(vars, fieldname);
 				if (numPlaces == -1) { // full precision
@@ -115,7 +119,7 @@ string srt::Object::getRep(int numPlaces, vector<Variable>& vars, vector<Object>
 						rep += numUtil::roundToNplaces(field.value, numPlaces);
 					}
 				}
-			} else if (containsObject(objects, fieldname)) {
+			} else if (vecUtil::contains(this->objFieldnames, fieldname)) {
 				// this is an inner object field
 				rep += findObject(objects, fieldname).getRep(numPlaces, vars, objects, structs);
 			}
