@@ -501,7 +501,7 @@ void debugOnTermination(vector<string>& com) {
 	if (top_level_crash_message == "none") {
 		cout << ANSI_GREEN << "\nProgram execution finished without an exception.\n" << ANSI_NORMAL;
 	} else {
-		cout << ANSI_RED << "\nTop-level crash message: " << ANSI_YELLOW << top_level_crash_message << ANSI_RED << ".\n" << ANSI_NORMAL;
+		cout << ANSI_RED << "\nTop-level crash message: " << ANSI_YELLOW << top_level_crash_message << "\n" << ANSI_NORMAL;
 	}
 	
 }
@@ -1279,7 +1279,7 @@ void existTemps(const string& boolvarname) {
 
 void customFail(const string& command, const string& message) {
 	cout << ANSI_RED << "An assertion has failed! The assertion that caused this is: " << ANSI_YELLOW << command << ANSI_RED << ".\n"
-	 	 << "Error message: " << ANSI_YELLOW << message << ANSI_RED << ".\n" << ANSI_NORMAL;
+	 	 << "Error message: " << ANSI_YELLOW << message << "\n" << ANSI_NORMAL;
 	non_assert_crash = false;
 	throw runtime_error("assertion failed");
 }
