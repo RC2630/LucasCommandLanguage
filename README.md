@@ -24,6 +24,8 @@ That's about it. Have fun using LCL! 😀
 
 ## Version History
 
+v3.4.1 - Tiny update to add `/lcspace` and the ability to use newline characters in string representations of objects
+
 v3.4 - Added string representation for objects
 
 v3.3 - Fixed a bug causing large numbers to not round properly in display. Also added line continuants, which allow one command to be written on multiple lines, a feature that is helpful for writing exceptionally long commands (or display messages).
