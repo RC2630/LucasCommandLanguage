@@ -102,10 +102,6 @@ string srt::Object::getRep(int numPlaces, vector<Variable>& vars, vector<Object>
 		} else {
 			// this part has angle brackets
 			string fieldname = part.substr(1, part.size() - 2); // removes angle brackets
-			if (fieldname.empty()) { // newline
-				rep += "\n";
-				continue;
-			}
 			fieldname = this->name + "." + fieldname; // "personalize" the fieldname for the current object
 			if (vecUtil::contains(this->fieldnames, fieldname)) {
 				// this is a variable field

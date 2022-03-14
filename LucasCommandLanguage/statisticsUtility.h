@@ -66,6 +66,14 @@ namespace statUtil {
             })->first;
     }
 
+    // returns true if v1 is earlier in permutation order than v2
+    // the permutation order is the order in the example below
+    bool earlierInPermutationOrder(const vector<int>& v1, const vector<int>& v2);
+
+    // generates permutations from 1 to n
+    // example: generatePermutations(3) = {{1, 2, 3}, {1, 3, 2}, {2, 1, 3}, {2, 3, 1}, {3, 1, 2}, {3, 2, 1}}
+    vector<vector<int>> generatePermutations(int n);
+
 }
 
 #endif

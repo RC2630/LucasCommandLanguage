@@ -43,3 +43,45 @@ vector<double> statUtil::scale(const vector<double>& unscaledData, const string&
     }
     return scaledData;
 }
+
+// returns true if v1 is earlier in permutation order than v2
+// the permutation order is the order in the example below
+bool statUtil::earlierInPermutationOrder(const vector<int>& v1, const vector<int>& v2) {
+    for (int i = 0; i < v1.size(); i++) {
+        if (v1.at(i) < v2.at(i)) {
+            return true;
+        } else if (v1.at(i) > v2.at(i)) {
+            return false;
+        }
+    }
+    throw runtime_error("all elements of v1 and v2 appear to be equal");
+}
+
+// generates permutations from 1 to n
+// example: generatePermutations(3) = {{1, 2, 3}, {1, 3, 2}, {2, 1, 3}, {2, 3, 1}, {3, 1, 2}, {3, 2, 1}}
+vector<vector<int>> statUtil::generatePermutations(int n) {
+    if (n == 0) {
+        return {};
+    } else if (n == 1) {
+        return {{1}};
+    } else {
+        vector<vector<int>> prev = generatePermutations(n - 1);
+        vector<vector<int>> result;
+        for (const vector<int>& perm : prev) {
+            for (int i = 0; i <= perm.size(); i++) {
+                vector<int> temp = perm;
+                vecUtil::insertAtPos(temp, i, n);
+                int indexToInsert = 0;
+                for (int r = 0; r < result.size(); r++) {
+                    if (earlierInPermutationOrder(result.at(r), temp)) {
+                        indexToInsert++;
+                    } else {
+                        break;
+                    }
+                }
+                vecUtil::insertAtPos(result, indexToInsert, temp);
+            }
+        }
+        return result;
+    }
+}

@@ -1494,9 +1494,6 @@ void stringRep(const string& srtname, const string& rep) {
 	for (const string& part : parts) {
 		if (strUtil::contains(part, "<")) { // has angle brackets
 			string fieldname = part.substr(1, part.size() - 2); // removes angle brackets
-			if (fieldname.empty()) { // newline
-				continue;
-			}
 			if (!vecUtil::contains(srt.getFields(), fieldname)) {
 				cout << ANSI_RED << "The struct \"" << srt.name << "\" does not have a field named \"" << fieldname << "\".\n" << ANSI_NORMAL;
 				return;
