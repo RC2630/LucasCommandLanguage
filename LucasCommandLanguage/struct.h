@@ -18,6 +18,7 @@ namespace srt {
 
 		string name;
 		vector<pair<string, string>> fieldsAndTypes;
+		vector<pair<string, string>> fieldsAndTypesForEquality;
 		vector<string> defaultValues;
 		string rep;
 
@@ -31,6 +32,7 @@ namespace srt {
 		bool containsStructAsInner(const string& innerSrtname) const;
 		vector<string> getFields() const;
 		vector<string> getTypes() const;
+		void setEqualityFields(const vector<string>& fields);
 
 	};
 

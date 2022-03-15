@@ -1,0 +1,63 @@
+// THIS FILE EXPANDS ON A PREVIOUS FILE (objEqual.txt)
+
+/debug true
+
+/structdef Point x Number y Number
+/structdef Triangle name String p1 Point p2 Point p3 Point
+
+/construct right Triangle RIGHT_TRIANGLE ...
+			  0 0 ...
+			  4 0 ...
+			  4 2
+
+/construct rightIdentical Triangle RIGHT_TRIANGLE ...
+			   	   0 0 ...
+			   	   4 0 ...
+			   	   4 2
+
+/construct rightWrongName Triangle WRONG_NAME_TRIANGLE ...
+			      	   0 0 ...
+			      	   4 0 ...
+			      	   4 2
+
+/construct isosceles Triangle ISOSCELES_TRIANGLE ...
+			      0 0 ...
+			      2 4 ...
+			      4 0
+
+/construct rightShifted Triangle SHIFTED_TRIANGLE ...
+			    	 0 100 ...
+			    	 4 100 ...
+			    	 4 102
+
+// case 1: struct does not exist
+CASE 1 ERROR MESSAGE:
+/equalfields Person name age					// expect error
+/line
+
+// case 2: field does not exist
+CASE 2 ERROR MESSAGE:
+/equalfields Point x y z					// expect error
+/line
+
+// case 3: vanilla comparison (all fields)
+/objequal b3a false right rightIdentical			// expect true
+/objequal b3b false right rightWrongName			// expect false
+/objequal b3c false right isosceles				// expect false
+/objequal b3d false right rightShifted				// expect false
+
+// case 4: comparing all fields EXCEPT name
+/equalfields Triangle p1 p2 p3
+/objequal b4a false right rightIdentical			// expect true
+/objequal b4b false right rightWrongName			// expect true
+/objequal b4c false right isosceles				// expect false
+/objequal b4d false right rightShifted				// expect false
+
+// case 5: points with the same X-coordinate are now considered equal (for whatever reason)
+/equalfields Point x
+/objequal b5a false right rightIdentical			// expect true
+/objequal b5b false right rightWrongName			// expect true
+/objequal b5c false right isosceles				// expect false
+/objequal b5d false right rightShifted				// expect true
+
+// use the debug output to check our expectations against the actual results

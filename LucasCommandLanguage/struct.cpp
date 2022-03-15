@@ -15,6 +15,7 @@ srt::Struct::Struct(const string& name_, const vector<string>& fieldsAndTypesUnp
 		}
 		fieldsAndTypes.push_back({field, type});
 	}
+	fieldsAndTypesForEquality = fieldsAndTypes;
 }
 
 bool srt::Struct::operator == (const Struct& other) const {
@@ -48,6 +49,15 @@ vector<string> srt::Struct::getTypes() const {
 		types.push_back(type);
 	}
 	return types;
+}
+
+void srt::Struct::setEqualityFields(const vector<string>& fields) {
+	this->fieldsAndTypesForEquality.clear();
+	vector<string> allFields = this->getFields();
+	for (const string& field : fields) {
+		int index = vecUtil::findIndex(allFields, field);
+		this->fieldsAndTypesForEquality.push_back(this->fieldsAndTypes.at(index));
+	}
 }
 
 // if you are calling this constructor from outside (i.e. non-recursively),
@@ -132,7 +142,7 @@ bool srt::Object::deepEquals(const Object& other, vector<Variable>& vars, vector
 		return true; // they are literally the same object
 	}
 	// at this point, they are different objects (but they could be either equal or unequal)
-	for (const auto& [fieldname, type] : findStruct(structs, this->structTypename).fieldsAndTypes) {
+	for (const auto& [fieldname, type] : findStruct(structs, this->structTypename).fieldsAndTypesForEquality) {
 		if (var::isPrimitive(type)) {
 			// variable field
 			Variable& var1 = var::find(vars, this->name + "." + fieldname);

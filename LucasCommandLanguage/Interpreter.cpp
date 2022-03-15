@@ -168,6 +168,7 @@ void copyObject(const string& command);
 void getObjectType(const string& strvar, const string& objname);
 void inherit(const string& command);
 void stringRep(const string& srtname, const string& rep);
+void setEqualityFields(const string& command);
 void objEqual(const string& boolvarname, bool shouldRound, const string& objname1, const string& objname2);
 
 int main() {
@@ -455,6 +456,8 @@ void interpretCommand(const string& command, vector<string>& commands, int currI
 		inherit(command);
 	} else if (commandIs(command, "/stringrep")) {
 		stringRep(parseArgument(command, 1), parseArgumentUntilEnd(command, 2));
+	} else if (commandIs(command, "/equalfields")) {
+		setEqualityFields(command);
 	} else if (commandIs(command, "/objequal")) {
 		objEqual(parseArgument(command, 1), parseBooleanArgument(command, 2), parseArgument(command, 3), parseArgument(command, 4));
 	} else if (numArguments(command) == 0 && blk::contains(blocks, command.substr(1))) { // DO NOT MOVE - SHOULD HAVE LOWEST PRECEDENCE
@@ -1504,6 +1507,26 @@ void stringRep(const string& srtname, const string& rep) {
 		}
 	}
 	srt.rep = rep;
+}
+
+void setEqualityFields(const string& command) {
+	string srtname = parseArgument(command, 1);
+	if (!containsStruct(structs, srtname)) {
+		cout << ANSI_RED << "The struct \"" << srtname << "\" does not currently exist.\n" << ANSI_NORMAL;
+		return;
+	}
+	Struct& srt = findStruct(structs, srtname);
+	vector<string> srtFields = srt.getFields();
+	vector<string> fields;
+	for (int i = 2; i <= numArguments(command); i++) {
+		string currField = parseArgument(command, i);
+		if (!vecUtil::contains(srtFields, currField)) {
+			cout << ANSI_RED << "The struct \"" << srtname << "\" has no field named \"" << currField << "\".\n" << ANSI_NORMAL;
+			return;
+		}
+		fields.push_back(currField);
+	}
+	srt.setEqualityFields(fields);
 }
 
 void objEqual(const string& boolvarname, bool shouldRound, const string& objname1, const string& objname2) {

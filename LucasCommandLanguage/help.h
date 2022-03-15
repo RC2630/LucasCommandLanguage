@@ -201,6 +201,7 @@ namespace help {
 		"/getobjecttype <strvar> <objname> = get the object named objname's struct-type, and store its name in strvar (as a String)\n"
 		"/inherit <substructname> <superstructname> <newfieldname_1> <newfieldtype_1> ... <newfieldname_n> <newfieldtype_n> = define a new struct with all of superstructname's fields, plus the given new fields\n"
 		"/stringrep <structname> <rep> = sets the string representation of objects of the given struct type (structname), where fields and inner objects are placed inside angle brackets (\"<...>\")\n"
+		"/equalfields <structname> <fieldname_1> <fieldname_2> ... <fieldname_n> = set which fields \"/objequal\" will use to compare objects of type structname (default is compare all fields)\n"
 		"/objequal <boolvarname> <should_round> <objname_1> <objname_2> = check the equality of the two given objects (rounding numbers if should_round is true), and store result into variable called boolvarname\n\n"
 		
 		"Type \"/help struct\" for information on what structs and objects are, and how to use them";
