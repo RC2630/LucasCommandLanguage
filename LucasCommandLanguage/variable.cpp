@@ -48,6 +48,24 @@ string var::Variable::getAppropriateValue() const {
 	}
 }
 
+// the parameter numPlaces is greater or equal to 0 if we should round, and is equal to -1 if we should NOT round
+bool var::Variable::equals(const Variable& other, int numPlaces) const {
+	if (this->datatype != other.datatype) {
+		return false; // if they are not the same type, they cannot be equal
+	}
+	if (this->datatype == "String" || this->datatype == "Bool") {
+		return this->getAppropriateValue() == other.getAppropriateValue();
+	} else if (this->datatype == "Number") {
+		if (numPlaces == -1) { // no rounding
+			return this->getNumericalValue() == other.getNumericalValue();
+		} else { // yes rounding
+			return numUtil::roundToNplaces(this->value, numPlaces) == numUtil::roundToNplaces(other.value, numPlaces);
+		}
+	} else {
+		throw runtime_error("invalid primitive data type");
+	}
+}
+
 bool var::operator == (const Variable& v1, const Variable& v2) {
 	return tie(v1.name, v1.value, v1.datatype) == tie(v2.name, v2.value, v2.datatype);
 }

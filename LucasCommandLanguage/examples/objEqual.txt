@@ -1,0 +1,60 @@
+/debug true
+
+/structdef Point x Number y Number
+/structdef Triangle name String p1 Point p2 Point p3 Point
+
+/construct origin Point 0 0
+/construct somewhere Point 3 4
+/construct mystery Point 3 4
+
+/construct right1 Triangle RIGHT_TRIANGLE ...
+			   0 0 ...
+			   4 0 ...
+			   4 2
+
+/construct right2 Triangle RIGHT_TRIANGLE ...
+			   0 0 ...
+			   4 0 ...
+			   4 2
+
+/construct right3 Triangle RIGHT_TRIANGLE ...
+			   0.000078 0.000193 ...
+			   3.999781 -0.000056 ...
+			   4.000151 1.999645
+
+/construct right4 Triangle WRONG_NAME_TRIANGLE ...
+			   0 0 ...
+			   4 0 ...
+			   4 2
+
+/construct isosceles Triangle ISOSCELES_TRIANGLE ...
+			      0 0 ...
+			      2 4 ...
+			      4 0
+
+// case 1: object(s) do(es) not exist
+/objequal b1a false el primo                  				// expect error
+/objequal b1b false origin sentry             				// expect error
+/objequal b1c true equilateral isosceles      				// expect error
+/line
+
+// case 2: objects exist, but their types are different
+/objequal b2a true right2 somewhere            				// expect error
+/line
+
+// case 3: non-nested object comparison
+/objequal b3a false origin somewhere          				// expect false
+/objequal b3b true mystery somewhere          				// expect true
+
+// case 4: nested object comparison
+/objequal b4a false right1 isosceles          				// expect false
+/objequal b4b false right1 right2             				// expect true
+/objequal b4c false right2 right4                                       // expect false
+
+// case 5: comparison with rounding
+/objequal b5a false isosceles right3          				// expect false
+/objequal b5b true isosceles right3           				// expect false
+/objequal b5c false right1 right3             				// expect false
+/objequal b5d true right1 right3              				// expect true
+
+// use the debug output to check our expectations against the actual results

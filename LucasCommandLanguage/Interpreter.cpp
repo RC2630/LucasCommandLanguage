@@ -168,6 +168,7 @@ void copyObject(const string& command);
 void getObjectType(const string& strvar, const string& objname);
 void inherit(const string& command);
 void stringRep(const string& srtname, const string& rep);
+void objEqual(const string& boolvarname, bool shouldRound, const string& objname1, const string& objname2);
 
 int main() {
 
@@ -454,6 +455,8 @@ void interpretCommand(const string& command, vector<string>& commands, int currI
 		inherit(command);
 	} else if (commandIs(command, "/stringrep")) {
 		stringRep(parseArgument(command, 1), parseArgumentUntilEnd(command, 2));
+	} else if (commandIs(command, "/objequal")) {
+		objEqual(parseArgument(command, 1), parseBooleanArgument(command, 2), parseArgument(command, 3), parseArgument(command, 4));
 	} else if (numArguments(command) == 0 && blk::contains(blocks, command.substr(1))) { // DO NOT MOVE - SHOULD HAVE LOWEST PRECEDENCE
 		runBlock(command.substr(1), commands, currIndex);
 	} else {
@@ -1501,4 +1504,19 @@ void stringRep(const string& srtname, const string& rep) {
 		}
 	}
 	srt.rep = rep;
+}
+
+void objEqual(const string& boolvarname, bool shouldRound, const string& objname1, const string& objname2) {
+	if (!containsObject(objects, objname1) || !containsObject(objects, objname2)) {
+		cout << ANSI_RED << "One or both of the objects \"" << objname1 << "\" or \"" << objname2 << "\" does not exist.\n" << ANSI_NORMAL;
+		return;
+	}
+	Object& obj1 = findObject(objects, objname1);
+	Object& obj2 = findObject(objects, objname2);
+	if (obj1.structTypename != obj2.structTypename) {
+		cout << ANSI_RED << "The objects \"" << objname1 << "\" and \"" << objname2 << "\" have different types. Therefore, they cannot be compared.\n" << ANSI_NORMAL;
+		return;
+	}
+	bool equal = obj1.deepEquals(obj2, vars, objects, structs, shouldRound ? num_places : -1);
+	createVar(boolvarname, strUtil::boolval(equal), "Bool");
 }

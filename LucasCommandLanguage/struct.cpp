@@ -124,6 +124,35 @@ string srt::Object::getRep(int numPlaces, vector<Variable>& vars, vector<Object>
 	return rep;
 }
 
+// compares (recursively) to see if each field is equal, as opposed to simply a name check as in the case of operator ==
+// the parameter numPlaces is greater or equal to 0 if we should round, and is equal to -1 if we should NOT round
+bool srt::Object::deepEquals(const Object& other, vector<Variable>& vars, vector<Object>& objects,
+							 vector<Struct>& structs, int numPlaces) const {
+	if (this->name == other.name) {
+		return true; // they are literally the same object
+	}
+	// at this point, they are different objects (but they could be either equal or unequal)
+	for (const auto& [fieldname, type] : findStruct(structs, this->structTypename).fieldsAndTypes) {
+		if (var::isPrimitive(type)) {
+			// variable field
+			Variable& var1 = var::find(vars, this->name + "." + fieldname);
+			Variable& var2 = var::find(vars, other.name + "." + fieldname);
+			if (!var1.equals(var2, numPlaces)) {
+				return false;
+			}
+		} else {
+			// inner object field
+			Object& obj1 = srt::findObject(objects, this->name + "." + fieldname);
+			Object& obj2 = srt::findObject(objects, other.name + "." + fieldname);
+			if (!obj1.deepEquals(obj2, vars, objects, structs, numPlaces)) {
+				return false;
+			}
+		}
+	}
+	// at this point, they must be equal objects
+	return true;
+}
+
 bool srt::containsStruct(const vector<Struct>& structs, const string& srtname) {
 	for (const Struct& srt : structs) {
 		if (srt.name == srtname) {

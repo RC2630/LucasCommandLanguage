@@ -54,6 +54,10 @@ namespace srt {
 		// the parameter numPlaces is greater or equal to 0 if we should round, and is equal to -1 if we should NOT round
 		string getRep(int numPlaces, vector<Variable>& vars, vector<Object>& objects, vector<Struct>& structs) const;
 
+		// compares (recursively) to see if each field is equal, as opposed to simply a name check as in the case of operator ==
+		// the parameter numPlaces is greater or equal to 0 if we should round, and is equal to -1 if we should NOT round
+		bool deepEquals(const Object& other, vector<Variable>& vars, vector<Object>& objects, vector<Struct>& structs, int numPlaces) const;
+
 	};
 
 	bool containsStruct(const vector<Struct>& structs, const string& srtname);

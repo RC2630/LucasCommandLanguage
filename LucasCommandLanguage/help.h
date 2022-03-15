@@ -200,7 +200,8 @@ namespace help {
 		"/copyobject <destobject> <sourceobject> = copy construction or copy assignment of source object into dest object, depending on if dest object already exists or not\n"
 		"/getobjecttype <strvar> <objname> = get the object named objname's struct-type, and store its name in strvar (as a String)\n"
 		"/inherit <substructname> <superstructname> <newfieldname_1> <newfieldtype_1> ... <newfieldname_n> <newfieldtype_n> = define a new struct with all of superstructname's fields, plus the given new fields\n"
-		"/stringrep <structname> <rep> = sets the string representation of objects of the given struct type (structname), where fields and inner objects are placed inside angle brackets (\"<...>\")\n\n"
+		"/stringrep <structname> <rep> = sets the string representation of objects of the given struct type (structname), where fields and inner objects are placed inside angle brackets (\"<...>\")\n"
+		"/objequal <boolvarname> <should_round> <objname_1> <objname_2> = check the equality of the two given objects (rounding numbers if should_round is true), and store result into variable called boolvarname\n\n"
 		
 		"Type \"/help struct\" for information on what structs and objects are, and how to use them";
 	

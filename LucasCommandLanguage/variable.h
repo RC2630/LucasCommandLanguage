@@ -37,6 +37,9 @@ namespace var {
 		bool getBooleanValue() const;
 		string getAppropriateValue() const;
 
+		// the parameter numPlaces is greater or equal to 0 if we should round, and is equal to -1 if we should NOT round
+		bool equals(const Variable& other, int numPlaces) const;
+
 	};
 
 	bool operator == (const Variable& v1, const Variable& v2);
