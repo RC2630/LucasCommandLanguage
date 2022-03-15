@@ -195,7 +195,8 @@ namespace help {
 		
 		"/structdef <structname> <fieldname_1> <fieldtype_1> <fieldname_2> <fieldtype_2> ... <fieldname_n> <fieldtype_n> = define a new struct with the given structname and field information\n"
 		"/construct <objectname> <structname> <fieldvalue_1> <fieldvalue_2> ... <fieldvalue_n> = instantiate a new object of type structname, with the given objectname and initial field values\n"
-		"/setdefault <structname> <fieldvalue_1> <fieldvalue_2> ... <fieldvalue_n> = sets the default constructor to initialize the object with the given field values\n"
+		"/construct <objectname> <structname> ... <<inner_object>> ... = same as above, but the inner object's fields will be copied so you don't have to manually supply so many inner fields (put \"<...>\")\n"
+		"/setdefault <structname> <fieldvalue_1> <fieldvalue_2> ... <fieldvalue_n> = sets the default constructor to initialize the object with the given field values (angle-bracket shorthand above also works)\n"
 		"/consdefault <objectname> <structname> = instantiate a new object with the default constructor set by \"/setdefault\"\n"
 		"/copyobject <destobject> <sourceobject> = copy construction or copy assignment of source object into dest object, depending on if dest object already exists or not\n"
 		"/getobjecttype <strvar> <objname> = get the object named objname's struct-type, and store its name in strvar (as a String)\n"
@@ -351,6 +352,12 @@ namespace help {
 		"Structs contain fields. Each field has a field name and a field type.\n"
 		"When creating objects, initial values of each of its fields are provided in the same order as the fields in its struct.\n"
 		"Specifically for nested object creation, the inner object's fields are treated as multiple separate fields in construction.\n\n"
+
+		"To make object construction easier, instead of multiple inner fields, you can instead supply the constructor with a single inner object.\n"
+		"The constructor will take all of that inner object's fields and copy them to the newly created object.\n"
+		"This saves you from needing to manually write out all the inner fields every time.\n"
+		"Note that inner objects are placed in angle brackets (\"<...>\") to distinguish them from strings, variables, or string representations of objects.\n"
+		"Example usage: instead of \"/construct pq TwoPoints {p.x} {p.y} 3 4\", you can write \"/construct pq TwoPoints <p> 3 4\".\n\n"
 
 		"Each field of an object is either a variable or a nested object.\n\n"
 

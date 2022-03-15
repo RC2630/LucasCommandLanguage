@@ -60,6 +60,9 @@ namespace srt {
 		// the parameter numPlaces is greater or equal to 0 if we should round, and is equal to -1 if we should NOT round
 		bool deepEquals(const Object& other, vector<Variable>& vars, vector<Object>& objects, vector<Struct>& structs, int numPlaces) const;
 
+		// inserts values of all fields (including nested inner ones) into the end of fieldInitValues
+		void copyFieldsTo(vector<string>& fieldInitValues, vector<Variable>& vars, vector<Object>& objects, vector<Struct>& structs) const;
+
 	};
 
 	bool containsStruct(const vector<Struct>& structs, const string& srtname);

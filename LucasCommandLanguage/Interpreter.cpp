@@ -1358,7 +1358,20 @@ void construct(const string& command) {
 	}
 	vector<string> fieldInitValues;
 	for (int i = 3; i <= numArguments(command); i++) {
-		fieldInitValues.push_back(parseArgument(command, i));
+		string field = parseArgument(command, i);
+		if (strUtil::beginsWith(field, "<") && strUtil::endsWith(field, ">")) {
+			// inner object
+			string innerObjname = field.substr(1, field.size() - 2); // removes <>
+			if (!containsObject(objects, innerObjname)) {
+				cout << ANSI_RED << "The object \"" << innerObjname << "\" does not currently exist.\n" << ANSI_NORMAL;
+				return;
+			}
+			Object& innerObj = findObject(objects, innerObjname);
+			innerObj.copyFieldsTo(fieldInitValues, vars, objects, structs);
+		} else {
+			// scalar value
+			fieldInitValues.push_back(field);
+		}
 	}
 	srt::attemptObjectConstruction(objectName, srt::findStruct(structs, typeName), fieldInitValues, vars, objects, structs, non_assert_crash);
 }
@@ -1371,7 +1384,20 @@ void setDefault(const string& command) {
 	}
 	Struct& srt = findStruct(structs, srtname);
 	for (int i = 2; i <= numArguments(command); i++) {
-		srt.defaultValues.push_back(parseArgument(command, i));
+		string field = parseArgument(command, i);
+		if (strUtil::beginsWith(field, "<") && strUtil::endsWith(field, ">")) {
+			// inner object
+			string innerObjname = field.substr(1, field.size() - 2); // removes <>
+			if (!containsObject(objects, innerObjname)) {
+				cout << ANSI_RED << "The object \"" << innerObjname << "\" does not currently exist.\n" << ANSI_NORMAL;
+				return;
+			}
+			Object& innerObj = findObject(objects, innerObjname);
+			innerObj.copyFieldsTo(srt.defaultValues, vars, objects, structs);
+		} else {
+			// scalar value
+			srt.defaultValues.push_back(field);
+		}
 	}
 }
 

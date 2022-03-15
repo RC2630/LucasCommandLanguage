@@ -163,6 +163,23 @@ bool srt::Object::deepEquals(const Object& other, vector<Variable>& vars, vector
 	return true;
 }
 
+// inserts values of all fields (including nested inner ones) into the end of fieldInitValues
+void srt::Object::copyFieldsTo(vector<string>& fieldInitValues, vector<Variable>& vars,
+							   vector<Object>& objects, vector<Struct>& structs) const {
+	Struct& srt = findStruct(structs, this->structTypename);
+	for (const auto& [fieldname, type] : srt.fieldsAndTypes) {
+		if (isPrimitive(type)) {
+			// variable field
+			Variable& field = var::find(vars, this->name + "." + fieldname);
+			fieldInitValues.push_back(field.value);
+		} else {
+			// inner object
+			Object& inner = findObject(objects, this->name + "." + fieldname);
+			inner.copyFieldsTo(fieldInitValues, vars, objects, structs);
+		}
+	}
+}
+
 bool srt::containsStruct(const vector<Struct>& structs, const string& srtname) {
 	for (const Struct& srt : structs) {
 		if (srt.name == srtname) {
