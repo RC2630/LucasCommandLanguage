@@ -1,0 +1,28 @@
+/debug true
+/copyobjdel true
+
+/structdef Person ...
+	name String ...
+	age Number
+
+/inherit Student Person ...
+	school String
+
+/stringrep Person (<name>, <age>)
+/stringrep Student (<name>, <age>, <school>)
+
+/blockdef printPerson1 // this block is not polymorphic
+	/useblue false ; {temp.name} is {temp.age} years old! ; /line ; /useblue true
+/endblock
+
+/blockdef printPerson2 // this block is polymorphic
+	/useblue false ; {temp} ; /line ; /useblue true
+/endblock
+
+/construct lucas1 Person Lucas 19
+lucas1 & printPerson1: ; /copyobject temp lucas1 ; /printPerson1
+lucas1 & printPerson2: ; /copyobject temp lucas1 ; /printPerson2
+
+/construct lucas2 Student Lucas 19 UBC
+lucas2 & printPerson1: ; /copyobject temp lucas2 ; /printPerson1
+lucas2 & printPerson2: ; /copyobject temp lucas2 ; /printPerson2

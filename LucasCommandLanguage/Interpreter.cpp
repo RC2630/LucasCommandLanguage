@@ -36,6 +36,7 @@ bool use_blue = true; // most output is blue (instead of the system's default co
 bool non_assert_crash = true; // program crashed NOT because of an assertion
 bool debug_on_termination = false; // program will output debug information when it terminates
 bool line_continuation_space = true; // line continuation marker ("...") causes a space to be inserted between the two lines
+bool delete_on_copy_object = false; // deletes the old object (if it exists) whenever "/copyobject" is used
 
 int num_places = 3; // number of decimal places numerical display uses
 
@@ -324,6 +325,8 @@ void interpretCommand(const string& command, vector<string>& commands, int currI
 		debug_on_termination = parseBooleanArgument(command);
 	} else if (commandIs(command, "/lcspace")) {
 		line_continuation_space = parseBooleanArgument(command);
+	} else if (commandIs(command, "/copyobjdel")) {
+		delete_on_copy_object = parseBooleanArgument(command);
 	} else if (commandIs(command, "/input")) {
 		inputWithPrompt(parseArgument(command, 1), parseArgument(command, 2), parseArgumentUntilEnd(command, 3));
 	} else if (commandIs(command, "/store") && numArguments(command) == 3) {
@@ -1477,7 +1480,8 @@ void copyObject(const string& command) {
 		return;
 	}
 	Object& sourceObject = findObject(objects, sourceObjname);
-	if (srt::containsObject(objects, destObjname)) {
+	bool containsDestObject = srt::containsObject(objects, destObjname);
+	if (containsDestObject && !delete_on_copy_object) {
 		// copy assignment
 		Object& destObject = findObject(objects, destObjname);
 		if (destObject.structTypename != sourceObject.structTypename) {
@@ -1485,6 +1489,12 @@ void copyObject(const string& command) {
 			return;
 		}
 		copyAssignment(sourceObject, destObject);
+	} else if (containsDestObject && delete_on_copy_object) {
+		// delete old object, then copy constructor
+		srt::deleteObject(objects, vars, destObjname);
+		// the source object is no longer valid because we may have resized the objects vector
+		Object& sourceObjectAfterDelete = findObject(objects, sourceObjname);
+		copyConstruction(sourceObjectAfterDelete, destObjname);
 	} else {
 		// copy constructor
 		copyConstruction(sourceObject, destObjname);

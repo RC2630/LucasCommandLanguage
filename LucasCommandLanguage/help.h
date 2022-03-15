@@ -64,7 +64,8 @@ namespace help {
 		"/useblue <b> = set whether or not displaying verbatim lines will be in blue (if false, then it will be in the default colour)\n"
 		"/reusedisp <b> = set whether or not \"/prev\" will print reuse message whenever it is used\n"
 		"/debug <b> = set whether or not debugging information will be displayed when the program terminates (or crashes)\n"
-		"/lcspace <b> = set whether or not a space will be inserted between the two lines whenever line continuation is used\n\n"
+		"/lcspace <b> = set whether or not a space will be inserted between the two lines whenever line continuation is used\n"
+		"/copyobjdel <b> = set whether or not the old object (if it exists) will be deleted whenever \"/copyobject\" is used\n\n"
 		
 		"/escprint <escmessage> = display escmessage verbatim, escaping all instances of \"/\", \"[]\", \"{}\", \"//\", \";\", etc. (variables will NOT be replaced with their values)\n"
 		"/escvarprint <escvarmessage> = display escvarmessage verbatim, escaping all instances of \"/\", \"[]\", \"//\", \";\", etc. but NOT \"{}\" (allowing for curly-brace-accessed variables to still work)\n"
