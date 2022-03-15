@@ -24,6 +24,8 @@ That's about it. Have fun using LCL! 😀
 
 ## Version History
 
+v3.5.1 - Added ability to customize which fields are used in object comparisons
+
 v3.5 - Added object comparison
 
 v3.4.2 - Reverted part of the previous update, such that the ability to use newline characters in string representations of objects now no longer exists (the reason for this will become clear in a few updates)
