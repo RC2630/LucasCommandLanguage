@@ -24,6 +24,8 @@ That's about it. Have fun using LCL! 😀
 
 ## Version History
 
+v3.6 - Added ability to construct objects and set default constructors without flattening inner objects
+
 v3.5.1 - Added ability to customize which fields are used in object comparisons
 
 v3.5 - Added object comparison
