@@ -1383,6 +1383,8 @@ void setDefault(const string& command) {
 		return;
 	}
 	Struct& srt = findStruct(structs, srtname);
+	vector<string> oldDefaultValues = srt.defaultValues;
+	srt.defaultValues.clear();
 	for (int i = 2; i <= numArguments(command); i++) {
 		string field = parseArgument(command, i);
 		if (strUtil::beginsWith(field, "<") && strUtil::endsWith(field, ">")) {
@@ -1390,6 +1392,7 @@ void setDefault(const string& command) {
 			string innerObjname = field.substr(1, field.size() - 2); // removes <>
 			if (!containsObject(objects, innerObjname)) {
 				cout << ANSI_RED << "The object \"" << innerObjname << "\" does not currently exist.\n" << ANSI_NORMAL;
+				srt.defaultValues = oldDefaultValues;
 				return;
 			}
 			Object& innerObj = findObject(objects, innerObjname);
