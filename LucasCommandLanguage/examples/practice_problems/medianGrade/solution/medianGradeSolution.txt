@@ -1,0 +1,138 @@
+// PROBLEM DESCRIPTION:
+// Given 5 students, find the name of the student with the median average grade of 3 courses.
+// Each student has a name and has grades for 3 courses.
+// When you are done, store the result into medianStudentName.
+
+/structdef Student ...
+	name String ...
+	grade1 Number ...
+	grade2 Number ...
+	grade3 Number
+
+/setdefault Student NAME -1 -1 -1
+
+// parameter is stuNum, return value is tempStudent
+/store stuNum 0 Number ; /consdefault tempStudent Student ; /blockdef inputStudent
+	/input tempStudent.name String Enter the name of student #{stuNum}: 
+	/input tempStudent.grade1 Number Enter the 1st grade of student #{stuNum}: 
+	/input tempStudent.grade2 Number Enter the 2nd grade of student #{stuNum}: 
+	/input tempStudent.grade3 Number Enter the 3rd grade of student #{stuNum}: 
+	/line
+/endblock
+
+// THE PROBLEM'S INPUT DATA IS AS FOLLOWS
+/add stuNum {stuNum} 1 ; /inputStudent ; /copyobject stu1 tempStudent
+/add stuNum {stuNum} 1 ; /inputStudent ; /copyobject stu2 tempStudent
+/add stuNum {stuNum} 1 ; /inputStudent ; /copyobject stu3 tempStudent
+/add stuNum {stuNum} 1 ; /inputStudent ; /copyobject stu4 tempStudent
+/add stuNum {stuNum} 1 ; /inputStudent ; /copyobject stu5 tempStudent
+
+// THE PROGRAM'S OUTPUT DATA GOES HERE
+/store medianStudentName unknown String
+
+// YOUR SOLUTION BEGINS HERE
+
+// step 1: calculate averages for each student
+
+// parameter is student, return value is avg
+/blockdef findAverage
+	/add sum {student.grade1} {student.grade2} {student.grade3}
+	/div avg {sum} 3
+/endblock
+
+/copyobject student stu1 ; /findAverage ; /store avg1 [avg] Number
+/copyobject student stu2 ; /findAverage ; /store avg2 [avg] Number
+/copyobject student stu3 ; /findAverage ; /store avg3 [avg] Number
+/copyobject student stu4 ; /findAverage ; /store avg4 [avg] Number
+/copyobject student stu5 ; /findAverage ; /store avg5 [avg] Number
+
+// step 2: create a structure to hold the students so we can work with them later
+
+/structdef StudentAverage ...
+	name String ...
+	avg Number
+
+/structdef FiveStudents ...
+	stu1 StudentAverage ...
+	stu2 StudentAverage ...
+	stu3 StudentAverage ...
+	stu4 StudentAverage ...
+	stu5 StudentAverage
+
+/construct students FiveStudents ...
+	{stu1.name} [avg1] ...
+	{stu2.name} [avg2] ...
+	{stu3.name} [avg3] ...
+	{stu4.name} [avg4] ...
+	{stu5.name} [avg5]
+
+// step 3: implement an algorithm that finds the maximum average, and sets it to -1
+
+// helper block for /findHigherName
+/blockdef set2
+	/store higherName {name2}
+	/store higherAvg [avg2]
+/endblock
+
+// helper block for /findHigherName
+/blockdef set1
+	/store higherName {name1}
+	/store higherAvg [avg1]
+/endblock
+
+// parameters are name1, avg1, name2, avg2; return values are higherName, higherAvg
+// SYNOPSIS: if avg2 > avg1, then higherName = name2 and higherAvg = avg2; else, higherName = name1 and higherAvg = avg1
+/store name1 none String ; /store name2 none String ; /store higherName none String ; /store higherAvg 0 Number ; /blockdef findHigherName
+	/greater useName2 [avg2] [avg1]
+	/if {useName2} set2
+	/not useName1 {useName2} ; /if {useName1} set1
+/endblock
+
+// single line helper blocks for /findHighestAndSetToNegative that only modify 1 variable each
+/blockdef setNegative1 ; /store students.stu1.avg -1 ; /endblock
+/blockdef setNegative2 ; /store students.stu2.avg -1 ; /endblock
+/blockdef setNegative3 ; /store students.stu3.avg -1 ; /endblock
+/blockdef setNegative4 ; /store students.stu4.avg -1 ; /endblock
+/blockdef setNegative5 ; /store students.stu5.avg -1 ; /endblock
+
+// no parameters, return value is highestName, uses and modifies students (global object)
+/store highestAvg -1 Number ; /store highestName unknown String ; /blockdef findHighestAndSetToNegative
+
+	/store highestAvg [students.stu1.avg]
+	/store highestName {students.stu1.name}
+
+	/store name1 {highestName} ; /store name2 {students.stu2.name} ; /store avg1 [highestAvg] ; /store avg2 [students.stu2.avg] ; /findHigherName
+	/store highestName {higherName} ; /store highestAvg [higherAvg]
+
+	/store name1 {highestName} ; /store name2 {students.stu3.name} ; /store avg1 [highestAvg] ; /store avg2 [students.stu3.avg] ; /findHigherName
+	/store highestName {higherName} ; /store highestAvg [higherAvg]
+
+	/store name1 {highestName} ; /store name2 {students.stu4.name} ; /store avg1 [highestAvg] ; /store avg2 [students.stu4.avg] ; /findHigherName
+	/store highestName {higherName} ; /store highestAvg [higherAvg]
+
+	/store name1 {highestName} ; /store name2 {students.stu5.name} ; /store avg1 [highestAvg] ; /store avg2 [students.stu5.avg] ; /findHigherName
+	/store highestName {higherName} ; /store highestAvg [higherAvg]
+
+	// at this point, the name of the highest student is in highestName
+	// so we will just iterate through all students to see if that person has the highest name, and if yes, set that student's average to -1
+
+	/strequal highestIs1 {students.stu1.name} {highestName}
+	/strequal highestIs2 {students.stu2.name} {highestName}
+	/strequal highestIs3 {students.stu3.name} {highestName}
+	/strequal highestIs4 {students.stu4.name} {highestName}
+	/strequal highestIs5 {students.stu5.name} {highestName}
+
+	/if {highestIs1} setNegative1
+	/if {highestIs2} setNegative2
+	/if {highestIs3} setNegative3
+	/if {highestIs4} setNegative4
+	/if {highestIs5} setNegative5
+
+/endblock
+
+/loop 3 findHighestAndSetToNegative
+/store medianStudentName {highestName}
+
+// YOUR SOLUTION ENDS HERE
+
+/useblue false ; The student with the median average grade of 3 courses is {medianStudentName}. ; /line ; /useblue true

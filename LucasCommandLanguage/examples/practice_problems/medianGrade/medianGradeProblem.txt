@@ -1,0 +1,42 @@
+// PROBLEM DESCRIPTION:
+// Given 5 students, find the name of the student with the median average grade of 3 courses.
+// Each student has a name and has grades for 3 courses.
+// When you are done, store the result into medianStudentName.
+
+/structdef Student ...
+	name String ...
+	grade1 Number ...
+	grade2 Number ...
+	grade3 Number
+
+/setdefault Student NAME -1 -1 -1
+
+// parameter is stuNum, return value is tempStudent
+/store stuNum 0 Number ; /consdefault tempStudent Student ; /blockdef inputStudent
+	/input tempStudent.name String Enter the name of student #{stuNum}: 
+	/input tempStudent.grade1 Number Enter the 1st grade of student #{stuNum}: 
+	/input tempStudent.grade2 Number Enter the 2nd grade of student #{stuNum}: 
+	/input tempStudent.grade3 Number Enter the 3rd grade of student #{stuNum}: 
+	/line
+/endblock
+
+// THE PROBLEM'S INPUT DATA IS AS FOLLOWS
+/add stuNum {stuNum} 1 ; /inputStudent ; /copyobject stu1 tempStudent
+/add stuNum {stuNum} 1 ; /inputStudent ; /copyobject stu2 tempStudent
+/add stuNum {stuNum} 1 ; /inputStudent ; /copyobject stu3 tempStudent
+/add stuNum {stuNum} 1 ; /inputStudent ; /copyobject stu4 tempStudent
+/add stuNum {stuNum} 1 ; /inputStudent ; /copyobject stu5 tempStudent
+
+// THE PROGRAM'S OUTPUT DATA GOES HERE
+/store medianStudentName unknown String
+
+// YOUR SOLUTION BEGINS HERE
+
+
+
+
+
+
+// YOUR SOLUTION ENDS HERE
+
+/useblue false ; The student with the median average grade of 3 courses is {medianStudentName}. ; /line ; /useblue true
