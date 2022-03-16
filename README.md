@@ -24,6 +24,8 @@ That's about it. Have fun using LCL! 😀
 
 ## Version History
 
+v3.7.2 - Deleting superstructs are now no longer possible. Also improved the display presentation of help documentation.
+
 v3.7.1 - Fixed a bug from the previous update (and added an interesting puzzle example file called `"abcdefgPuzzle.txt"`)
 
 v3.7 - Added the ability for structs to reference its superstruct's string representation in its own string representation
