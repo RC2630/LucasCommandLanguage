@@ -1528,7 +1528,9 @@ void inherit(const string& command) {
 	}
 	srt::attemptStructDefinition(subsrtname, fieldInfo, structs, non_assert_crash);
 	Struct& substruct = findStruct(structs, subsrtname);
-	substruct.superstructs = superstruct.superstructs;
+	// the superstruct is no longer valid because the struct creation above has changed the size of the structs vector
+	Struct& superstructAfterCreation = findStruct(structs, supersrtname);
+	substruct.superstructs = superstructAfterCreation.superstructs;
 	substruct.superstructs.push_back(supersrtname);
 }
 
