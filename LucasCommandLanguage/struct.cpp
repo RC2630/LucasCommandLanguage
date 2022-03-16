@@ -98,13 +98,16 @@ bool srt::Object::operator != (const Object& other) const {
 
 // throws runtime_error if no suitable string representation is found on this object or one of its inner objects
 // the parameter numPlaces is greater or equal to 0 if we should round, and is equal to -1 if we should NOT round
-string srt::Object::getRep(int numPlaces, vector<Variable>& vars, vector<Object>& objects, vector<Struct>& structs) const {
+// the parameter superRep is a valid string rep if we should use it, and is equal to srt::NO_SUPER_REP if we should use srt.rep instead
+string srt::Object::getRep(int numPlaces, vector<Variable>& vars, vector<Object>& objects,
+						   vector<Struct>& structs, const string& superRep) const {
 	Struct& srt = findStruct(structs, this->structTypename);
-	if (srt.rep.empty()) {
+	string useThisRep = (superRep == srt::NO_SUPER_REP) ? srt.rep : superRep;
+	if (useThisRep.empty()) {
 		throw runtime_error("no suitable string representation found");
 	}
 	string rep;
-	vector<string> parts = strUtil::partsSplitByOpenCloseDelimiters(srt.rep, '<', '>');
+	vector<string> parts = strUtil::partsSplitByOpenCloseDelimiters(useThisRep, '<', '>');
 	for (const string& part : parts) {
 		if (!strUtil::contains(part, "<")) {
 			// this part doesn't have angle brackets
@@ -112,6 +115,13 @@ string srt::Object::getRep(int numPlaces, vector<Variable>& vars, vector<Object>
 		} else {
 			// this part has angle brackets
 			string fieldname = part.substr(1, part.size() - 2); // removes angle brackets
+			if (fieldname.front() == '@') {
+				// this is a reference to the string rep of a superstruct
+				string supersrtname = fieldname.substr(1);
+				Struct& superstruct = findStruct(structs, supersrtname);
+				rep += this->getRep(numPlaces, vars, objects, structs, superstruct.rep);
+				continue;
+			}
 			fieldname = this->name + "." + fieldname; // "personalize" the fieldname for the current object
 			if (vecUtil::contains(this->fieldnames, fieldname)) {
 				// this is a variable field
@@ -127,7 +137,7 @@ string srt::Object::getRep(int numPlaces, vector<Variable>& vars, vector<Object>
 				}
 			} else if (vecUtil::contains(this->objFieldnames, fieldname)) {
 				// this is an inner object field
-				rep += findObject(objects, fieldname).getRep(numPlaces, vars, objects, structs);
+				rep += findObject(objects, fieldname).getRep(numPlaces, vars, objects, structs, srt::NO_SUPER_REP);
 			}
 		}
 	}

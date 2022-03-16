@@ -1,0 +1,50 @@
+/debug true
+
+/structdef Point ...
+	x Number ...
+	y Number
+
+/inherit Point3D Point ...
+	z Number
+
+/inherit PointWithName Point3D ...
+	name String
+
+/structdef Person ...
+	name String ...
+	age Number
+
+/inherit Student Person ...
+	school String
+
+/construct lucas Student Lucas 19 UBC
+/construct point PointWithName 1 2 3 FUNNY-POINT
+
+// case 1: you got the super-sub relationship backwards
+/stringrep Person <@Student> is a good boy! ; /line
+
+// case 2: the struct doesn't even exist
+/stringrep Point <@Dot> and some more! ; /line
+
+// case 3: there is no super-sub relationship between the structs
+/stringrep Point <@Person> is not related to me! ; /line
+
+// case 4: there is no string rep
+{lucas} ; /line
+
+// case 5: the string rep setting worked, but there is no string rep for the superstruct
+/stringrep Student <@Person>, a student of <school>
+{lucas} ; /line
+
+// case 6: same as case 4, but we add a string rep for Person so that the entire thing will work
+/stringrep Person <name> (age <age>)
+{lucas} ; /line
+
+// case 7: more layers - there is a string rep for its own struct and for its direct parent, but not for its grandparent
+/stringrep Point3D <@Point>, <z>
+/stringrep PointWithName <name> = (<@Point3D>)
+{point} ; /line
+
+// case 8: more layers - there are string reps for itself, its parent, and its grandparent, so it should work
+/stringrep Point <x>, <y>
+{point} ; /line

@@ -14,12 +14,15 @@ using namespace var;
 
 namespace srt {
 
+	const string NO_SUPER_REP = "__none__"; // reserved identifier for not using a superstruct's string representation
+
 	struct Struct {
 
 		string name;
 		vector<pair<string, string>> fieldsAndTypes;
 		vector<pair<string, string>> fieldsAndTypesForEquality;
 		vector<string> defaultValues;
+		vector<string> superstructs;
 		string rep;
 
 		Struct() = default;
@@ -54,7 +57,8 @@ namespace srt {
 
 		// throws runtime_error if no suitable string representation is found on this object or one of its inner objects
 		// the parameter numPlaces is greater or equal to 0 if we should round, and is equal to -1 if we should NOT round
-		string getRep(int numPlaces, vector<Variable>& vars, vector<Object>& objects, vector<Struct>& structs) const;
+		// the parameter superRep is a valid string rep if we should use it, and is equal to srt::NO_SUPER_REP if we should use srt.rep instead
+		string getRep(int numPlaces, vector<Variable>& vars, vector<Object>& objects, vector<Struct>& structs, const string& superRep) const;
 
 		// compares (recursively) to see if each field is equal, as opposed to simply a name check as in the case of operator ==
 		// the parameter numPlaces is greater or equal to 0 if we should round, and is equal to -1 if we should NOT round

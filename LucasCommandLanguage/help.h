@@ -374,8 +374,11 @@ namespace help {
 
 		"Objects and variables must not be named the same thing. For example, there cannot be a variable and an object both named \"bob\" at any given time in the program.\n"
 		"When objects are used surrounded by braces (\"{...}\") or square brackets (\"[...]\"), they are replaced with their string representation.\n"
+		"In the definition of the string representation, \"<@SUPERSTRUCT_NAME>\" can be used to reference the string representation of the superstruct.\n"
+		"For example, if \"Student\" is a substruct of \"Person\", then \"/stringrep Student <@Person> and <school>\" will set Student's string rep to Person's string rep and the student's school.\n"
 		"If an object does not have a string representation (or some of its inner objects do not have one), the program will let you know that.\n"
-		"Note that just like using {} or [] for variables, {} will replace numerical values with their rounded values, while [] will use full precision.\n\n"
+		"Note that just like using {} or [] for variables, {} will replace numerical values with their rounded values, while [] will use full precision.\n"
+		"Special note: It is not allowed to set the string representation of any struct to \"__none__\" (2 underscores on each side, no quotes). This representation is reserved for internal use.\n\n"
 		
 		"Type \"/help commands struct\" for a list of commands related to structs and objects";
 

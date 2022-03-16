@@ -132,10 +132,12 @@ void var::replaceVariableReferencesWithRoundedValues(string& s, vector<Variable>
 			} else if (srt::containsObject(objects, noBraces)) {
 				srt::Object& obj = srt::findObject(objects, noBraces);
 				try {
-					newString += obj.getRep(numPlaces, vars, objects, structs);
+					newString += obj.getRep(numPlaces, vars, objects, structs, srt::NO_SUPER_REP);
 				} catch (const runtime_error& e) { // no suitable string representation
 					cout << ANSI_RED << "No suitable string representation found for object \"" << obj.name << "\".\n"
-				 		 << "This could be due to no suitable string representation for one or more of its inner objects.\n" << ANSI_NORMAL;
+						 << "This could be due to no suitable string representation for one or more of its inner objects.\n"
+						 << "If you used superstruct string-rep reference, then the error could also be due to no suitable string "
+						 << "representation for one or more of its superstructs (both direct and indirect).\n" << ANSI_NORMAL;
 					s = "";
 					return;
 				}
@@ -166,10 +168,12 @@ void var::replaceVariableReferencesWithFullPrecisionValues(string& s, vector<Var
 			} else if (srt::containsObject(objects, noSquareBrackets)) {
 				srt::Object& obj = srt::findObject(objects, noSquareBrackets);
 				try {
-					newString += obj.getRep(-1, vars, objects, structs); // no rounding
+					newString += obj.getRep(-1, vars, objects, structs, srt::NO_SUPER_REP); // no rounding
 				} catch (const runtime_error& e) { // no suitable string representation
 					cout << ANSI_RED << "No suitable string representation found for object \"" << obj.name << "\".\n"
-						 << "This could be due to no suitable string representation for one or more of its inner objects.\n" << ANSI_NORMAL;
+						 << "This could be due to no suitable string representation for one or more of its inner objects.\n"
+						 << "If you used superstruct string-rep reference, then the error could also be due to no suitable string "
+						 << "representation for one or more of its superstructs (both direct and indirect).\n" << ANSI_NORMAL;
 					s = "";
 					return;
 				}

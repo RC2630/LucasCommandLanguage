@@ -1527,6 +1527,9 @@ void inherit(const string& command) {
 		fieldInfo.push_back(parseArgument(command, i));
 	}
 	srt::attemptStructDefinition(subsrtname, fieldInfo, structs, non_assert_crash);
+	Struct& substruct = findStruct(structs, subsrtname);
+	substruct.superstructs = superstruct.superstructs;
+	substruct.superstructs.push_back(supersrtname);
 }
 
 void stringRep(const string& srtname, const string& rep) {
@@ -1539,6 +1542,19 @@ void stringRep(const string& srtname, const string& rep) {
 	for (const string& part : parts) {
 		if (strUtil::contains(part, "<")) { // has angle brackets
 			string fieldname = part.substr(1, part.size() - 2); // removes angle brackets
+			if (fieldname.empty()) {
+				cout << ANSI_RED << "There cannot be nothing inside the angle brackets.\n" << ANSI_NORMAL;
+				return;
+			}
+			if (fieldname.front() == '@') { // has @
+				string supersrtname = fieldname.substr(1); // removes @
+				if (!vecUtil::contains(srt.superstructs, supersrtname)) {
+					cout << ANSI_RED << "The struct \"" << supersrtname << "\" is not a superstruct of \"" << srt.name << "\".\n" << ANSI_NORMAL;
+					return;
+				} else {
+					continue;
+				}
+			}
 			if (!vecUtil::contains(srt.getFields(), fieldname)) {
 				cout << ANSI_RED << "The struct \"" << srt.name << "\" does not have a field named \"" << fieldname << "\".\n" << ANSI_NORMAL;
 				return;
