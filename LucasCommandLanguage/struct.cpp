@@ -234,6 +234,15 @@ bool srt::containsStructAsInner(const vector<Struct>& structs, const string& inn
 	return false;
 }
 
+bool srt::isSuperstruct(const vector<Struct>& structs, const string& srtname) {
+	for (const Struct& srt : structs) {
+		if (vecUtil::contains(srt.superstructs, srtname)) {
+			return true;
+		}
+	}
+	return false;
+}
+
 void srt::deleteObject(vector<Object>& objects, vector<Variable>& vars, const string& objname) {
 	if (!containsObject(objects, objname)) {
 		return;
@@ -262,6 +271,10 @@ void srt::deleteStruct(vector<Struct>& structs, vector<Object>& objects, vector<
 	}
 	if (containsStructAsInner(structs, srtname)) {
 		cout << ANSI_RED << "The struct you are attempting to delete (" << srtname << ") is an inner struct of at least 1 other struct. Therefore, the deletion cannot proceed.\n" << ANSI_NORMAL;
+		return;
+	}
+	if (isSuperstruct(structs, srtname)) {
+		cout << ANSI_RED << "The struct you are attempting to delete (" << srtname << ") is a superstruct of at least 1 other struct. Therefore, the deletion cannot proceed.\n" << ANSI_NORMAL;
 		return;
 	}
 	Struct srt = findStruct(structs, srtname);

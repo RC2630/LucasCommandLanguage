@@ -30,6 +30,8 @@ using namespace srt;
 
 const string INPUT_FILE = "../LucasCommandLanguage/inputFile/input.txt"; // file path for the source code
 
+string SEPARATOR; // used to separate help documents (not const because it's not initialized yet, but supposed to be a constant)
+
 bool reuse_display = true; // using "/prev" will show special green message
 bool warn_type_change = true; // changing type of variable will show warning message
 bool use_blue = true; // most output is blue (instead of the system's default colour)
@@ -57,6 +59,9 @@ void interpretCommand(const string& command, vector<string>& commands, int currI
 
 // a testing function that executes when the main program terminates (or crashes)
 void debugOnTermination(vector<string>& com);
+
+// this function initializes the separator declared as a "constant" above
+string generateSeparator();
 
 // general helpers
 void helpWith1Arg(const string& specific);
@@ -174,6 +179,7 @@ void objEqual(const string& boolvarname, bool shouldRound, const string& objname
 
 int main() {
 
+	SEPARATOR = generateSeparator();
 	digits(num_places);
 	
 	vector<string> commands;
@@ -296,7 +302,7 @@ int main() {
 void interpretCommand(const string& command, vector<string>& commands, int currIndex, const string& untouched) {
 
 	if (commandIs(command, "/help") && numArguments(command) == 0) {
-		cout << ANSI_GREEN << HELP_DIRECTORY << "\n" << ANSI_NORMAL;
+		cout << ANSI_GREEN << HELP_DIRECTORY << ANSI_BLUE << SEPARATOR << ANSI_NORMAL;
 	} else if (commandIs(command, "/help") && numArguments(command) == 1) {
 		helpWith1Arg(parseArgument(command));
 	} else if (commandIs(command, "/help") && numArguments(command) == 2) {
@@ -518,21 +524,29 @@ void debugOnTermination(vector<string>& com) {
 	
 }
 
+string generateSeparator() {
+	string sep = "\n\n";
+	for (int i = 1; i <= 210; i++) { // a carefully-measured and carefully-chosen number
+		sep += "-";
+	}
+	return sep + "\n\n";
+}
+
 void helpWith1Arg(const string& specific) {
 	if (specific == "commands") {
-		cout << ANSI_GREEN << COMMAND_HELP_DIRECTORY << "\n" << ANSI_NORMAL;
+		cout << ANSI_GREEN << COMMAND_HELP_DIRECTORY << ANSI_BLUE << SEPARATOR << ANSI_NORMAL;
 	} else if (specific == "variables") {
-		cout << ANSI_GREEN << VARIABLE_HELP << "\n" << ANSI_NORMAL;
+		cout << ANSI_GREEN << VARIABLE_HELP << ANSI_BLUE << SEPARATOR << ANSI_NORMAL;
 	} else if (specific == "blocks") {
-		cout << ANSI_GREEN << BLOCK_HELP << "\n" << ANSI_NORMAL;
+		cout << ANSI_GREEN << BLOCK_HELP << ANSI_BLUE << SEPARATOR << ANSI_NORMAL;
 	} else if (specific == "memory") {
-		cout << ANSI_GREEN << MEM_HELP << "\n" << ANSI_NORMAL;
+		cout << ANSI_GREEN << MEM_HELP << ANSI_BLUE << SEPARATOR << ANSI_NORMAL;
 	} else if (specific == "lclinfo") {
-		cout << ANSI_GREEN << LCL_INFO << "\n" << ANSI_NORMAL;
+		cout << ANSI_GREEN << LCL_INFO << ANSI_BLUE << SEPARATOR << ANSI_NORMAL;
 	} else if (specific == "special") {
-		cout << ANSI_GREEN << SPECIAL_HELP << "\n" << ANSI_NORMAL;
+		cout << ANSI_GREEN << SPECIAL_HELP << ANSI_BLUE << SEPARATOR << ANSI_NORMAL;
 	} else if (specific == "struct") {
-		cout << ANSI_GREEN << STRUCT_HELP << "\n" << ANSI_NORMAL;
+		cout << ANSI_GREEN << STRUCT_HELP << ANSI_BLUE << SEPARATOR << ANSI_NORMAL;
 	} else {
 		cout << ANSI_YELLOW << "/help " << specific << ANSI_RED << " does not display a valid help document.\n" << ANSI_NORMAL;
 	}
@@ -541,29 +555,29 @@ void helpWith1Arg(const string& specific) {
 void helpWith2Arg(const string& spec1, const string& spec2) {
 	if (spec1 == "commands") {
 		if (spec2 == "general") {
-			cout << ANSI_GREEN << COMMAND_HELP_GENERAL << "\n" << ANSI_NORMAL;
+			cout << ANSI_GREEN << COMMAND_HELP_GENERAL << ANSI_BLUE << SEPARATOR << ANSI_NORMAL;
 		} else if (spec2 == "variables") {
-			cout << ANSI_GREEN << COMMAND_HELP_VARIABLES << "\n" << ANSI_NORMAL;
+			cout << ANSI_GREEN << COMMAND_HELP_VARIABLES << ANSI_BLUE << SEPARATOR << ANSI_NORMAL;
 		} else if (spec2 == "arithmetic") {
-			cout << ANSI_GREEN << COMMAND_HELP_ARITHMETIC << "\n" << ANSI_NORMAL;
+			cout << ANSI_GREEN << COMMAND_HELP_ARITHMETIC << ANSI_BLUE << SEPARATOR << ANSI_NORMAL;
 		} else if (spec2 == "relational") {
-			cout << ANSI_GREEN << COMMAND_HELP_RELATIONAL << "\n" << ANSI_NORMAL;
+			cout << ANSI_GREEN << COMMAND_HELP_RELATIONAL << ANSI_BLUE << SEPARATOR << ANSI_NORMAL;
 		} else if (spec2 == "logical") {
-			cout << ANSI_GREEN << COMMAND_HELP_LOGICAL << "\n" << ANSI_NORMAL;
+			cout << ANSI_GREEN << COMMAND_HELP_LOGICAL << ANSI_BLUE << SEPARATOR << ANSI_NORMAL;
 		} else if (spec2 == "cast") {
-			cout << ANSI_GREEN << COMMAND_HELP_CAST << "\n" << ANSI_NORMAL;
+			cout << ANSI_GREEN << COMMAND_HELP_CAST << ANSI_BLUE << SEPARATOR << ANSI_NORMAL;
 		} else if (spec2 == "string") {
-			cout << ANSI_GREEN << COMMAND_HELP_STRING << "\n" << ANSI_NORMAL;
+			cout << ANSI_GREEN << COMMAND_HELP_STRING << ANSI_BLUE << SEPARATOR << ANSI_NORMAL;
 		} else if (spec2 == "blocks") {
-			cout << ANSI_GREEN << COMMAND_HELP_BLOCKS << "\n" << ANSI_NORMAL;
+			cout << ANSI_GREEN << COMMAND_HELP_BLOCKS << ANSI_BLUE << SEPARATOR << ANSI_NORMAL;
 		} else if (spec2 == "cflow") {
-			cout << ANSI_GREEN << COMMAND_HELP_CONTROL_FLOW << "\n" << ANSI_NORMAL;
+			cout << ANSI_GREEN << COMMAND_HELP_CONTROL_FLOW << ANSI_BLUE << SEPARATOR << ANSI_NORMAL;
 		} else if (spec2 == "memory") {
-			cout << ANSI_GREEN << COMMAND_HELP_MEMORY << "\n" << ANSI_NORMAL;
+			cout << ANSI_GREEN << COMMAND_HELP_MEMORY << ANSI_BLUE << SEPARATOR << ANSI_NORMAL;
 		} else if (spec2 == "assert") {
-			cout << ANSI_GREEN << COMMAND_HELP_ASSERT << "\n" << ANSI_NORMAL;
+			cout << ANSI_GREEN << COMMAND_HELP_ASSERT << ANSI_BLUE << SEPARATOR << ANSI_NORMAL;
 		} else if (spec2 == "struct") {
-			cout << ANSI_GREEN << COMMAND_HELP_STRUCT << "\n" << ANSI_NORMAL;
+			cout << ANSI_GREEN << COMMAND_HELP_STRUCT << ANSI_BLUE << SEPARATOR << ANSI_NORMAL;
 		} else {
 			cout << ANSI_YELLOW << "/help commands " << spec2 << ANSI_RED << " does not display a valid help document, because \""
 			 	 << spec2 << "\" is not a valid category of commands.\n" << ANSI_NORMAL;
@@ -1514,7 +1528,7 @@ void inherit(const string& command) {
 	string subsrtname = parseArgument(command, 1);
 	string supersrtname = parseArgument(command, 2);
 	if (!containsStruct(structs, supersrtname)) {
-		cout << ANSI_RED << "There is currently no super-struct named \"" << supersrtname << "\" to inherit from.\n" << ANSI_NORMAL;
+		cout << ANSI_RED << "There is currently no superstruct named \"" << supersrtname << "\" to inherit from.\n" << ANSI_NORMAL;
 		return;
 	}
 	Struct& superstruct = findStruct(structs, supersrtname);

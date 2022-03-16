@@ -294,6 +294,11 @@ namespace help {
 		"Deleting the inner struct is not allowed. If you attempt to do that, an error message will appear and no deletion will occur.\n"
 		"Deleting the outer struct removes all objects of that struct's type, as before, but now according to the nested object deletion rules above.\n\n"
 
+		"Specifically for deleting structs in a superstruct/substruct relationship:\n"
+		"Deleting any struct that is a superstruct of one or more other structs is not allowed. Doing so results in an error message and no deletion.\n"
+		"Note that this applies to both direct and indirect superstructs, which means grandparent/great-grandparent/etc. structs cannot be deleted.\n"
+		"It is okay to delete a substruct as long as it satisfies all the other necessary criteria for qualifying as a deletable struct.\n\n"
+
 		"Type \"/help commands memory\" for a list of commands that perform these deletion operations";
 
 	const string LCL_INFO =

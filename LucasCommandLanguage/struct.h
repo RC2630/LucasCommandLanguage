@@ -74,6 +74,7 @@ namespace srt {
 	Struct& findStruct(vector<Struct>& structs, const string& srtname);
 	Object& findObject(vector<Object>& objects, const string& objname);
 	bool containsStructAsInner(const vector<Struct>& structs, const string& innerSrtname);
+	bool isSuperstruct(const vector<Struct>& structs, const string& srtname);
 	void deleteObject(vector<Object>& objects, vector<Variable>& vars, const string& objname);
 	void deleteStruct(vector<Struct>& structs, vector<Object>& objects, vector<Variable>& vars, const string& srtname);
 	void attemptStructDefinition(const string& name, const vector<string>& fieldAndTypesUnpaired,
