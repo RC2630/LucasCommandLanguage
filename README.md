@@ -24,6 +24,8 @@ That's about it. Have fun using LCL! 😀
 
 ## Version History
 
+v3.7 - Added the ability for structs to reference its superstruct's string representation in its own string representation
+
 v3.6.1 - Added `/copyobjdel`, which provides the option to delete old objects whenever we use `/copyobject`
 
 v3.6 - Added ability to construct objects and set default constructors without flattening inner objects
