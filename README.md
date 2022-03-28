@@ -24,6 +24,8 @@ That's about it. Have fun using LCL! 😀
 
 ## Version History
 
+v3.8 - Added the ability for `/objequal` to only compare fields from a superstruct (removing the restriction that the two objects to compare must always have the same struct type)
+
 v3.7.2 - Deleting superstructs are now no longer possible. Also improved the display presentation of help documentation. Also, a very challenging new practice problem has been added to the `examples/practice_problems` folder. You can find this new problem and a sample solution in the `medianGrade` subfolder.
 
 v3.7.1 - Fixed a bug from the previous update (and added an interesting puzzle example file called `"abcdefgPuzzle.txt"`)
