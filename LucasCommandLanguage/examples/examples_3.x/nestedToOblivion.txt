@@ -1,0 +1,16 @@
+/debug true
+
+/structdef Grandparent a Number b Number
+/inherit Parent Grandparent c Number d Number x Grandparent y Grandparent
+/inherit Child Parent e Number f Number i Parent j Parent n Grandparent
+
+/setdefault Grandparent 1 2
+/setdefault Parent <@Grandparent> 3 4 <@Grandparent> <@Grandparent>
+/setdefault Child <@Parent> 5 6 <@Parent> <@Parent> <@Grandparent>
+
+/stringrep Grandparent <a><b>
+/stringrep Parent <@Grandparent><c><d><x><y>
+/stringrep Child <@Parent><e><f><i><j><n>
+
+/consdefault child Child
+{child} ; /line

@@ -1,0 +1,16 @@
+/debug true
+
+/structdef Point ...
+	x Number ...
+	y Number
+
+/structdef TwoPoints ...
+	p Point ...
+	q Point
+
+/setdefault Point 1 2
+/setdefault TwoPoints <@Point> <@Point>
+/setdefault Point 3 4
+
+/consdefault defPoint Point
+/consdefault defTwoPoints TwoPoints

@@ -29,6 +29,8 @@ using namespace blk;
 using namespace srt;
 
 const string INPUT_FILE = "../LucasCommandLanguage/inputFile/input.txt"; // file path for the source code
+const string NO_REP = "__NO_REP__"; // string representation is not found (for debug screen)
+const string REP_TOO_LONG = "__REP_TOO_LONG__"; // string representation is too long (for debug screen)
 
 string SEPARATOR; // used to separate help documents (not const because it's not initialized yet, but supposed to be a constant)
 
@@ -180,7 +182,7 @@ void objEqualSuper(const string& boolvarname, const string& supersrtname, bool s
 
 int main() {
 
-	SEPARATOR = generateSeparator();
+	SEPARATOR = "\n\n" + generateSeparator() + "\n\n";
 	digits(num_places);
 	
 	vector<string> commands;
@@ -484,12 +486,15 @@ void interpretCommand(const string& command, vector<string>& commands, int currI
 // note: this function passes in the commands of the program by reference, so we can look at the commands for debugging purposes
 // note: some commands will be different when inspected at the end of execution because of modifications during the program execution
 void debugOnTermination(vector<string>& com) {
+
+	string debugSeparator = "\n" + generateSeparator() + "\n";
+	cout << ANSI_BLUE << debugSeparator;
 	
 	cout << ANSI_YELLOW << "\nVariables:\n\n" << ANSI_NORMAL;
 	for (const Variable& var : vars) {
 		cout << var.name << ANSI_RED << " = " << ANSI_GREEN
 			 << var.getAppropriateValue() << ANSI_RED << " (" << ANSI_BLUE
-			 << var.datatype << ANSI_RED << ")\n" << ANSI_NORMAL;
+			 << var.datatype << ANSI_RED << ")" << ANSI_NORMAL << "\n";
 	}
 	if (vars.empty()) {
 		cout << ANSI_MAGENTA << "(none)\n" << ANSI_NORMAL;
@@ -497,7 +502,8 @@ void debugOnTermination(vector<string>& com) {
 
 	cout << ANSI_YELLOW << "\nBlocks:\n\n" << ANSI_NORMAL;
 	for (const Block& block : blocks) {
-		cout << block.name << "\n";
+		cout << block.name << ANSI_RED << " (" << ANSI_GREEN << block.commands.size() << ANSI_BLUE
+			 << " commands" << ANSI_RED << ")" << ANSI_NORMAL << "\n";
 	}
 	if (blocks.empty()) {
 		cout << ANSI_MAGENTA << "(none)\n" << ANSI_NORMAL;
@@ -505,7 +511,9 @@ void debugOnTermination(vector<string>& com) {
 
 	cout << ANSI_YELLOW << "\nStructs:\n\n" << ANSI_NORMAL;
 	for (const Struct& srt : structs) {
-		cout << srt.name << "\n";
+		cout << srt.name << ANSI_RED << " (" << ANSI_GREEN << srt.fieldsAndTypes.size() << ANSI_BLUE
+			 << " fields" << ANSI_RED << " & " << ANSI_GREEN << srt.superstructs.size() << ANSI_BLUE
+			 << " superstructs" << ANSI_RED << ")" << ANSI_NORMAL << "\n";
 	}
 	if (structs.empty()) {
 		cout << ANSI_MAGENTA << "(none)\n" << ANSI_NORMAL;
@@ -513,11 +521,30 @@ void debugOnTermination(vector<string>& com) {
 
 	cout << ANSI_YELLOW << "\nObjects:\n\n" << ANSI_NORMAL;
 	for (const Object& obj : objects) {
-		cout << obj.name << "\n";
+		string objRep;
+		try {
+			objRep = obj.getRep(-1, vars, objects, structs, srt::NO_SUPER_REP);
+		} catch (const runtime_error& e) {
+			objRep = NO_REP;
+		}
+		if (objRep.size() > 50) {
+			objRep = REP_TOO_LONG;
+		}
+		cout << obj.name << ANSI_RED << " = ";
+		if (objRep == NO_REP) {
+			cout << ANSI_CYAN << "<" << ANSI_MAGENTA << "no string rep" << ANSI_CYAN << ">";
+		} else if (objRep == REP_TOO_LONG) {
+			cout << ANSI_CYAN << "<" << ANSI_MAGENTA << "string rep is too long" << ANSI_CYAN << ">";
+		} else {
+			cout << ANSI_GREEN << objRep;
+		}
+		cout << ANSI_RED << " (" << ANSI_BLUE << obj.structTypename << ANSI_RED << ")" << ANSI_NORMAL << "\n";
 	}
 	if (objects.empty()) {
 		cout << ANSI_MAGENTA << "(none)\n" << ANSI_NORMAL;
 	}
+
+	cout << ANSI_BLUE << debugSeparator;
 
 	if (top_level_crash_message == "none") {
 		cout << ANSI_GREEN << "\nProgram execution finished without an exception.\n" << ANSI_NORMAL;
@@ -528,11 +555,11 @@ void debugOnTermination(vector<string>& com) {
 }
 
 string generateSeparator() {
-	string sep = "\n\n";
+	string sep;
 	for (int i = 1; i <= 210; i++) { // a carefully-measured and carefully-chosen number
 		sep += "-";
 	}
-	return sep + "\n\n";
+	return sep;
 }
 
 void helpWith1Arg(const string& specific) {
@@ -1380,8 +1407,28 @@ void construct(const string& command) {
 	for (int i = 3; i <= numArguments(command); i++) {
 		string field = parseArgument(command, i);
 		if (strUtil::beginsWith(field, "<") && strUtil::endsWith(field, ">")) {
-			// inner object
+			// inner object or reference to inner struct's default constructor
 			string innerObjname = field.substr(1, field.size() - 2); // removes <>
+			if (innerObjname.empty()) {
+				cout << ANSI_RED << "There cannot be nothing inside the angle brackets.\n" << ANSI_NORMAL;
+				return;
+			}
+			if (innerObjname.front() == '@') {
+				// reference to inner struct's default constructor
+				string innerSrtname = innerObjname.substr(1);
+				if (!containsStruct(structs, innerSrtname)) {
+					cout << ANSI_RED << "The struct \"" << innerSrtname << "\" does not exist.\n" << ANSI_NORMAL;
+					return;
+				}
+				Struct& innerSrt = findStruct(structs, innerSrtname);
+				if (innerSrt.defaultValues.empty()) {
+					cout << ANSI_RED << "The inner struct \"" << innerSrtname << "\" does not currently have a default constructor.\n" << ANSI_NORMAL;
+					return;
+				}
+				fieldInitValues.insert(fieldInitValues.end(), innerSrt.defaultValues.begin(), innerSrt.defaultValues.end());
+				continue;
+			}
+			// inner object
 			if (!containsObject(objects, innerObjname)) {
 				cout << ANSI_RED << "The object \"" << innerObjname << "\" does not currently exist.\n" << ANSI_NORMAL;
 				return;
@@ -1408,8 +1455,30 @@ void setDefault(const string& command) {
 	for (int i = 2; i <= numArguments(command); i++) {
 		string field = parseArgument(command, i);
 		if (strUtil::beginsWith(field, "<") && strUtil::endsWith(field, ">")) {
-			// inner object
+			// inner object or reference to inner struct
 			string innerObjname = field.substr(1, field.size() - 2); // removes <>
+			if (innerObjname.empty()) {
+				cout << ANSI_RED << "There cannot be nothing inside the angle brackets.\n" << ANSI_NORMAL;
+				return;
+			}
+			if (innerObjname.front() == '@') {
+				// reference to inner struct
+				string innerSrtname = innerObjname.substr(1);
+				if (!containsStruct(structs, innerSrtname)) {
+					cout << ANSI_RED << "The struct \"" << innerSrtname << "\" does not exist.\n" << ANSI_NORMAL;
+					srt.defaultValues = oldDefaultValues;
+					return;
+				}
+				Struct& innerSrt = findStruct(structs, innerSrtname);
+				if (innerSrt.defaultValues.empty()) {
+					cout << ANSI_RED << "The inner struct \"" << innerSrtname << "\" does not currently have a default constructor.\n" << ANSI_NORMAL;
+					srt.defaultValues = oldDefaultValues;
+					return;
+				}
+				srt.defaultValues.insert(srt.defaultValues.end(), innerSrt.defaultValues.begin(), innerSrt.defaultValues.end());
+				continue;
+			}
+			// inner object
 			if (!containsObject(objects, innerObjname)) {
 				cout << ANSI_RED << "The object \"" << innerObjname << "\" does not currently exist.\n" << ANSI_NORMAL;
 				srt.defaultValues = oldDefaultValues;
@@ -1594,6 +1663,25 @@ void setEqualityFields(const string& command) {
 	vector<string> fields;
 	for (int i = 2; i <= numArguments(command); i++) {
 		string currField = parseArgument(command, i);
+		if (currField.front() == '@') {
+			// superstruct reference
+			string supersrtname = currField.substr(1);
+			if (!containsStruct(structs, supersrtname)) {
+				cout << ANSI_RED << "The struct \"" << supersrtname << "\" does not exist.\n" << ANSI_NORMAL;
+				return;
+			}
+			if (!srt.isSubstructOf(supersrtname, false)) {
+				cout << ANSI_RED << "The struct \"" << supersrtname << "\" is not a superstruct of the struct \""
+					 << srtname << "\".\n" << ANSI_NORMAL;
+				return;
+			}
+			Struct& supersrt = findStruct(structs, supersrtname);
+			for (const auto& [field, type] : supersrt.fieldsAndTypesForEquality) {
+				fields.push_back(field);
+			}
+			continue;
+		}
+		// regular field
 		if (!vecUtil::contains(srtFields, currField)) {
 			cout << ANSI_RED << "The struct \"" << srtname << "\" has no field named \"" << currField << "\".\n" << ANSI_NORMAL;
 			return;

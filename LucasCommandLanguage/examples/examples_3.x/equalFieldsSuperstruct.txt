@@ -1,0 +1,51 @@
+/debug true
+
+/structdef Student ...
+	name String ...
+	grade Number ...
+	age Number ...
+	id Number
+
+/inherit GoodStudent Student ...
+	creditsPerYear Number ...
+	numAwards Number ...
+	popularity Number
+
+/structdef Teacher ...
+	name String ...
+	department String ...
+	favStu GoodStudent ...
+	leastFavStu Student
+
+// consider this scenario: we want to compare two GoodStudents using all fields except for popularity
+// without superstruct reference, we would have to write "/equalfields Student name grade age id creditsPerYear numAwards"
+// that is a lot to write! let's see if we can do any better now :D
+
+// case 1: edge cases
+/equalfields GoodStudent @Dog		// no such struct
+/equalfields GoodStudent @Teacher	// not superstruct
+
+// case 2: normal case
+/equalfields GoodStudent @Student creditsPerYear numAwards
+
+/construct control GoodStudent ...
+	rand 12 17 12345 ...		// the Student (core) part
+	36 16 95			// the GoodStudent (additional) part
+
+/copyobject exp1 control ; /store exp1.name other
+/copyobject exp2 control ; /store exp2.grade 11
+/copyobject exp3 control ; /store exp3.age 20
+/copyobject exp4 control ; /store exp4.id 54321
+/copyobject exp5 control ; /store exp5.creditsPerYear 44
+/copyobject exp6 control ; /store exp6.numAwards 25
+/copyobject exp7 control ; /store exp7.popularity 90
+
+/objequal eq1 true control exp1
+/objequal eq2 true control exp2
+/objequal eq3 true control exp3
+/objequal eq4 true control exp4
+/objequal eq5 true control exp5
+/objequal eq6 true control exp6
+/objequal eq7 true control exp7
+
+// look at debug

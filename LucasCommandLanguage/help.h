@@ -197,13 +197,15 @@ namespace help {
 		"/structdef <structname> <fieldname_1> <fieldtype_1> <fieldname_2> <fieldtype_2> ... <fieldname_n> <fieldtype_n> = define a new struct with the given structname and field information\n"
 		"/construct <objectname> <structname> <fieldvalue_1> <fieldvalue_2> ... <fieldvalue_n> = instantiate a new object of type structname, with the given objectname and initial field values\n"
 		"/construct <objectname> <structname> ... <<inner_object>> ... = same as above, but the inner object's fields will be copied so you don't have to manually supply so many inner fields (put \"<...>\")\n"
-		"/setdefault <structname> <fieldvalue_1> <fieldvalue_2> ... <fieldvalue_n> = sets the default constructor to initialize the object with the given field values (angle-bracket shorthand above also works)\n"
+		"/construct <objectname> <structname> ... <<@inner_struct>> ... = same as above, but uses the field values of inner_struct's default constructor (put \"<@...>\")\n"
+		"/setdefault <structname> <fieldvalue_1> <fieldvalue_2> ... <fieldvalue_n> = sets the default constructor to initialize the object with the given field values (angle-bracket and @ shorthands both work)\n"
 		"/consdefault <objectname> <structname> = instantiate a new object with the default constructor set by \"/setdefault\"\n"
 		"/copyobject <destobject> <sourceobject> = copy construction or copy assignment of source object into dest object, depending on if dest object already exists or not\n"
 		"/getobjecttype <strvar> <objname> = get the object named objname's struct-type, and store its name in strvar (as a String)\n"
 		"/inherit <substructname> <superstructname> <newfieldname_1> <newfieldtype_1> ... <newfieldname_n> <newfieldtype_n> = define a new struct with all of superstructname's fields, plus the given new fields\n"
 		"/stringrep <structname> <rep> = sets the string representation of objects of the given struct type (structname), where fields and inner objects are placed inside angle brackets (\"<...>\")\n"
 		"/equalfields <structname> <fieldname_1> <fieldname_2> ... <fieldname_n> = set which fields \"/objequal\" will use to compare objects of type structname (default is compare all fields)\n"
+		"/equalfields <structname> ... <@superstructname> ... = same as above, but adds the fields used to compare the superstruct to the current struct's compared fields (put \"@...\")\n"
 		"/objequal <boolvarname> <should_round> <objname_1> <objname_2> = check the equality of the two given objects (rounding numbers if should_round is true), and store result into variable called boolvarname\n"
 		"/objequal <boolvarname> <common_type> <should_round> <objname_1> <objname_2> = same as above, but only compares the fields in common_type (must be same struct or superstruct of the structs of both objects)\n\n"
 		
@@ -357,15 +359,6 @@ namespace help {
 		"Structs can be useful in modeling naturally compound data, such as points (x, y), colour (r, g, b), or student (name, age, grade).\n\n"
 
 		"Structs contain fields. Each field has a field name and a field type.\n"
-		"When creating objects, initial values of each of its fields are provided in the same order as the fields in its struct.\n"
-		"Specifically for nested object creation, the inner object's fields are treated as multiple separate fields in construction.\n\n"
-
-		"To make object construction easier, instead of multiple inner fields, you can instead supply the constructor with a single inner object.\n"
-		"The constructor will take all of that inner object's fields and copy them to the newly created object.\n"
-		"This saves you from needing to manually write out all the inner fields every time.\n"
-		"Note that inner objects are placed in angle brackets (\"<...>\") to distinguish them from strings, variables, or string representations of objects.\n"
-		"Example usage: instead of \"/construct pq TwoPoints {p.x} {p.y} 3 4\", you can write \"/construct pq TwoPoints <p> 3 4\".\n\n"
-
 		"Each field of an object is either a variable or a nested object.\n\n"
 
 		"If the field is a variable, it will, for the most part, behave just like any other variable.\n"
@@ -378,6 +371,23 @@ namespace help {
 		"The inner objects that are fields of outer objects have names of the same form as the field variables of that outer object.\n"
 		"As an example, the name \"p.x.y\" refers to the object p's inner object x's field (variable or inner object) y.\n\n"
 
+		"When creating objects, initial values of each of its fields are provided in the same order as the fields in its struct.\n"
+		"Specifically for nested object creation, the inner object's fields are treated as multiple separate fields in construction.\n\n"
+
+		"To make object construction easier, instead of multiple inner fields, you can instead supply the constructor with a single inner object.\n"
+		"The constructor will take all of that inner object's fields and copy them to the newly created object.\n"
+		"This saves you from needing to manually write out all the inner fields every time.\n"
+		"Note that inner objects are placed in angle brackets (\"<...>\") to distinguish them from strings, variables, or string representations of objects.\n"
+		"Example usage: instead of \"/construct pq TwoPoints {p.x} {p.y} 3 4\", you can write \"/construct pq TwoPoints <p> 3 4\".\n\n"
+
+		"To make object construction even easier, you can supply the constructor with a reference to an inner type or a superstruct type.\n"
+		"The constructor will use the default constructor's field values for the referenced type and copy them to the newly created object.\n"
+		"Note that struct references are placed in angle brackets with an additional @ sign right before the struct's name (\"<@...>\").\n"
+		"Example usage: if the struct Point has a default constructor, then you can write \"/construct pq TwoPoints <@Point> 3 4\" if you want to.\n\n"
+
+		"Also, for convenience, both the angle-bracket and @ shorthands (previous 2 paragraphs) can be used in setting the default constructor.\n"
+		"Commands such as \"/setdefault TwoPoints <p> 3 4\" and \"/setdefault TwoPoints <@Point> 3 4\" would both work.\n\n"
+
 		"Objects and variables must not be named the same thing. For example, there cannot be a variable and an object both named \"bob\" at any given time in the program.\n"
 		"When objects are used surrounded by braces (\"{...}\") or square brackets (\"[...]\"), they are replaced with their string representation.\n"
 		"In the definition of the string representation, \"<@SUPERSTRUCT_NAME>\" can be used to reference the string representation of the superstruct.\n"
@@ -386,6 +396,18 @@ namespace help {
 		"Note that just like using {} or [] for variables, {} will replace numerical values with their rounded values, while [] will use full precision.\n"
 		"Special note: It is not allowed to set the string representation of any struct to \"__none__\" (2 underscores on each side, no quotes). This representation is reserved for internal use.\n\n"
 		
+		"When working with structs and objects, it is very important to keep in mind when LCL makes a copy of field values.\n"
+		"For example, if you used <@Point> to set the default constructor of TwoPoints, but you change Point's default constructor later,\n"
+		"then you should be aware that the default constructor of TwoPoints did not also change.\n"
+		"This is due to LCL making a copy of Point's default constructor at the time when the default constructor of TwoPoints was first defined.\n"
+		"Later, when the default constructor of Point was changed, the copy of it used for TwoPoints was not changed.\n"
+		"Therefore, the default constructor of TwoPoints will not change.\n\n"
+
+		"This is only 1 example of such a detail that you need to pay attention to.\n"
+		"Similar situations that arise with copies of values, fields, objects, etc. often arise in LCL.\n"
+		"The documentation will not list out all of these situations exhaustively, so it is up to you to pay attention to these details.\n"
+		"Keep in mind that small details like this sometimes matter quite a bit in programs, so please be very careful about them.\n\n"
+
 		"Type \"/help commands struct\" for a list of commands related to structs and objects";
 
 }
