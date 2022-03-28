@@ -1,0 +1,60 @@
+/debug true
+
+// consider a scenario where 2 shapes are considered the same if their length and height are the same
+
+/structdef Shape ...
+	length Number ...
+	height Number ...
+	type String
+
+/inherit Triangle Shape ...
+	isRight Bool
+
+/inherit Quadrilateral Shape ...
+	isRect Bool
+
+/construct rightTriangle Triangle 5 3 Triangle true
+/construct rectangle Quadrilateral 5 3 Rectangle true
+
+// consider a scenario where cats can have amazing superpowers
+
+/structdef Cat ...
+	name String ...
+	owner String
+
+/inherit SuperpowerCat Cat ...
+	ability String
+
+/construct ninjaCat1 SuperpowerCat ...
+	Ninjie Daboss Huge-Leap
+
+/construct ninjaCat2 SuperpowerCat ...
+	Ninjie Daboss Smash-Pounce
+
+/construct normalCat Cat ...
+	Ninjie Daboss
+
+// case 1: try comparing them directly, it won't work
+/objequal c1a true rightTriangle rectangle
+
+// case 2: edge cases
+/objequal c2a Shape true blob rectangle 	 	// non-existent object
+/objequal c2b Point true rightTriangle rectangle 	// non-existent struct
+/objequal c3c Cat true rightTriangle rectangle   	// irrelevant struct
+
+// case 3: compare all fields (including type) of Shape (which is not what is intended)
+/objequal c3a Shape true rightTriangle rectangle 	// expect false
+
+// case 4: compare only length and height (which is what is intended, even if it doesn't make much sense)
+/equalfields Shape length height
+/objequal c4a Shape true rightTriangle rectangle 	// expect true
+
+// case 5: compare two objects, but we forgot the name of the superstruct to feed into the comparison
+/getobjecttype normalCatType normalCat
+/objequal c5a {normalCatType} true ninjaCat1 normalCat  // expect true
+
+// case 6: compare two superpower cats
+/objequal c6a true ninjaCat1 ninjaCat2           	// expect false because this is comparing all fields of SuperpowerCat
+/objequal c6b Cat true ninjaCat1 ninjaCat2       	// expect true because this only compares the fields of Cat now
+
+// use the debug display to figure out the values of the boolean variables c#*

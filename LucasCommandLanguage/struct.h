@@ -25,7 +25,8 @@ namespace srt {
 		vector<string> superstructs;
 		string rep;
 
-		Struct() = default;
+		Struct() = default; // is only here so that the program works (don't ask why)
+
 		// this constructor throws a runtime error if a self-reference is detected,
 		// and throws an invalid argument exception if an invalid type is detected
 		Struct(const string& name_, const vector<string>& fieldsAndTypesUnpaired, const vector<Struct>& structs);
@@ -36,6 +37,10 @@ namespace srt {
 		vector<string> getFields() const;
 		vector<string> getTypes() const;
 		void setEqualityFields(const vector<string>& fields);
+
+		// if *this is a substruct of srtname (equivalently: if srtname is a superstruct of *this), then return true, otherwise ......
+		// else if *this and srtname are the same struct, then return true if includeSelf is true, otherwise return false
+		bool isSubstructOf(const string& srtname, bool includeSelf) const;
 
 	};
 
@@ -63,6 +68,10 @@ namespace srt {
 		// compares (recursively) to see if each field is equal, as opposed to simply a name check as in the case of operator ==
 		// the parameter numPlaces is greater or equal to 0 if we should round, and is equal to -1 if we should NOT round
 		bool deepEquals(const Object& other, vector<Variable>& vars, vector<Object>& objects, vector<Struct>& structs, int numPlaces) const;
+
+		// same as above, but only compares fields present in supersrt
+		bool deepEqualsSuper(const Object& other, const Struct& supersrt, vector<Variable>& vars,
+							 vector<Object>& objects, vector<Struct>& structs, int numPlaces) const;
 
 		// inserts values of all fields (including nested inner ones) into the end of fieldInitValues
 		void copyFieldsTo(vector<string>& fieldInitValues, vector<Variable>& vars, vector<Object>& objects, vector<Struct>& structs) const;

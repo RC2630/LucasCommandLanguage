@@ -204,7 +204,8 @@ namespace help {
 		"/inherit <substructname> <superstructname> <newfieldname_1> <newfieldtype_1> ... <newfieldname_n> <newfieldtype_n> = define a new struct with all of superstructname's fields, plus the given new fields\n"
 		"/stringrep <structname> <rep> = sets the string representation of objects of the given struct type (structname), where fields and inner objects are placed inside angle brackets (\"<...>\")\n"
 		"/equalfields <structname> <fieldname_1> <fieldname_2> ... <fieldname_n> = set which fields \"/objequal\" will use to compare objects of type structname (default is compare all fields)\n"
-		"/objequal <boolvarname> <should_round> <objname_1> <objname_2> = check the equality of the two given objects (rounding numbers if should_round is true), and store result into variable called boolvarname\n\n"
+		"/objequal <boolvarname> <should_round> <objname_1> <objname_2> = check the equality of the two given objects (rounding numbers if should_round is true), and store result into variable called boolvarname\n"
+		"/objequal <boolvarname> <common_type> <should_round> <objname_1> <objname_2> = same as above, but only compares the fields in common_type (must be same struct or superstruct of the structs of both objects)\n\n"
 		
 		"Type \"/help struct\" for information on what structs and objects are, and how to use them";
 	

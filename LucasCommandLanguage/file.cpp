@@ -3,7 +3,7 @@
 // only use for strings!
 void file::inputStrFrom(string& v_str, const string& filename) {
     ifstream fin(filename);
-    getline(fin >> ws, v_str);
+    getline(fin, v_str); // no ws (not necessary when only reading 1 line)
     fin.close();
 }
 
@@ -12,7 +12,7 @@ void file::inputStrVecFrom(vector<string>& v_var, const string& filename) {
     ifstream fin(filename);
     string temp;
     while (!fin.fail()) {
-        getline(fin >> ws, temp);
+        getline(fin, temp); // no ws (otherwise blank lines will get skipped)
         v_var.push_back(temp);
     }
     v_var.pop_back();

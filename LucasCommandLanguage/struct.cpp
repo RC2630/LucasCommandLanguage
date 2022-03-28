@@ -60,6 +60,16 @@ void srt::Struct::setEqualityFields(const vector<string>& fields) {
 	}
 }
 
+// if *this is a substruct of srtname (equivalently: if srtname is a superstruct of *this), then return true, otherwise ......
+// else if *this and srtname are the same struct, then return true if includeSelf is true, otherwise return false
+bool srt::Struct::isSubstructOf(const string& srtname, bool includeSelf) const {
+	if (includeSelf) {
+		return vecUtil::contains(this->superstructs, srtname) || this->name == srtname;
+	} else {
+		return vecUtil::contains(this->superstructs, srtname);
+	}
+}
+
 // if you are calling this constructor from outside (i.e. non-recursively),
 // you MUST provide an int variable set to 0 for the fieldInitValuesIndex parameter
 // ALSO, this constructor throws an exception on a non-existent inner struct type, so please catch it
@@ -153,6 +163,34 @@ bool srt::Object::deepEquals(const Object& other, vector<Variable>& vars, vector
 	}
 	// at this point, they are different objects (but they could be either equal or unequal)
 	for (const auto& [fieldname, type] : findStruct(structs, this->structTypename).fieldsAndTypesForEquality) {
+		if (var::isPrimitive(type)) {
+			// variable field
+			Variable& var1 = var::find(vars, this->name + "." + fieldname);
+			Variable& var2 = var::find(vars, other.name + "." + fieldname);
+			if (!var1.equals(var2, numPlaces)) {
+				return false;
+			}
+		} else {
+			// inner object field
+			Object& obj1 = srt::findObject(objects, this->name + "." + fieldname);
+			Object& obj2 = srt::findObject(objects, other.name + "." + fieldname);
+			if (!obj1.deepEquals(obj2, vars, objects, structs, numPlaces)) {
+				return false;
+			}
+		}
+	}
+	// at this point, they must be equal objects
+	return true;
+}
+
+// same as above, but only compares fields present in supersrt
+bool srt::Object::deepEqualsSuper(const Object& other, const Struct& supersrt, vector<Variable>& vars,
+								  vector<Object>& objects, vector<Struct>& structs, int numPlaces) const {
+	if (this->name == other.name) {
+		return true; // they are literally the same object
+	}
+	// at this point, they are different objects (but they could be either equal or unequal)
+	for (const auto& [fieldname, type] : supersrt.fieldsAndTypesForEquality) {
 		if (var::isPrimitive(type)) {
 			// variable field
 			Variable& var1 = var::find(vars, this->name + "." + fieldname);

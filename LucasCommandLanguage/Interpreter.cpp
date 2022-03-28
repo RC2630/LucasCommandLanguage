@@ -176,6 +176,7 @@ void inherit(const string& command);
 void stringRep(const string& srtname, const string& rep);
 void setEqualityFields(const string& command);
 void objEqual(const string& boolvarname, bool shouldRound, const string& objname1, const string& objname2);
+void objEqualSuper(const string& boolvarname, const string& supersrtname, bool shouldRound, const string& objname1, const string& objname2);
 
 int main() {
 
@@ -467,8 +468,10 @@ void interpretCommand(const string& command, vector<string>& commands, int currI
 		stringRep(parseArgument(command, 1), parseArgumentUntilEnd(command, 2));
 	} else if (commandIs(command, "/equalfields")) {
 		setEqualityFields(command);
-	} else if (commandIs(command, "/objequal")) {
+	} else if (commandIs(command, "/objequal") && numArguments(command) == 4) {
 		objEqual(parseArgument(command, 1), parseBooleanArgument(command, 2), parseArgument(command, 3), parseArgument(command, 4));
+	} else if (commandIs(command, "/objequal") && numArguments(command) == 5) {
+		objEqualSuper(parseArgument(command, 1), parseArgument(command, 2), parseBooleanArgument(command, 3), parseArgument(command, 4), parseArgument(command, 5));
 	} else if (numArguments(command) == 0 && blk::contains(blocks, command.substr(1))) { // DO NOT MOVE - SHOULD HAVE LOWEST PRECEDENCE
 		runBlock(command.substr(1), commands, currIndex);
 	} else {
@@ -1612,5 +1615,28 @@ void objEqual(const string& boolvarname, bool shouldRound, const string& objname
 		return;
 	}
 	bool equal = obj1.deepEquals(obj2, vars, objects, structs, shouldRound ? num_places : -1);
+	createVar(boolvarname, strUtil::boolval(equal), "Bool");
+}
+
+void objEqualSuper(const string& boolvarname, const string& supersrtname, bool shouldRound, const string& objname1, const string& objname2) {
+	if (!containsObject(objects, objname1) || !containsObject(objects, objname2)) {
+		cout << ANSI_RED << "One or both of the objects \"" << objname1 << "\" or \"" << objname2 << "\" does not exist.\n" << ANSI_NORMAL;
+		return;
+	}
+	if (!containsStruct(structs, supersrtname)) {
+		cout << ANSI_RED << "The struct \"" << supersrtname << "\" does not exist.\n" << ANSI_NORMAL;
+		return;
+	}
+	Object& obj1 = findObject(objects, objname1);
+	Object& obj2 = findObject(objects, objname2);
+	Struct& srt1 = findStruct(structs, obj1.structTypename);
+	Struct& srt2 = findStruct(structs, obj2.structTypename);
+	if (!srt1.isSubstructOf(supersrtname, true) || !srt2.isSubstructOf(supersrtname, true)) {
+		cout << ANSI_RED << "The struct \"" << supersrtname << "\" is not the same struct or a superstruct of "
+			 << "the struct of object \"" << obj1.name << "\" (" << srt1.name << "), or "
+			 << "the struct of object \"" << obj2.name << "\" (" << srt2.name << "), or both.\n" << ANSI_NORMAL;
+		return;
+	}
+	bool equal = obj1.deepEqualsSuper(obj2, findStruct(structs, supersrtname), vars, objects, structs, shouldRound ? num_places : -1);
 	createVar(boolvarname, strUtil::boolval(equal), "Bool");
 }
