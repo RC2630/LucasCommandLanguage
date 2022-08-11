@@ -93,7 +93,7 @@ string parse::getCommandName(const string& command, char sep) {
 }
 
 // parses all arguments of the command, returning a list of arguments
-vector<string> parse::parseAllArguments(const string& command, bool includeCommandName = true, char sep = ' ') {
+vector<string> parse::parseAllArguments(const string& command, bool includeCommandName, char sep) {
     vector<string> arguments;
     int start = includeCommandName ? 0 : 1;
     for (int i = start; i <= numArguments(command, sep); i++) {
@@ -104,7 +104,7 @@ vector<string> parse::parseAllArguments(const string& command, bool includeComma
 
 // parses all numerical arguments of the command, returning a list of arguments
 // note that if includeCommandName is true, then the "command name" needs to be numerical as well (i.e. not a traditional command name)
-vector<double> parse::parseAllNumericalArguments(const string& command, bool includeCommandName = true, char sep = ' ') {
+vector<double> parse::parseAllNumericalArguments(const string& command, bool includeCommandName, char sep) {
     vector<double> arguments;
     int start = includeCommandName ? 0 : 1;
     for (int i = start; i <= numArguments(command, sep); i++) {
@@ -115,7 +115,7 @@ vector<double> parse::parseAllNumericalArguments(const string& command, bool inc
 
 // parses all boolean arguments of the command, returning a list of arguments
 // note that if includeCommandName is true, then the "command name" needs to be boolean as well (i.e. not a traditional command name)
-vector<bool> parse::parseAllBooleanArguments(const string& command, bool includeCommandName = true, char sep = ' ') {
+vector<bool> parse::parseAllBooleanArguments(const string& command, bool includeCommandName, char sep) {
     vector<bool> arguments;
     int start = includeCommandName ? 0 : 1;
     for (int i = start; i <= numArguments(command, sep); i++) {
