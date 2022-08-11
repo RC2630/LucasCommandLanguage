@@ -18,15 +18,15 @@ namespace strUtil {
     string sort(const string& s);
     bool endsWith(const string& s, const string& subs);
     string removeChars(const string& s, char toRemove, int num);
-    // removes everything after (and including) the first occurrence of remAfter in s
-    string removeAllAfterChar(const string& s, char remAfter);
+    // removes everything before (but NOT including, by default) the first occurrence of remBefore in s
+    string removeAllBeforeChar(const string& s, char remBefore, bool remCharItself = false);
+    // removes everything after (and including, by default) the first occurrence of remAfter in s
+    string removeAllAfterChar(const string& s, char remAfter, bool remCharItself = true);
     // returns the position in s of the first occurrence of c (throws exception if c is not in s)
     int positionOfFirstOccurrence(const string& s, char c);
     // returns the position in s of the final occurrence of c (throws exception if c is not in s)
     int positionOfFinalOccurrence(const string& s, char c);
     vector<int> positionsOfAllOccurrences(const string& s, char c);
-    // removes everything before (but NOT including) the first occurrence of remBefore in s
-    string removeAllBeforeChar(const string& s, char remBefore);
     int numOccurrences(const string& s, char c);
     string removeAllOccurrencesOfChar(const string& s, char c);
     bool parseBool(const string& s);
@@ -55,11 +55,19 @@ namespace strUtil {
     bool containsTrimmed(const vector<string>& v, const string& s);
     vector<string> fillSpacesTo(const vector<string>& v, int size);
     vector<string> fillSpacesToMaxPlusN(const vector<string>& v, int n = 0);
+    string quotify(const string& s);
     vector<string> quotify(const vector<string>& v);
     vector<string> spaceSplit(const string& s);
     string toUpper(const string& s);
     string toLower(const string& s);
     bool equalsIgnoreCase(const string& s1, const string& s2);
+    bool isLetter(char c);
+    bool isLowerCaseLetter(char c);
+    bool isUpperCaseLetter(char c);
+    bool isDigit(char c);
+    // separates a string into a list of words and spaces/punctuation, ex. "I am. Are you?" -> {"I", " ", "am", ". ", "Are", " ", "you", "?"} 
+    vector<string> separateIntoWordsAndSpaces(const string& s);
+    vector<int> getAsciiFromString(const string& s);
 }
 
 #endif

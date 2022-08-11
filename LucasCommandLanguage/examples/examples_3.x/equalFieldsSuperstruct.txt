@@ -18,7 +18,7 @@
 	leastFavStu Student
 
 // consider this scenario: we want to compare two GoodStudents using all fields except for popularity
-// without superstruct reference, we would have to write "/equalfields Student name grade age id creditsPerYear numAwards"
+// without superstruct reference, we would have to write "/equalfields GoodStudent name grade age id creditsPerYear numAwards"
 // that is a lot to write! let's see if we can do any better now :D
 
 // case 1: edge cases

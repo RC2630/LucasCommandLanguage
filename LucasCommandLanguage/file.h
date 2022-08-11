@@ -6,6 +6,7 @@
 #include <string>
 
 #include "mapUtility.h"
+#include "parseArguments.h"
 
 using namespace std;
 
@@ -85,6 +86,7 @@ namespace file {
     void outputStrVecAddTo(const vector<string>& v, const string& filename);
 
     void clearFile(const string& filename);
+    bool isEmpty(const string& filename);
 
     template <typename K, typename V>
     void outputMapTo(const map<K, V>& m, const string& keysFilename, const string& valuesFilename) {
@@ -176,6 +178,38 @@ namespace file {
 
     // use this if K == string, V == string
     void outputMapAddTo_stringKeyValue(const map<string, string>& m, const string& keysFilename, const string& valuesFilename);
+
+    // requires types K and V be convertible (castable) to string
+    template <typename K, typename V>
+    void outputMapTo_singleFile(const map<K, V>& m, const string& filename, char sep) {
+        vector<string> mapContents;
+        for (auto [key, value] : m) {
+            mapContents.push_back((string) key + sep + (string) value);
+        }
+        outputVecTo(mapContents, filename);
+    }
+
+    // requires types K and V be convertible (castable) from string
+    template <typename K, typename V>
+    void inputMapFrom_singleFile(map<K, V>& m, const string& filename, char sep) {
+        vector<string> mapContents;
+        inputStrVecFrom(mapContents, filename);
+        for (const string& entry : mapContents) {
+            vector<string> keyAndValue = parse::parseAllArguments(entry, true, sep);
+            m.insert({(K) keyAndValue.front(), (V) keyAndValue.back()});
+        }
+    }
+
+    // requires types K and V be convertible (castable) to string
+    template <typename K, typename V>
+    void outputMapAddTo_singleFile(const map<K, V>& m, const string& filename, char sep) {
+        vector<string> mapContents;
+        inputStrVecFrom(mapContents, filename);
+        for (auto [key, value] : m) {
+            mapContents.push_back((string) key + sep + (string) value);
+        }
+        outputVecTo(mapContents, filename);
+    }
 
 }
 

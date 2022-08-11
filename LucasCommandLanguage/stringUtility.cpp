@@ -50,8 +50,20 @@ string strUtil::removeChars(const string& s, char toRemove, int num) {
     return newString;
 }
 
-// removes everything after (and including) the first occurrence of remAfter in s
-string strUtil::removeAllAfterChar(const string& s, char remAfter) {
+// removes everything before (but NOT including, by default) the first occurrence of remBefore in s
+string strUtil::removeAllBeforeChar(const string& s, char remBefore, bool remCharItself) {
+    if (!contains(s, charToString(remBefore))) {
+        return s;
+    }
+    if (remCharItself) {
+        return s.substr(positionOfFirstOccurrence(s, remBefore) + 1);
+    } else {
+        return s.substr(positionOfFirstOccurrence(s, remBefore));
+    }
+}
+
+// removes everything after (and including, by default) the first occurrence of remAfter in s
+string strUtil::removeAllAfterChar(const string& s, char remAfter, bool remCharItself) {
     if (!contains(s, charToString(remAfter))) {
         return s;
     }
@@ -63,7 +75,11 @@ string strUtil::removeAllAfterChar(const string& s, char remAfter) {
             break;
         }
     }
-    return newString;
+    if (remCharItself) {
+        return newString;
+    } else {
+        return newString + remAfter;
+    }
 }
 
 // returns the position in s of the first occurrence of c (throws exception if c is not in s)
@@ -94,14 +110,6 @@ vector<int> strUtil::positionsOfAllOccurrences(const string& s, char c) {
         }
     }
     return positions;
-}
-
-// removes everything before (but NOT including) the first occurrence of remBefore in s
-string strUtil::removeAllBeforeChar(const string& s, char remBefore) {
-    if (!contains(s, charToString(remBefore))) {
-        return s;
-    }
-    return s.substr(positionOfFirstOccurrence(s, remBefore));
 }
 
 int strUtil::numOccurrences(const string& s, char c) {
@@ -287,10 +295,14 @@ vector<string> strUtil::fillSpacesToMaxPlusN(const vector<string>& v, int n) {
     return fillSpacesTo(v, maxStringLength(v) + n);
 }
 
+string strUtil::quotify(const string& s) {
+    return "\"" + s + "\"";
+}
+
 vector<string> strUtil::quotify(const vector<string>& v) {
     vector<string> quoted;
     for (const string& s : v) {
-        quoted.push_back("\"" + s + "\"");
+        quoted.push_back(strUtil::quotify(s));
     }
     return quoted;
 }
@@ -332,4 +344,46 @@ string strUtil::toLower(const string& s) {
 
 bool strUtil::equalsIgnoreCase(const string& s1, const string& s2) {
     return toUpper(s1) == toUpper(s2);
+}
+
+bool strUtil::isLetter(char c) {
+    return ('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z');
+}
+
+bool strUtil::isLowerCaseLetter(char c) {
+    return 'a' <= c && c <= 'z';
+}
+
+bool strUtil::isUpperCaseLetter(char c) {
+    return 'A' <= c && c <= 'Z';
+}
+
+bool strUtil::isDigit(char c) {
+    return '0' <= c && c <= '9';
+}
+
+// separates a string into a list of words and spaces/punctuation, ex. "I am. Are you?" -> {"I", " ", "am", ". ", "Are", " ", "you", "?"}
+vector<string> strUtil::separateIntoWordsAndSpaces(const string& s) {
+    vector<string> parts;
+    bool wordMode = true;
+    string curr;
+    for (char c : s) {
+        if ((strUtil::isLetter(c) && wordMode) || (!strUtil::isLetter(c) && !wordMode)) {
+            curr += c;
+        } else {
+            wordMode = !wordMode;
+            parts.push_back(curr);
+            curr = c;
+        }
+    }
+    parts.push_back(curr);
+    return parts;
+}
+
+vector<int> strUtil::getAsciiFromString(const string& s) {
+    vector<int> points;
+    for (char c : s) {
+        points.push_back((std::uint8_t) c);
+    }
+    return points;
 }

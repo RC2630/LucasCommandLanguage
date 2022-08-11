@@ -45,6 +45,12 @@ void file::clearFile(const string& filename) {
     fout.close();
 }
 
+bool file::isEmpty(const string& filename) {
+    vector<string> fileContents;
+    file::inputStrVecFrom(fileContents, filename);
+    return fileContents.empty();
+}
+
 // use this if K == string, V == string
 void file::inputMapFrom_stringKeyValue(map<string, string>& m, const string& keysFilename, const string& valuesFilename) {
     vector<string> keys;

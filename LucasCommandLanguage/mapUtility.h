@@ -95,6 +95,24 @@ namespace mapUtil {
         return values;
     }
 
+    template <typename K, typename V>
+    V getOrDefault(const map<K, V>& m, const K& key, const V& defaultValue) {
+        if (m.count(key)) {
+            return m.at(key);
+        } else {
+            return defaultValue;
+        }
+    }
+
+    template <typename T>
+    T getOrSelf(const map<T, T>& m, const T& key) {
+        if (m.count(key)) {
+            return m.at(key);
+        } else {
+            return key;
+        }
+    }
+
 }
 
 #endif
