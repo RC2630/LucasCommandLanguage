@@ -24,6 +24,8 @@ That's about it. Have fun using LCL! 😀
 
 ## Version History
 
+v3.9 - This is an important update, as it ends the 3.x versions. In other words, all functionality related to structs and objects are now done (for now). This update adds superstruct and/or inner struct reference capabilities to `/construct`, `/setdefault`, and `/equalfields`. Additionally, the debug display has been improved significantly. Also, all example files are now reorganized into subfolders according to which version of LCL they were specifically designed for (all example files are still fully backwards compatible with all previous versions of LCL, with a few exceptions that are explicitly noted). Finally, in the previous few versions, as more and more struct/object functionalities were being added, the help documentation for structs/objects got a bit disorganized, so that got improved and expanded in this update as well.
+
 v3.8 - Added the ability for `/objequal` to only compare fields from a superstruct (removing the restriction that the two objects to compare must always have the same struct type)
 
 v3.7.2 - Deleting superstructs are now no longer possible. Also improved the display presentation of help documentation. Also, a very challenging new practice problem has been added to the `examples/practice_problems` folder. You can find this new problem and a sample solution in the `medianGrade` subfolder.
