@@ -143,35 +143,35 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="abstractFunctions.h" />
-    <ClInclude Include="ansi_codes.h" />
-    <ClInclude Include="binaryUtility.h" />
+    <ClInclude Include="general\abstractFunctions.h" />
+    <ClInclude Include="general\ansi_codes.h" />
+    <ClInclude Include="general\binaryUtility.h" />
     <ClInclude Include="block.h" />
-    <ClInclude Include="customPrint.h" />
-    <ClInclude Include="file.h" />
+    <ClInclude Include="general\customPrint.h" />
+    <ClInclude Include="general\file.h" />
     <ClInclude Include="help.h" />
-    <ClInclude Include="mapUtility.h" />
-    <ClInclude Include="numberUtility.h" />
-    <ClInclude Include="parseArguments.h" />
-    <ClInclude Include="pipe.h" />
-    <ClInclude Include="randomUtility.h" />
-    <ClInclude Include="statisticsUtility.h" />
-    <ClInclude Include="stringUtility.h" />
+    <ClInclude Include="general\mapUtility.h" />
+    <ClInclude Include="general\numberUtility.h" />
+    <ClInclude Include="general\parseArguments.h" />
+    <ClInclude Include="general\pipe.h" />
+    <ClInclude Include="general\randomUtility.h" />
+    <ClInclude Include="general\statisticsUtility.h" />
+    <ClInclude Include="general\stringUtility.h" />
     <ClInclude Include="struct.h" />
     <ClInclude Include="variable.h" />
-    <ClInclude Include="vectorUtility.h" />
+    <ClInclude Include="general\vectorUtility.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="binaryUtility.cpp" />
+    <ClCompile Include="general\binaryUtility.cpp" />
     <ClCompile Include="block.cpp" />
-    <ClCompile Include="customPrint.cpp" />
-    <ClCompile Include="file.cpp" />
+    <ClCompile Include="general\customPrint.cpp" />
+    <ClCompile Include="general\file.cpp" />
     <ClCompile Include="Interpreter.cpp" />
-    <ClCompile Include="numberUtility.cpp" />
-    <ClCompile Include="parseArguments.cpp" />
-    <ClCompile Include="randomUtility.cpp" />
-    <ClCompile Include="statisticsUtility.cpp" />
-    <ClCompile Include="stringUtility.cpp" />
+    <ClCompile Include="general\numberUtility.cpp" />
+    <ClCompile Include="general\parseArguments.cpp" />
+    <ClCompile Include="general\randomUtility.cpp" />
+    <ClCompile Include="general\statisticsUtility.cpp" />
+    <ClCompile Include="general\stringUtility.cpp" />
     <ClCompile Include="struct.cpp" />
     <ClCompile Include="variable.cpp" />
   </ItemGroup>

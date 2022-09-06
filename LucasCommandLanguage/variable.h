@@ -6,9 +6,9 @@
 #include <tuple>
 #include <stdexcept>
 
-#include "ansi_codes.h"
-#include "stringUtility.h"
-#include "numberUtility.h"
+#include "general/ansi_codes.h"
+#include "general/stringUtility.h"
+#include "general/numberUtility.h"
 
 #include "struct.h"
 

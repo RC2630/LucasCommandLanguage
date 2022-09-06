@@ -1,8 +1,8 @@
 #ifndef BLOCK_DOT_H
 #define BLOCK_DOT_H
 
-#include "stringUtility.h"
-#include "vectorUtility.h"
+#include "general/stringUtility.h"
+#include "general/vectorUtility.h"
 
 #include <tuple>
 

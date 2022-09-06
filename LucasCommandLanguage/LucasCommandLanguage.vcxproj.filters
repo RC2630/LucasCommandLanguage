@@ -30,46 +30,46 @@
     <ClInclude Include="block.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="abstractFunctions.h">
+    <ClInclude Include="general\abstractFunctions.h">
       <Filter>Header Files\general</Filter>
     </ClInclude>
-    <ClInclude Include="ansi_codes.h">
+    <ClInclude Include="general\ansi_codes.h">
       <Filter>Header Files\general</Filter>
     </ClInclude>
-    <ClInclude Include="binaryUtility.h">
+    <ClInclude Include="general\binaryUtility.h">
       <Filter>Header Files\general</Filter>
     </ClInclude>
-    <ClInclude Include="file.h">
+    <ClInclude Include="general\file.h">
       <Filter>Header Files\general</Filter>
     </ClInclude>
-    <ClInclude Include="mapUtility.h">
+    <ClInclude Include="general\mapUtility.h">
       <Filter>Header Files\general</Filter>
     </ClInclude>
-    <ClInclude Include="numberUtility.h">
+    <ClInclude Include="general\numberUtility.h">
       <Filter>Header Files\general</Filter>
     </ClInclude>
-    <ClInclude Include="parseArguments.h">
+    <ClInclude Include="general\parseArguments.h">
       <Filter>Header Files\general</Filter>
     </ClInclude>
-    <ClInclude Include="pipe.h">
+    <ClInclude Include="general\pipe.h">
       <Filter>Header Files\general</Filter>
     </ClInclude>
-    <ClInclude Include="randomUtility.h">
+    <ClInclude Include="general\randomUtility.h">
       <Filter>Header Files\general</Filter>
     </ClInclude>
-    <ClInclude Include="statisticsUtility.h">
+    <ClInclude Include="general\statisticsUtility.h">
       <Filter>Header Files\general</Filter>
     </ClInclude>
-    <ClInclude Include="stringUtility.h">
+    <ClInclude Include="general\stringUtility.h">
       <Filter>Header Files\general</Filter>
     </ClInclude>
-    <ClInclude Include="vectorUtility.h">
+    <ClInclude Include="general\vectorUtility.h">
       <Filter>Header Files\general</Filter>
     </ClInclude>
     <ClInclude Include="struct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="customPrint.h">
+    <ClInclude Include="general\customPrint.h">
       <Filter>Header Files\general</Filter>
     </ClInclude>
   </ItemGroup>
@@ -77,25 +77,25 @@
     <ClCompile Include="Interpreter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="binaryUtility.cpp">
+    <ClCompile Include="general\binaryUtility.cpp">
       <Filter>Source Files\general</Filter>
     </ClCompile>
-    <ClCompile Include="file.cpp">
+    <ClCompile Include="general\file.cpp">
       <Filter>Source Files\general</Filter>
     </ClCompile>
-    <ClCompile Include="numberUtility.cpp">
+    <ClCompile Include="general\numberUtility.cpp">
       <Filter>Source Files\general</Filter>
     </ClCompile>
-    <ClCompile Include="parseArguments.cpp">
+    <ClCompile Include="general\parseArguments.cpp">
       <Filter>Source Files\general</Filter>
     </ClCompile>
-    <ClCompile Include="randomUtility.cpp">
+    <ClCompile Include="general\randomUtility.cpp">
       <Filter>Source Files\general</Filter>
     </ClCompile>
-    <ClCompile Include="statisticsUtility.cpp">
+    <ClCompile Include="general\statisticsUtility.cpp">
       <Filter>Source Files\general</Filter>
     </ClCompile>
-    <ClCompile Include="stringUtility.cpp">
+    <ClCompile Include="general\stringUtility.cpp">
       <Filter>Source Files\general</Filter>
     </ClCompile>
     <ClCompile Include="block.cpp">
@@ -107,7 +107,7 @@
     <ClCompile Include="struct.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="customPrint.cpp">
+    <ClCompile Include="general\customPrint.cpp">
       <Filter>Source Files\general</Filter>
     </ClCompile>
   </ItemGroup>
